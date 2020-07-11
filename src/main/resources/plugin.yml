@@ -5,3 +5,13 @@ description: Movecraft Warfare Addon
 authors: [TylerS1066, cccm5, eirik1996, BaccaYarro]
 website: https://github.com/APDevTeam/Movecraft-Warfare
 main: net.countercraft.movecraft.warfare.MovecraftWarfare
+commands:
+  siege:
+    description: If the region you are standing in is configured for Siege, lays siege to it
+    usage: /siege
+  assaultinfo:
+    description: Gives you information about the region(s) you are in, and if they are available for Assault
+    usage: /assaultinfo
+  assault:
+    description: Begins an Assault on the specified region
+    usage: /assault <regionname>
