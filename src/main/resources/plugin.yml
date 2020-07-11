@@ -1,0 +1,7 @@
+name: Movecraft Warfare
+  depend: [WorldGuard, WorldEdit]
+version: ${project.version}
+description: Movecraft Warfare Addon
+authors: [TylerS1066, cccm5, eirik1996, BaccaYarro]
+website: https://github.com/APDevTeam/Movecraft-Warfare
+main: net.countercraft.movecraft.warfare.MovecraftWarfare
