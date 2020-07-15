@@ -1,9 +1,11 @@
 package net.countercraft.movecraft.warfare;
 
+import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.commands.AssaultCommand;
 import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.commands.SiegeCommand;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -29,17 +32,47 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if(Settings.AssaultEnable) {
-            assaultManager = new AssaultManager(this);
-            assaultManager.runTaskTimerAsynchronously(this, 0, 20);
+        if(instance != null)
+            return;
+
+        instance = this;
+        Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
+        Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
+
+        if(Movecraft.getInstance().getWorldGuardPlugin() == null || Movecraft.getInstance().getEconomy() == null) {
+            Config.AssaultEnable = false;
+            Config.SiegeEnable = false;
+        }
+        if(Movecraft.getInstance().getWorldEditPlugin() == null) {
+            Config.AssaultEnable = false;
         }
 
-        if(Settings.SiegeEnable) {
+        if(Config.AssaultEnable) {
+            assaultManager = new AssaultManager(this);
+            assaultManager.runTaskTimerAsynchronously(this, 0, 20);
 
+            Config.AssaultDamagesCapPercent = getConfig().getDouble("AssaultDamagesCapPercent", 1.0);
+            Config.AssaultCooldownHours = getConfig().getInt("AssaultCooldownHours", 24);
+            Config.AssaultDelay = getConfig().getInt("AssaultDelay", 1800);
+            Config.AssaultDuration = getConfig().getInt("AssaultDuration", 1800);
+            Config.AssaultCostPercent = getConfig().getDouble("AssaultCostPercent", 0.25);
+            Config.AssaultDamagesPerBlock = getConfig().getInt("AssaultDamagesPerBlock", 15);
+            Config.AssaultRequiredDefendersOnline = getConfig().getInt("AssaultRequiredDefendersOnline", 2);
+            Config.AssaultRequiredOwnersOnline = getConfig().getInt("AssaultRequiredOwnersOnline", 1);
+            Config.AssaultMaxBalance = getConfig().getDouble("AssaultMaxBalance", 5000000);
+            Config.AssaultOwnerWeightPercent = getConfig().getDouble("AssaultOwnerWeightPercent", 1.0);
+            Config.AssaultMemberWeightPercent = getConfig().getDouble("AssaultMemberWeightPercent", 1.0);
+            Config.AssaultDestroyableBlocks = new HashSet<>(getConfig().getIntegerList("AssaultDestroyableBlocks"));
+
+            this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
+            this.getCommand("assault").setExecutor(new AssaultCommand());
+        }
+
+        if(Config.SiegeEnable) {
             siegeManager = new SiegeManager(this);
-            logger.info("Enabling siege");
+            getLogger().info("Enabling siege");
             //load the sieges.yml file
-            File siegesFile = new File(Movecraft.getInstance().getDataFolder().getAbsolutePath() + "/sieges.yml");
+            File siegesFile = new File(MovecraftWarfare.getInstance().getDataFolder().getAbsolutePath() + "/sieges.yml");
             InputStream input;
             try {
                 input = new FileInputStream(siegesFile);
@@ -69,17 +102,11 @@ public final class MovecraftWarfare extends JavaPlugin {
                             (List<String>) siegeMap.getOrDefault("SiegeCommandsOnWin", Collections.emptyList()),
                             (List<String>) siegeMap.getOrDefault("SiegeCommandsOnLose", Collections.emptyList())));
                 }
-                logger.log(Level.INFO, "Siege configuration loaded.");
-
+                getLogger().log(Level.INFO, "Siege configuration loaded.");
             }
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
-        }
 
-        if(Settings.SiegeEnable)
             this.getCommand("siege").setExecutor(new SiegeCommand());
-        if(Settings.AssaultEnable) {
-            this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
-            this.getCommand("assault").setExecutor(new AssaultCommand());
         }
     }
 

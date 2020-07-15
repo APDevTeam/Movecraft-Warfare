@@ -10,6 +10,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.MathUtils;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -41,7 +42,7 @@ public class BlockListener implements Listener {
 
     //TODO: move to Warfare plugin
     private void processAssault(EntityExplodeEvent e){
-        List<Assault> assaults = Movecraft.getInstance().getAssaultManager() != null ? Movecraft.getInstance().getAssaultManager().getAssaults() : null;
+        List<Assault> assaults = MovecraftWarfare.getInstance().getAssaultManager() != null ? MovecraftWarfare.getInstance().getAssaultManager().getAssaults() : null;
         if (assaults == null || assaults.size() == 0) {
             return;
         }

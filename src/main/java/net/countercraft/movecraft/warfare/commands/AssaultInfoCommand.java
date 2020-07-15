@@ -9,6 +9,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.WorldguardUtils;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.siege.Siege;
@@ -69,7 +70,7 @@ public class AssaultInfoCommand implements CommandExecutor {
             // regions with no owners can not be assaulted
             if (tRegion.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || tRegion.getOwners().size() == 0)
                 continue ;
-            for (Siege siege : Movecraft.getInstance().getSiegeManager().getSieges()) {
+            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
                 // siegable regions can not be assaulted
                 if (tRegion.getId().equalsIgnoreCase(siege.getAttackRegion()) || tRegion.getId().equalsIgnoreCase(siege.getCaptureRegion()))
                     continue Search;
@@ -97,7 +98,7 @@ public class AssaultInfoCommand implements CommandExecutor {
         double cost = AssaultUtils.getCostToAssault(assaultRegion);
         output += String.format("%.2f", cost);
         lines.add(output);
-        for (Assault assault : Movecraft.getInstance().getAssaultManager().getAssaults()) {
+        for (Assault assault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()) {
             if (assault.getRegionName().equals(assaultRegion.getId()) && System.currentTimeMillis() - assault.getStartTime() < Settings.AssaultCooldownHours * (60 * 60 * 1000)) {
                 canBeAssaulted = false;
                 lines.add("- "+I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable Damaged"));

@@ -9,6 +9,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftRepair;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.siege.Siege;
@@ -70,7 +71,7 @@ public class AssaultCommand implements CommandExecutor{
             return true;
         }
         boolean canBeAssaulted = true;
-        for (Siege siege : Movecraft.getInstance().getSiegeManager().getSieges()) {
+        for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
             // siegable regions can not be assaulted
             if (aRegion.getId().equalsIgnoreCase(siege.getAttackRegion()) || aRegion.getId().equalsIgnoreCase(siege.getCaptureRegion())) {
                 canBeAssaulted = false;
@@ -84,7 +85,7 @@ public class AssaultCommand implements CommandExecutor{
 
         {
             Assault assault = null;
-            for (Assault tempAssault : Movecraft.getInstance().getAssaultManager().getAssaults()) {
+            for (Assault tempAssault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()) {
                 if (tempAssault.getRegionName().equals(aRegion.getId())) {
                     assault = tempAssault;
                     break;
@@ -104,7 +105,7 @@ public class AssaultCommand implements CommandExecutor{
         if (aRegion.isMember(lp)) {
             canBeAssaulted = false;
         }
-        for(Assault assault : Movecraft.getInstance().getAssaultManager().getAssaults()){
+        for(Assault assault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()){
             if(assault.getRegionName().equals(args[0])){
                 canBeAssaulted = false;
                 break;
@@ -168,7 +169,7 @@ public class AssaultCommand implements CommandExecutor{
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
-                Movecraft.getInstance().getAssaultManager().getAssaults().add(new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax));
+                MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax));
                 ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(taskWorld).getRegion(taskAssaultName);
                 tRegion.setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
             }

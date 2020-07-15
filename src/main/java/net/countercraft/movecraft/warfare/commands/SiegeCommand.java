@@ -8,6 +8,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.TopicPaginator;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.siege.SiegeStage;
@@ -44,7 +45,7 @@ public class SiegeCommand implements TabExecutor {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - No Argument"));
             return true;
         }
-        SiegeManager siegeManager = Movecraft.getInstance().getSiegeManager();
+        SiegeManager siegeManager = MovecraftWarfare.getInstance().getSiegeManager();
         if (siegeManager.getSieges().size() == 0) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Siege Not Configured"));
             return true;
@@ -69,7 +70,7 @@ public class SiegeCommand implements TabExecutor {
         }
         String siegeName = String.join(" ", Arrays.copyOfRange(args, 1,args.length));
         Siege siege = null;
-        for(Siege searchSiege : Movecraft.getInstance().getSiegeManager().getSieges()){
+        for(Siege searchSiege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()){
             if(searchSiege.getName().equalsIgnoreCase(siegeName)){
                 siege = searchSiege;
                 break;
@@ -85,7 +86,7 @@ public class SiegeCommand implements TabExecutor {
     }
 
     private boolean listCommand(CommandSender commandSender, String[] args){
-        SiegeManager siegeManager = Movecraft.getInstance().getSiegeManager();
+        SiegeManager siegeManager = MovecraftWarfare.getInstance().getSiegeManager();
         int page;
         try {
             if (args.length <= 1)
@@ -115,7 +116,7 @@ public class SiegeCommand implements TabExecutor {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Must Be Player"));
             return true;
         }
-        SiegeManager siegeManager = Movecraft.getInstance().getSiegeManager();
+        SiegeManager siegeManager = MovecraftWarfare.getInstance().getSiegeManager();
         Player player = (Player) commandSender;
 
         for (Siege siege : siegeManager.getSieges()) {
@@ -303,7 +304,7 @@ public class SiegeCommand implements TabExecutor {
             tabCompletions.add("begin");
             tabCompletions.add("list");
         } else if (strings[0].equalsIgnoreCase("info")) {
-            for (Siege siege : Movecraft.getInstance().getSiegeManager().getSieges()) {
+            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
                 tabCompletions.add(siege.getName());
             }
         }
