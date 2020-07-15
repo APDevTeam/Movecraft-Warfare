@@ -8,6 +8,8 @@ import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.events.SiegeLoseEvent;
+import net.countercraft.movecraft.warfare.events.SiegeWinEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -78,6 +80,7 @@ public class SiegeProgressTask extends SiegeTask {
     }
 
     private void winSiege(@NotNull Player siegeLeader) {
+        Bukkit.getPluginManager().callEvent(new SiegeWinEvent(siege));
         ProtectedRegion controlRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(siegeLeader.getWorld()).getRegion(siege.getCaptureRegion());
         DefaultDomain newOwner = new DefaultDomain();
         newOwner.addPlayer(siege.getPlayerUUID());
@@ -89,6 +92,7 @@ public class SiegeProgressTask extends SiegeTask {
     }
 
     private void failSiege(@NotNull Player siegeLeader) {
+        Bukkit.getPluginManager().callEvent(new SiegeLoseEvent(siege));
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
                 siege.getName(), siegeLeader.getDisplayName()));
 

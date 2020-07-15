@@ -7,6 +7,8 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.sign.RegionDamagedSign;
+import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
+import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,6 +35,7 @@ public class AssaultTask extends BukkitRunnable {
             assault.getRunning().set(false);
             World w = assault.getWorld();
             Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"), assault.getRegionName()));
+            Bukkit.getPluginManager().callEvent(new AssaultWinEvent(assault));
             ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(w).getRegion(assault.getRegionName());
             assert tRegion != null;
             tRegion.setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
@@ -104,6 +107,7 @@ public class AssaultTask extends BukkitRunnable {
                 // assault has failed to reach damage cap within required time
                 assault.getRunning().set(false);
                 Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName()));
+                Bukkit.getPluginManager().callEvent(new AssaultLoseEvent(assault));
                 ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(assault.getWorld()).getRegion(assault.getRegionName());
                 assert tRegion != null;
                 tRegion.setFlag(DefaultFlag.TNT, StateFlag.State.DENY);

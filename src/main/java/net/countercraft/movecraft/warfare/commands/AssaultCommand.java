@@ -12,6 +12,8 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
+import net.countercraft.movecraft.warfare.events.AssaultBeginEvent;
+import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -169,7 +171,9 @@ public class AssaultCommand implements CommandExecutor{
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
-                MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax));
+                Assault assault = new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax)
+                MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
+                Bukkit.getPluginManager().callEvent(new AssaultBeginEvent(assault));
                 ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(taskWorld).getRegion(taskAssaultName);
                 tRegion.setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
             }

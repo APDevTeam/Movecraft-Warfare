@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.siege;
 
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.events.SiegeBeginEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ public class SiegePreparationTask extends SiegeTask {
         }
         int timeLeft = siege.getDelayBeforeStart() - timePassedInSeconds;
         broadcastSiegePreparation(Bukkit.getPlayer(siege.getPlayerUUID()), siege.getName(), timeLeft);
+        Bukkit.getPluginManager().callEvent(new SiegeBeginEvent(siege));
     }
 
     private void broadcastSiegePreparation(Player player, String siegeName, int timeLeft){
