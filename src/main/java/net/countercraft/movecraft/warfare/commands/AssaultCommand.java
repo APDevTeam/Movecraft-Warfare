@@ -171,7 +171,7 @@ public class AssaultCommand implements CommandExecutor{
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
-                Assault assault = new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax)
+                Assault assault = new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax);
                 MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
                 Bukkit.getPluginManager().callEvent(new AssaultBeginEvent(assault));
                 ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(taskWorld).getRegion(taskAssaultName);
