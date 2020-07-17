@@ -21,6 +21,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.config.Settings;
+import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -73,7 +74,7 @@ public class WarfareRepair {
                     if (block.getType().equals(Material.AIR)) {
                         continue;
                     }
-                    if (Settings.AssaultDestroyableBlocks.contains(block.getTypeId())) {
+                    if (Config.AssaultDestroyableBlocks.contains(block.getTypeId())) {
                         baseBlockSet.add(new BaseBlock(block.getTypeId(), block.getData()));
                     }
                 }

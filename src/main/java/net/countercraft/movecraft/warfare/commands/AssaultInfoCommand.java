@@ -12,6 +12,7 @@ import net.countercraft.movecraft.utils.WorldguardUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,7 +31,7 @@ public class AssaultInfoCommand implements CommandExecutor {
         if (!command.getName().equalsIgnoreCase("assaultinfo")) {
             return false;
         }
-        if (!Settings.AssaultEnable) {
+        if (!Config.AssaultEnable) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Disabled"));
             return true;
         }
@@ -99,7 +100,7 @@ public class AssaultInfoCommand implements CommandExecutor {
         output += String.format("%.2f", cost);
         lines.add(output);
         for (Assault assault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()) {
-            if (assault.getRegionName().equals(assaultRegion.getId()) && System.currentTimeMillis() - assault.getStartTime() < Settings.AssaultCooldownHours * (60 * 60 * 1000)) {
+            if (assault.getRegionName().equals(assaultRegion.getId()) && System.currentTimeMillis() - assault.getStartTime() < Config.AssaultCooldownHours * (60 * 60 * 1000)) {
                 canBeAssaulted = false;
                 lines.add("- "+I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable Damaged"));
                 break;

@@ -1,10 +1,8 @@
-package net.countercraft.movecraft.listener;
+package net.countercraft.movecraft.warfare.listener;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
@@ -12,6 +10,7 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.MathUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
+import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -70,7 +69,7 @@ public class BlockListener implements Listener {
                         b.getLocation().getBlockX() > max.getBlockX() ||
                         b.getLocation().getBlockZ() < min.getBlockZ() ||
                         b.getLocation().getBlockZ() > max.getBlockZ() ||
-                        !Settings.AssaultDestroyableBlocks.contains(b.getTypeId()) ||
+                        !Config.AssaultDestroyableBlocks.contains(b.getTypeId()) ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.SOUTH).getTypeId()) >= 0 ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.DOWN).getTypeId()) >= 0 ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.UP).getTypeId()) >= 0 ||
@@ -82,7 +81,7 @@ public class BlockListener implements Listener {
 
 
                 // whether or not you actually destroyed the block, add to damages
-                long damages = assault.getDamages() + Settings.AssaultDamagesPerBlock;
+                long damages = assault.getDamages() + Config.AssaultDamagesPerBlock;
                 assault.setDamages(Math.min(damages, assault.getMaxDamages()));
 
                 // notify nearby players of the damages, do this 1 second later so all damages from this volley will be included

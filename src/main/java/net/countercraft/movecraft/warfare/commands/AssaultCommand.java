@@ -12,9 +12,10 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultBeginEvent;
-import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
+import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -36,7 +37,7 @@ public class AssaultCommand implements CommandExecutor{
         if (!command.getName().equalsIgnoreCase("assault")) {
             return false;
         }
-        if (!Settings.AssaultEnable) {
+        if (!Config.AssaultEnable) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Disabled"));
             return true;
         }
@@ -96,7 +97,7 @@ public class AssaultCommand implements CommandExecutor{
             if (assault != null) {
                 long startTime = assault.getStartTime();
                 long curtime = System.currentTimeMillis();
-                if (curtime - startTime < Settings.AssaultCooldownHours * (60 * 60 * 1000)) {
+                if (curtime - startTime < Config.AssaultCooldownHours * (60 * 60 * 1000)) {
                     canBeAssaulted = false;
                 }
             }
@@ -123,7 +124,7 @@ public class AssaultCommand implements CommandExecutor{
             return true;
         }
 //			if(aRegion.getType() instanceof ProtectedCuboidRegion) { // Originally I wasn't going to do non-cubes, but we'll try it and see how it goes. In theory it may repair more than it should but... meh...
-        if (!MovecraftRepair.getInstance().saveRegionRepairState(player.getWorld(), aRegion)){
+        if (!WarfareRepair.getInstance().saveRegionRepairState(player.getWorld(), aRegion)){
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Repair - Could not save file"));
             return true;
         }
@@ -152,7 +153,7 @@ public class AssaultCommand implements CommandExecutor{
 //			}
         Movecraft.getInstance().getEconomy().withdrawPlayer(offP, getCostToAssault(aRegion));
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon")
-                , player.getDisplayName(), args[0], Settings.AssaultDelay / 60));
+                , player.getDisplayName(), args[0], Config.AssaultDelay / 60));
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, (float) 0.25);
         }
@@ -177,7 +178,7 @@ public class AssaultCommand implements CommandExecutor{
                 ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(taskWorld).getRegion(taskAssaultName);
                 tRegion.setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
             }
-        }.runTaskLater(Movecraft.getInstance(), (20 * Settings.AssaultDelay));
+        }.runTaskLater(Movecraft.getInstance(), (20 * Config.AssaultDelay));
         return true;
 
 

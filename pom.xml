@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft</groupId>
     <artifactId>Movecraft-Warfare</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>Movecraft Warfare</name>
@@ -82,7 +82,7 @@
             <artifactId>Movecraft</artifactId>
             <version>7.0.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Movecraft.jar</systemPath>
+            <systemPath>${project.basedir}/../Movecraft/target/Movecraft.jar</systemPath>
         </dependency>
         <!--Annotations-->
         <dependency>

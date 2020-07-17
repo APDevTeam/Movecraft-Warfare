@@ -2,7 +2,7 @@ package net.countercraft.movecraft.warfare.assault;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.config.Settings;
+import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -12,47 +12,47 @@ import java.util.UUID;
 public class AssaultUtils {
     public static boolean areDefendersOnline(ProtectedRegion tRegion) {
         int numOnline = 0;
-        if(Settings.AssaultRequiredOwnersOnline > 0) {
+        if(Config.AssaultRequiredOwnersOnline > 0) {
             for (UUID playerID : tRegion.getOwners().getUniqueIds()) {
                 if (Bukkit.getPlayer(playerID) != null) {
                     numOnline++;
 
-                    if(numOnline > Settings.AssaultRequiredOwnersOnline) {
+                    if(numOnline > Config.AssaultRequiredOwnersOnline) {
                         break;
                     }
                 }
             }
 
-            if (numOnline < Settings.AssaultRequiredOwnersOnline) {
+            if (numOnline < Config.AssaultRequiredOwnersOnline) {
                 return false;
             }
         }
 
-        if(Settings.AssaultRequiredDefendersOnline > 0) {
+        if(Config.AssaultRequiredDefendersOnline > 0) {
             for (UUID playerID : tRegion.getMembers().getUniqueIds()) {
                 if (Bukkit.getPlayer(playerID) != null) {
                     numOnline++;
 
-                    if(numOnline > Settings.AssaultRequiredDefendersOnline) {
+                    if(numOnline > Config.AssaultRequiredDefendersOnline) {
                         return true;
                     }
                 }
             }
 
-            if (numOnline < Settings.AssaultRequiredDefendersOnline) {
+            if (numOnline < Config.AssaultRequiredDefendersOnline) {
                 return false;
             }
         }
-        return numOnline >= Settings.AssaultRequiredDefendersOnline;
+        return numOnline >= Config.AssaultRequiredDefendersOnline;
     }
 
     public static double getCostToAssault(ProtectedRegion tRegion) {
-        return getAssaultBalance(tRegion) * Settings.AssaultCostPercent;
+        return getAssaultBalance(tRegion) * Config.AssaultCostPercent;
     }
 
     public static double getMaxDamages(ProtectedRegion tRegion) {
 
-        return getAssaultBalance(tRegion) * Settings.AssaultDamagesCapPercent;
+        return getAssaultBalance(tRegion) * Config.AssaultDamagesCapPercent;
     }
 
     private static double getAssaultBalance(ProtectedRegion tRegion) {
@@ -66,12 +66,12 @@ public class AssaultUtils {
         for (UUID playerID : players) {
             OfflinePlayer offP = Bukkit.getOfflinePlayer(playerID);
             if (offP.getName() != null)
-                if (Movecraft.getInstance().getEconomy().getBalance(offP) > Settings.AssaultMaxBalance)
-                    total += Settings.AssaultMaxBalance;
+                if (Movecraft.getInstance().getEconomy().getBalance(offP) > Config.AssaultMaxBalance)
+                    total += Config.AssaultMaxBalance;
                 else
                     total += Movecraft.getInstance().getEconomy().getBalance(offP);
         }
-        return total * (Settings.AssaultOwnerWeightPercent / 100.0);
+        return total * (Config.AssaultOwnerWeightPercent / 100.0);
     }
 
     private static double getMemberBalance(ProtectedRegion tRegion) {
@@ -81,11 +81,11 @@ public class AssaultUtils {
         for (UUID playerID : players) {
             OfflinePlayer offP = Bukkit.getOfflinePlayer(playerID);
             if (offP.getName() != null)
-                if (Movecraft.getInstance().getEconomy().getBalance(offP) > Settings.AssaultMaxBalance)
-                    total += Settings.AssaultMaxBalance;
+                if (Movecraft.getInstance().getEconomy().getBalance(offP) > Config.AssaultMaxBalance)
+                    total += Config.AssaultMaxBalance;
                 else
                     total += Movecraft.getInstance().getEconomy().getBalance(offP);
         }
-        return total * (Settings.AssaultMemberWeightPercent / 100.0);
+        return total * (Config.AssaultMemberWeightPercent / 100.0);
     }
 }

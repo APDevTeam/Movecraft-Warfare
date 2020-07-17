@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.sign;
+package net.countercraft.movecraft.warfare.sign;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
@@ -6,11 +6,11 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
-import net.countercraft.movecraft.MovecraftRepair;
-import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.mapUpdater.MapUpdateManager;
 import net.countercraft.movecraft.mapUpdater.update.WorldEditUpdateCommand;
+import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -89,7 +89,7 @@ public class RegionDamagedSign implements Listener {
     public boolean repairRegion(World w, String regionName) {
         if (w == null || regionName == null)
             return false;
-        Clipboard clipboard = MovecraftRepair.getInstance().loadRegionRepairStateClipboard(regionName, w);
+        Clipboard clipboard = WarfareRepair.getInstance().loadRegionRepairStateClipboard(regionName, w);
         if (clipboard == null){
             return false;
         }
@@ -105,7 +105,7 @@ public class RegionDamagedSign implements Listener {
                     Vector ccloc = new Vector(x, y, z);
                     BaseBlock bb = clipboard.getBlock(ccloc);
                     if (!bb.isAir()) { // most blocks will be air, quickly move on to the next. This loop will run 16 million times, needs to be fast
-                        if (Settings.AssaultDestroyableBlocks.contains(bb.getId())) {
+                        if (Config.AssaultDestroyableBlocks.contains(bb.getId())) {
                             if (!w.getChunkAt(x >> 4, z >> 4).isLoaded())
                                 w.loadChunk(x >> 4, z >> 4);
                             if (w.getBlockAt(x, y, z).isEmpty() || w.getBlockAt(x, y, z).isLiquid()) {

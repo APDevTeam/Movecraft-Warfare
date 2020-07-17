@@ -4,11 +4,11 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.localisation.I18nSupport;
-import net.countercraft.movecraft.sign.RegionDamagedSign;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
+import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -103,7 +103,7 @@ public class AssaultTask extends BukkitRunnable {
             }
         } else {
             // assault was not successful
-            if (System.currentTimeMillis() - assault.getStartTime() > Settings.AssaultDuration * 1000) {
+            if (System.currentTimeMillis() - assault.getStartTime() > Config.AssaultDuration * 1000) {
                 // assault has failed to reach damage cap within required time
                 assault.getRunning().set(false);
                 Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName()));
