@@ -119,5 +119,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         return assaultManager;
     }
 
-    public SiegeManager getSiegeManager(){return siegeManager;}
+    public SiegeManager getSiegeManager() {
+        return siegeManager;
+    }
 }
