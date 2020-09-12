@@ -36,6 +36,18 @@ public final class MovecraftWarfare extends JavaPlugin {
             return;
 
         instance = this;
+
+        saveDefaultConfig();
+        // TODO other languages
+        String[] languages = {"en"};
+        for (String s : languages) {
+            if (!new File(getDataFolder()  + "/localisation/mcwlang_"+ s +".properties").exists()) {
+                this.saveResource("localisation/mcwlang_"+ s +".properties", false);
+            }
+        }
+
+        Config.Locale = getConfig().getString("Locale", "en");
+
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
 
@@ -69,6 +81,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         }
 
         if(Config.SiegeEnable) {
+            Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);
             siegeManager = new SiegeManager(this);
             getLogger().info("Enabling siege");
             //load the sieges.yml file

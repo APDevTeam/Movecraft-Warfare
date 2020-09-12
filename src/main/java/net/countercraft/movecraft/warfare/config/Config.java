@@ -3,8 +3,12 @@ package net.countercraft.movecraft.warfare.config;
 import java.util.HashSet;
 
 public class Config {
-    public static boolean AssaultEnable;
 
+    // Localisation
+    public static String Locale = "en";
+
+    // Assault
+    public static boolean AssaultEnable;
     public static double AssaultDamagesCapPercent;
     public static int AssaultCooldownHours;
     public static int AssaultDelay;
@@ -18,5 +22,7 @@ public class Config {
     public static HashSet<Integer> AssaultDestroyableBlocks;
     public static int AssaultDamagesPerBlock;
 
+    // Siege
     public static boolean SiegeEnable;
+    public static int SiegeTaskSeconds = 600;
 }

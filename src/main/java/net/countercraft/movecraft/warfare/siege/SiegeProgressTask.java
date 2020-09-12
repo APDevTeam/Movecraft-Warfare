@@ -4,10 +4,10 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
-import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.SiegeLoseEvent;
 import net.countercraft.movecraft.warfare.events.SiegeWinEvent;
 import org.bukkit.Bukkit;
@@ -27,7 +27,7 @@ public class SiegeProgressTask extends SiegeTask {
     //every 20 ticks = 1 second
     public void run() {
         int timeLeft = (int) (siege.getDuration() - ((System.currentTimeMillis() - siege.getStartTime()) / 1000));
-        if (!siege.isJustCommenced() && timeLeft % Settings.SiegeTaskSeconds != 0) {
+        if (!siege.isJustCommenced() && timeLeft % Config.SiegeTaskSeconds != 0) {
             return;
         }
         siege.setJustCommenced(false);
