@@ -55,9 +55,9 @@ jobs:
     - run: mvn -B package --file Movecraft-Warfare/pom.xml
 
     - name: Stage jar
-      run: mkdir staging && cp target/Movecraft-Warfare*.jar staging
+      run: mkdir staging && cp Movecraft-Warfare/target/Movecraft-Warfare*.jar staging
     - name: Rename jar
-      run: mv staging/Movecraft-Combat*.jar staging/Movecraft-Warfare_$GITHUB_SHA.jar
+      run: mv staging/Movecraft-Warfare*.jar staging/Movecraft-Warfare_$GITHUB_SHA.jar
     - name: Upload jar
       uses: actions/upload-artifact@v2
       with:
