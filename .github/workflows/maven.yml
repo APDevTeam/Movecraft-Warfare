@@ -15,10 +15,9 @@ jobs:
     - name: Checkout Movecraft
       uses: actions/checkout@v2
       with:
-        repository: 'APDevTeam/Movecraft'
+        repository: 'TylerS1066/Movecraft'
+        ref: 'mcw'
         path: Movecraft
-    - run: ls
-    - run: pwd
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
@@ -49,10 +48,12 @@ jobs:
       run: cd BuildTools && java -jar BuildTools.jar --rev 1.12.1
     
     # Build Movecraft
-    - run:  mvn -B package --file Movecraft/pom.xml
+    - name: Build Movecraft
+      run:  mvn -B package --file Movecraft/pom.xml
 
-    # Build MCC
-    - run: mvn -B package --file Movecraft-Warfare/pom.xml
+    # Build MCW
+    - name: Build MCW
+      run: mvn -B package --file Movecraft-Warfare/pom.xml
 
     - name: Stage jar
       run: mkdir staging && cp Movecraft-Warfare/target/Movecraft-Warfare*.jar staging
