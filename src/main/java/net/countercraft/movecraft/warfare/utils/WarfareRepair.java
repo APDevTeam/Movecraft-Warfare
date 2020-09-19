@@ -20,7 +20,6 @@ import com.sk89q.worldedit.world.registry.WorldData;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.Material;
 import org.bukkit.World;

@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.warfare.listener.BlockListener;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.commands.AssaultCommand;
 import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
@@ -8,6 +9,7 @@ import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
+import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
 
@@ -120,6 +122,8 @@ public final class MovecraftWarfare extends JavaPlugin {
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
 
             this.getCommand("siege").setExecutor(new SiegeCommand());
+            getServer().getPluginManager().registerEvents(new BlockListener(), this);
+            new WarfareRepair(this);
         }
     }
 
