@@ -60,7 +60,7 @@ public class SiegeCommand implements TabExecutor {
         } else if(args[0].equalsIgnoreCase("time")){
             return timeCommand(commandSender,args);
         } else if(args[0].equalsIgnoreCase("cancel")){
-            return timeCommand(commandSender,args);
+            return cancelCommand(commandSender,args);
         }
         commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Invalid Argument"));
         return true;
@@ -86,7 +86,7 @@ public class SiegeCommand implements TabExecutor {
         }
         String region = sb.toString();
 
-        for(Siege siege : Movecraft.getInstance().getSiegeManager().getSieges()) {
+        for(Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
             if(siege.getStage().get() == SiegeStage.INACTIVE) {
                 continue;
             }
@@ -368,7 +368,7 @@ public class SiegeCommand implements TabExecutor {
             }
         }
         else if(strings[0].equalsIgnoreCase("cancel")) {
-            for (Siege siege : Movecraft.getInstance().getSiegeManager().getSieges()) {
+            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
                 if(siege.getStage().get() == SiegeStage.INACTIVE) {
                     continue;
                 }
