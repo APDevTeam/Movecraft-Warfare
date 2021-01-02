@@ -10,6 +10,7 @@
     <packaging>jar</packaging>
 
     <name>Movecraft-Warfare</name>
+    <description>Warfare features of Movecraft</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -112,6 +113,7 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
+        <!--VaultAPI-->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
