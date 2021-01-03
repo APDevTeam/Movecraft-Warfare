@@ -112,7 +112,7 @@ public class SiegeProgressTask extends SiegeTask {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command
                     .replaceAll("%r", siege.getCaptureRegion())
                     .replaceAll("%c", "" + siege.getCost())
-                    .replaceAll("%l", siegeLeader.toString()));
+                    .replaceAll("%l", siegeLeader.getName()));
         }
     }
 

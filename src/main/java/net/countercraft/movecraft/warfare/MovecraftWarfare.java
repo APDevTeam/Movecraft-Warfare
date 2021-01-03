@@ -9,6 +9,7 @@ import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
+import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
@@ -82,6 +83,8 @@ public final class MovecraftWarfare extends JavaPlugin {
             this.getCommand("assault").setExecutor(new AssaultCommand());
 
             getServer().getPluginManager().registerEvents(new BlockListener(), this);
+
+            getServer().getPluginManager().registerEvents(new RegionDamagedSign(), this);
 
             new WarfareRepair(this);
         }

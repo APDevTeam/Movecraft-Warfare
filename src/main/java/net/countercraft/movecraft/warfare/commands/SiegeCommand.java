@@ -60,16 +60,66 @@ public class SiegeCommand implements TabExecutor {
             return infoCommand(commandSender,args);
         } else if(args[0].equalsIgnoreCase("time")){
             return timeCommand(commandSender,args);
+        } else if(args[0].equalsIgnoreCase("cancel")){
+            return cancelCommand(commandSender,args);
         }
         commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Invalid Argument"));
         return true;
 
     }
 
+    private boolean cancelCommand(CommandSender commandSender, String[] args) {
+        if (!commandSender.hasPermission("movecraft.siege.cancel")) {
+            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
+            return true;
+        }
+        if(args.length <=1 ) {
+            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Specify Region"));
+            return true;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int i = 1; i < args.length; i++) {
+            if(i > 1) {
+                sb.append(" ");
+            }
+            sb.append(args[i]);
+        }
+        String region = sb.toString();
+
+        for(Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+            if(siege.getStage().get() == SiegeStage.INACTIVE) {
+                continue;
+            }
+            if(!region.equalsIgnoreCase(siege.getName())) {
+                continue;
+            }
+
+            cancelSiege(siege);
+        }
+        return true;
+    }
+
     private boolean timeCommand(CommandSender commandSender, String[] args) {
         int militaryTime = getMilitaryTime();
         commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + dayToString(getDayOfWeek()) + " - " + String.format("%02d", militaryTime / 100) + ":" + String.format("%02d",militaryTime % 100));
         return true;
+    }
+
+    private void cancelSiege(Siege siege) {
+        @NotNull Player siegeLeader = Movecraft.getInstance().getServer().getPlayer(siege.getPlayerUUID());
+        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
+                siege.getName(), siegeLeader.getDisplayName()));
+
+        siege.setStage(SiegeStage.INACTIVE);
+
+        List<String> commands = siege.getCommandsOnLose();
+        for (String command : commands) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command
+                    .replaceAll("%r", siege.getCaptureRegion())
+                    .replaceAll("%c", "" + siege.getCost())
+                    .replaceAll("%l", siegeLeader.toString()));
+        }
     }
 
     private boolean infoCommand(CommandSender commandSender, String[] args){
@@ -316,8 +366,17 @@ public class SiegeCommand implements TabExecutor {
             tabCompletions.add("begin");
             tabCompletions.add("list");
             tabCompletions.add("time");
+            tabCompletions.add("cancel");
         } else if (strings[0].equalsIgnoreCase("info")) {
             for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+                tabCompletions.add(siege.getName());
+            }
+        }
+        else if(strings[0].equalsIgnoreCase("cancel")) {
+            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+                if(siege.getStage().get() == SiegeStage.INACTIVE) {
+                    continue;
+                }
                 tabCompletions.add(siege.getName());
             }
         }

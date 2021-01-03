@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout MCW
+    - name: Checkout Movecraft-Warfare
       uses: actions/checkout@v2
       with:
         path: Movecraft-Warfare
@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: 'TylerS1066/Movecraft'
-        ref: 'mcw'
+        ref: 'mcw3'
         path: Movecraft
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
@@ -32,19 +32,24 @@ jobs:
     
     # Run Spigot BuildTools for NMS if required
     - name: Setup BuildTools
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: mkdir BuildTools
-    - name: Download BuildTools
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: wget -O BuildTools/BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-    - name: 1.10.2
-      if: steps.cache.outputs.cache-hit != 'true'
+      run: mkdir BuildTools && wget -O BuildTools/BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+    - name: Check 1.10.2
+      id: frostburn
+      run: test -f ~/.m2/repository/org/bukkit/craftbukkit/1.10.2-R0.1-SNAPSHOT/craftbukkit-1.10.2-R0.1-SNAPSHOT.jar && echo "::set-output name=sucess::true" || echo "::set-output name=sucess::false"
+    - name: Build 1.10.2
+      if: steps.frostburn.outputs.sucess != 'true'
       run: cd BuildTools && java -jar BuildTools.jar --rev 1.10.2
-    - name: 1.11.2
-      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Check 1.11.2
+      id: exploration
+      run: test -f ~/.m2/repository/org/bukkit/craftbukkit/1.11.2-R0.1-SNAPSHOT/craftbukkit-1.11.2-R0.1-SNAPSHOT.jar && echo "::set-output name=sucess::true" || echo "::set-output name=sucess::false"
+    - name: Build 1.11.2
+      if: steps.exploration.outputs.sucess != 'true'
       run: cd BuildTools && java -jar BuildTools.jar --rev 1.11.2
-    - name: 1.12.1
-      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Check 1.12.1
+      id: color
+      run: test -f ~/.m2/repository/org/bukkit/craftbukkit/1.12.1-R0.1-SNAPSHOT/craftbukkit-1.12.1-R0.1-SNAPSHOT.jar && echo "::set-output name=sucess::true" || echo "::set-output name=sucess::false"
+    - name: Build 1.12.1
+      if: steps.color.outputs.sucess != 'true'
       run: cd BuildTools && java -jar BuildTools.jar --rev 1.12.1
     
     # Build Movecraft
@@ -52,15 +57,15 @@ jobs:
       run:  mvn -B package --file Movecraft/pom.xml
 
     # Build MCW
-    - name: Build MCW
+    - name: Build Movecraft-Warfare
       run: mvn -B package --file Movecraft-Warfare/pom.xml
 
     - name: Stage jar
-      run: mkdir staging && cp Movecraft-Warfare/target/Movecraft-Warfare*.jar staging
+      run: mkdir staging && cp Movecraft-Warfare/target/Movecraft-Warfare.jar staging
     - name: Rename jar
       run: mv staging/Movecraft-Warfare*.jar staging/Movecraft-Warfare_$GITHUB_SHA.jar
     - name: Upload jar
       uses: actions/upload-artifact@v2
       with:
-        name: MCW_Dev-Build
+        name: Movecraft-Warfare_Dev-Build
         path: staging/Movecraft-Warfare_*.jar
