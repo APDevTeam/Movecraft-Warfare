@@ -9,6 +9,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.TopicPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
+import net.countercraft.movecraft.warfare.events.SiegeStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.siege.SiegeStage;
@@ -175,6 +176,10 @@ public class SiegeCommand implements TabExecutor {
     }
 
     private void startSiege(Siege siege, Player player, long cost) {
+        final SiegeStartEvent event = new SiegeStartEvent(siege);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
         for (String startCommand : siege.getCommandsOnStart()) {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), startCommand.replaceAll("%r", siege.getAttackRegion()).replaceAll("%c", "" + siege.getCost()));
         }

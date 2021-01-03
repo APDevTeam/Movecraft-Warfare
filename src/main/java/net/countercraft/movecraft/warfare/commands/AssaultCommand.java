@@ -14,6 +14,7 @@ import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultBeginEvent;
+import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
@@ -163,6 +164,11 @@ public class AssaultCommand implements CommandExecutor{
         final Long taskMaxDamages = (long) AssaultUtils.getMaxDamages(aRegion);
         final Vector taskMin = min;
         final Vector taskMax = max;
+        Assault assault = new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax);
+        final AssaultStartEvent event = new AssaultStartEvent(assault);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return true;
         //TODO: Make async
         new BukkitRunnable() {
             @Override
@@ -172,7 +178,6 @@ public class AssaultCommand implements CommandExecutor{
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
-                Assault assault = new Assault(taskAssaultName, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax);
                 MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
                 Bukkit.getPluginManager().callEvent(new AssaultBeginEvent(assault));
                 ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(taskWorld).getRegion(taskAssaultName);
