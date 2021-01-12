@@ -6,6 +6,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
+import net.countercraft.movecraft.warfare.assault.AssaultStage;
 import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -33,6 +34,8 @@ public class BlockListener implements Listener {
         }
 
         for (final Assault assault : assaults) {
+            if (assault.getStage().get() != AssaultStage.IN_PROGRESS)
+                continue;
             Iterator<Block> i = e.blockList().iterator();
             while (i.hasNext()) {
                 Block b = i.next();

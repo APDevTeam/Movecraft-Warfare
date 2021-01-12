@@ -28,6 +28,7 @@ public final class MovecraftWarfare extends JavaPlugin {
     private static MovecraftWarfare instance;
     private AssaultManager assaultManager;
     private SiegeManager siegeManager;
+    private File configFile;
 
     public static synchronized MovecraftWarfare getInstance() {
         return instance;
@@ -35,10 +36,14 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        configFile = new File(getDataFolder(), "config.yml");
         if(instance != null)
             return;
 
         instance = this;
+
+        final String packageName = getServer().getClass().getPackage().getName();
+        Config.IsLegacy = Integer.parseInt(packageName.substring(packageName.lastIndexOf(".") + 1).split("_")[1]) <= 12;
 
         saveDefaultConfig();
         // TODO other languages
@@ -94,7 +99,7 @@ public final class MovecraftWarfare extends JavaPlugin {
             siegeManager = new SiegeManager(this);
             getLogger().info("Enabling siege");
             //load the sieges.yml file
-            File siegesFile = new File(MovecraftWarfare.getInstance().getDataFolder().getAbsolutePath() + "/sieges.yml");
+            File siegesFile = new File(getDataFolder().getAbsolutePath() + "/sieges.yml");
             InputStream input;
             try {
                 input = new FileInputStream(siegesFile);
@@ -135,6 +140,18 @@ public final class MovecraftWarfare extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    @Override
+    public void saveDefaultConfig() {
+        if (configFile.exists())
+            return;
+        if (Config.IsLegacy) {
+            saveResource("config_legacy.yml", false);
+            new File(getDataFolder(), "config_legacy.yml").renameTo(configFile);
+            return;
+        }
+        super.saveDefaultConfig();
     }
 
     public AssaultManager getAssaultManager() {

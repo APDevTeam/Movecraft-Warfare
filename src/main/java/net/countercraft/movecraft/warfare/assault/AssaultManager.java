@@ -25,6 +25,12 @@ public class AssaultManager extends BukkitRunnable {
         }
     }
 
+    public void addAssault(Assault assault) {
+        assault.setStartTime(System.currentTimeMillis());
+        assault.getStage().set(AssaultStage.IN_PROGRESS);
+        assaults.add(assault);
+    }
+
     public List<Assault> getAssaults() {
         return assaults;
     }

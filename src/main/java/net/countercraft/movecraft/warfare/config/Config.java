@@ -25,4 +25,7 @@ public class Config {
     // Siege
     public static boolean SiegeEnable;
     public static int SiegeTaskSeconds = 600;
+
+    //Compatibility
+    public static boolean IsLegacy = false; //Pre-1.13
 }

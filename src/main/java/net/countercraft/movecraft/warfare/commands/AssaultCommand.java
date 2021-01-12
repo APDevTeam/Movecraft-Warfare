@@ -115,7 +115,7 @@ public class AssaultCommand implements CommandExecutor{
         final Long taskMaxDamages = (long) AssaultUtils.getMaxDamages(region);
         final Vector taskMin = min;
         final Vector taskMax = max;
-        Assault assault = new Assault(region, taskPlayer, taskWorld, System.currentTimeMillis(), taskMaxDamages, taskMin, taskMax);
+        Assault assault = new Assault(region, taskPlayer, taskWorld, taskMaxDamages, taskMin, taskMax);
         final AssaultStartEvent event = new AssaultStartEvent(assault);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -130,7 +130,7 @@ public class AssaultCommand implements CommandExecutor{
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
 
-                MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
+                MovecraftWarfare.getInstance().getAssaultManager().addAssault(assault);
                 Bukkit.getPluginManager().callEvent(new AssaultBeginEvent(assault));
                 tRegion.setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
             }

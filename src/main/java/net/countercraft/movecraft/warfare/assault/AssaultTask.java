@@ -23,10 +23,9 @@ public class AssaultTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!assault.getRunning().get())
+        if (assault.getStage().get() != AssaultStage.IN_PROGRESS)
             //in-case the server is lagging and a new assault task is started at the exact time on ends
             return;
-
         if (assault.getDamages() >= assault.getMaxDamages())
             assaultWon();
         else if (System.currentTimeMillis() - assault.getStartTime() > Config.AssaultDuration * 1000L)
@@ -35,7 +34,7 @@ public class AssaultTask extends BukkitRunnable {
 
     private void assaultWon() {
         // assault was successful
-        assault.getRunning().set(false);
+        assault.getStage().set(AssaultStage.INACTIVE);
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"), assault.getRegionName()));
         Bukkit.getPluginManager().callEvent(new AssaultWinEvent(assault));
         assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
@@ -49,7 +48,7 @@ public class AssaultTask extends BukkitRunnable {
 
     private void assaultLost() {
         // assault has failed to reach damage cap within required time
-        assault.getRunning().set(false);
+        assault.getStage().set(AssaultStage.INACTIVE);
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName()));
         Bukkit.getPluginManager().callEvent(new AssaultLoseEvent(assault));
         assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.DENY);

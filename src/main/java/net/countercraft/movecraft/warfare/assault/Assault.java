@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Represents an assault
@@ -17,18 +17,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Assault {
     private final @NotNull ProtectedRegion region;
     private final UUID starterUUID;
-    private final long startTime;
+    private long startTime;
     private long damages;
     private final long maxDamages;
     private final World world;
     private final Vector minPos, maxPos;
-    private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicReference<AssaultStage> stage = new AtomicReference<>(AssaultStage.PREPARATION);
 
-    public Assault(@NotNull ProtectedRegion region, Player starter, World world, long startTime, long maxDamages, Vector minPos, Vector maxPos) {
+    public Assault(@NotNull ProtectedRegion region, Player starter, World world, long maxDamages, Vector minPos, Vector maxPos) {
         this.region = region;
         starterUUID = starter.getUniqueId();
         this.world = world;
-        this.startTime = startTime;
+        this.startTime = 0L;
         this.maxDamages = maxDamages;
         this.minPos = minPos;
         this.maxPos = maxPos;
@@ -55,6 +55,10 @@ public class Assault {
         return startTime;
     }
 
+    void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
     public long getDamages() {
         return damages;
     }
@@ -76,10 +80,9 @@ public class Assault {
         return region.getId();
     }
 
-    public AtomicBoolean getRunning() {
-        return running;
+    public AtomicReference<AssaultStage> getStage() {
+        return stage;
     }
-
 
     public boolean makeBeacon() {
         //first, find a position for the repair beacon
