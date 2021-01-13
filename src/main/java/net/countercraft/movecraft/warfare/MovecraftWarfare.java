@@ -11,6 +11,7 @@ import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
 
@@ -43,7 +44,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         instance = this;
 
         final String packageName = getServer().getClass().getPackage().getName();
-        Config.IsLegacy = Integer.parseInt(packageName.substring(packageName.lastIndexOf(".") + 1).split("_")[1]) <= 12;
+        //Config.IsLegacy = Integer.parseInt(packageName.substring(packageName.lastIndexOf(".") + 1).split("_")[1]) <= 12;
 
         saveDefaultConfig();
         // TODO other languages
@@ -82,8 +83,15 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultMaxBalance = getConfig().getDouble("AssaultMaxBalance", 5000000);
             Config.AssaultOwnerWeightPercent = getConfig().getDouble("AssaultOwnerWeightPercent", 1.0);
             Config.AssaultMemberWeightPercent = getConfig().getDouble("AssaultMemberWeightPercent", 1.0);
-            Config.AssaultDestroyableBlocks = new HashSet<>(getConfig().getIntegerList("AssaultDestroyableBlocks"));
+            Config.AssaultDestroyableBlocks = new HashSet<>();
+            getConfig().getList("AssaultDestroyableBlocks").forEach( e -> {
+                if (e instanceof Integer) {
+                    Config.AssaultDestroyableBlocks.add(Material.getMaterial((int) e));
+                    return;
+                }
+                Config.AssaultDestroyableBlocks.add(Material.getMaterial(((String) e).toUpperCase()));
 
+            });
             this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
             this.getCommand("assault").setExecutor(new AssaultCommand());
 
