@@ -43,7 +43,7 @@ public final class MovecraftWarfare extends JavaPlugin {
 
         instance = this;
 
-        final String packageName = getServer().getClass().getPackage().getName();
+        //final String packageName = getServer().getClass().getPackage().getName();
         //Config.IsLegacy = Integer.parseInt(packageName.substring(packageName.lastIndexOf(".") + 1).split("_")[1]) <= 12;
 
         saveDefaultConfig();
@@ -86,7 +86,7 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultDestroyableBlocks = new HashSet<>();
             getConfig().getList("AssaultDestroyableBlocks").forEach( e -> {
                 if (e instanceof Integer) {
-                    Config.AssaultDestroyableBlocks.add(Material.getMaterial((int) e));
+                    Config.AssaultDestroyableBlocks.add(Material.getMaterial((Integer) e));
                     return;
                 }
                 Config.AssaultDestroyableBlocks.add(Material.getMaterial(((String) e).toUpperCase()));
