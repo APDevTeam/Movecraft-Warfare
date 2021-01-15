@@ -3,6 +3,7 @@ package net.countercraft.movecraft.warfare.siege;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.SiegeBeginEvent;
+import net.countercraft.movecraft.warfare.events.SiegeStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -19,6 +20,8 @@ public class SiegePreparationTask extends SiegeTask {
         int timePassed = ((int)(System.currentTimeMillis() - siege.getStartTime())); //time passed in milliseconds
         int timePassedInSeconds = timePassed / 1000;
         if (timePassedInSeconds >= siege.getDelayBeforeStart()){
+            Bukkit.getPluginManager().callEvent(new SiegeStartEvent(siege));
+            
             siege.setJustCommenced(true);
             siege.setStage(SiegeStage.IN_PROGRESS);
         }
