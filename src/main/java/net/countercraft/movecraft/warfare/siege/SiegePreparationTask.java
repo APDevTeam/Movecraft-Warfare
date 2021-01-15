@@ -27,7 +27,6 @@ public class SiegePreparationTask extends SiegeTask {
         }
         int timeLeft = siege.getDelayBeforeStart() - timePassedInSeconds;
         broadcastSiegePreparation(Bukkit.getPlayer(siege.getPlayerUUID()), siege.getName(), timeLeft);
-        Bukkit.getPluginManager().callEvent(new SiegeBeginEvent(siege));
     }
 
     private void broadcastSiegePreparation(Player player, String siegeName, int timeLeft){
