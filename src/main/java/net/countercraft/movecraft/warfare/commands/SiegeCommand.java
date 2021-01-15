@@ -220,7 +220,13 @@ public class SiegeCommand implements TabExecutor {
             return true;
         }
 
-        Bukkit.getPluginManager().callEvent(new SiegeBeginEvent(siege));
+        SiegeBeginEvent siegeBeginEvent = new SiegeBeginEvent(siege);
+        Bukkit.getPluginManager().callEvent(siegeBeginEvent);
+
+        if (siegeBeginEvent.isCancelled()) {
+            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + siegeBeginEvent.getCancelReason());
+            return true;
+        }
 
         startSiege(siege, player, cost);
         return true;
