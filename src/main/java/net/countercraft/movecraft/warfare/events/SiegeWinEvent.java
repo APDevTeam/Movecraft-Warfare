@@ -15,4 +15,8 @@ public class SiegeWinEvent extends SiegeEvent {
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

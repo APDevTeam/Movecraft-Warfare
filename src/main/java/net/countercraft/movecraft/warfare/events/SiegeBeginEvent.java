@@ -44,4 +44,8 @@ public class SiegeBeginEvent extends SiegeEvent implements Cancellable {
     public String getCancelReason() {
         return cancelReason;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }
