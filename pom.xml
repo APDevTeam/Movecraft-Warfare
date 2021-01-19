@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft.movecraft.warfare</groupId>
     <artifactId>Movecraft-Warfare</artifactId>
-    <version>0.5.0-SNAPSHOT.5</version>
+    <version>0.5.0-SNAPSHOT.6</version>
     <packaging>jar</packaging>
 
     <name>Movecraft-Warfare</name>
