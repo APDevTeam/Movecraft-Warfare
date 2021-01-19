@@ -8,6 +8,7 @@ import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.listener.TypesReloadedListener;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
@@ -49,8 +50,8 @@ public final class MovecraftWarfare extends JavaPlugin {
                 this.saveResource("localisation/mcwlang_"+ s +".properties", false);
             }
         }
-
         Config.Locale = getConfig().getString("Locale", "en");
+        I18nSupport.init();
 
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
