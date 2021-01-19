@@ -1,6 +1,6 @@
 package net.countercraft.movecraft.warfare.siege;
 
-import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.SiegeBeginEvent;
 import org.bukkit.Bukkit;

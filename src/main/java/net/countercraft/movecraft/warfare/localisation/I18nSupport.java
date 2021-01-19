@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.combat.movecraftcombat.localisation;
+package net.countercraft.movecraft.warfare.localisation;
 
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
