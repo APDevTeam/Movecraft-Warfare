@@ -37,12 +37,10 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if(instance != null)
-            return;
-
         instance = this;
 
         saveDefaultConfig();
+
         // TODO other languages
         String[] languages = {"en"};
         for (String s : languages) {
@@ -52,6 +50,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         }
         Config.Locale = getConfig().getString("Locale", "en");
         I18nSupport.init();
+
 
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
