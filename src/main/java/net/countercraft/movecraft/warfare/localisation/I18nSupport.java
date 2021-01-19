@@ -32,13 +32,7 @@ public class I18nSupport {
         }
 
         try {
-            try {
-                langFile.load(stream);
-            } catch (NullPointerException e) {
-                MovecraftWarfare.getInstance().getLogger().log(Level.SEVERE, "BAD ERROR!");
-                e.printStackTrace();
-                MovecraftWarfare.getInstance().getLogger().log(Level.SEVERE, "BAD ERROR!");
-            }
+            langFile.load(stream);
         } catch (IOException e) {
             e.printStackTrace();
         }
