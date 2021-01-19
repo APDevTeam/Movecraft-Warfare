@@ -7,6 +7,7 @@ import net.countercraft.movecraft.warfare.commands.AssaultCommand;
 import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.listener.TypesReloadedListener;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
@@ -128,6 +129,8 @@ public final class MovecraftWarfare extends JavaPlugin {
             }
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
 
+            getServer().getPluginManager().registerEvents(new TypesReloadedListener(), this);
+
             this.getCommand("siege").setExecutor(new SiegeCommand());
         }
     }
@@ -143,5 +146,9 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     public SiegeManager getSiegeManager() {
         return siegeManager;
+    }
+
+    public void reloadTypes() {
+        // Currently nothing is needed here, since craft types are referred to as strings.
     }
 }
