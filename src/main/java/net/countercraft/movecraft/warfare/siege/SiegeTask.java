@@ -1,7 +1,7 @@
 package net.countercraft.movecraft.warfare.siege;
 
 import org.bukkit.scheduler.BukkitRunnable;
-import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 
 public abstract class SiegeTask extends BukkitRunnable {
     protected final Siege siege;

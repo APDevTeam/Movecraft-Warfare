@@ -7,6 +7,8 @@ import net.countercraft.movecraft.warfare.commands.AssaultCommand;
 import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.listener.TypesReloadedListener;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
@@ -35,12 +37,10 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if(instance != null)
-            return;
-
         instance = this;
 
         saveDefaultConfig();
+
         // TODO other languages
         String[] languages = {"en"};
         for (String s : languages) {
@@ -48,8 +48,9 @@ public final class MovecraftWarfare extends JavaPlugin {
                 this.saveResource("localisation/mcwlang_"+ s +".properties", false);
             }
         }
-
         Config.Locale = getConfig().getString("Locale", "en");
+        I18nSupport.init();
+
 
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
@@ -128,6 +129,8 @@ public final class MovecraftWarfare extends JavaPlugin {
             }
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
 
+            getServer().getPluginManager().registerEvents(new TypesReloadedListener(), this);
+
             this.getCommand("siege").setExecutor(new SiegeCommand());
         }
     }
@@ -143,5 +146,9 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     public SiegeManager getSiegeManager() {
         return siegeManager;
+    }
+
+    public void reloadTypes() {
+        // Currently nothing is needed here, since craft types are referred to as strings.
     }
 }
