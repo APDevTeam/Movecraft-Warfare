@@ -107,10 +107,12 @@ public class AssaultUtils {
         if (region.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || region.getOwners().size() == 0)
             return false;
 
-        for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-            // siegable regions can not be assaulted
-            if (region.getId().equalsIgnoreCase(siege.getAttackRegion()) || region.getId().equalsIgnoreCase(siege.getCaptureRegion())) {
-                return false;
+        if(Config.SiegeEnable) {
+            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+                // siegable regions can not be assaulted
+                if (region.getId().equalsIgnoreCase(siege.getAttackRegion()) || region.getId().equalsIgnoreCase(siege.getCaptureRegion())) {
+                    return false;
+                }
             }
         }
 

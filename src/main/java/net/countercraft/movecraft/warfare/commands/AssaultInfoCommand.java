@@ -69,11 +69,13 @@ public class AssaultInfoCommand implements CommandExecutor {
             // a region can only be assaulted if it disables TNT, this is to prevent child regions or sub regions from being assaulted
             // regions with no owners can not be assaulted
             if (tRegion.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || tRegion.getOwners().size() == 0)
-                continue ;
-            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-                // siegable regions can not be assaulted
-                if (tRegion.getId().equalsIgnoreCase(siege.getAttackRegion()) || tRegion.getId().equalsIgnoreCase(siege.getCaptureRegion()))
-                    continue Search;
+                continue;
+            if(Config.SiegeEnable) {
+                for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+                    // siegable regions can not be assaulted
+                    if (tRegion.getId().equalsIgnoreCase(siege.getAttackRegion()) || tRegion.getId().equalsIgnoreCase(siege.getCaptureRegion()))
+                        continue Search;
+                }
             }
             assaultRegion = tRegion;
         }
