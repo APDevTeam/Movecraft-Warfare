@@ -6,9 +6,10 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.repair.mapUpdater.WorldEditUpdateCommand;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.mapUpdater.MapUpdateManager;
-import net.countercraft.movecraft.mapUpdater.update.WorldEditUpdateCommand;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
@@ -42,7 +43,7 @@ public class RegionDamagedSign implements Listener {
         String regionName = sign.getLine(1).substring(sign.getLine(1).indexOf(":") + 1);
         long damages = Long.parseLong(sign.getLine(2).substring(sign.getLine(2).indexOf(":") + 1));
         String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
-        if (!Movecraft.getInstance().getEconomy().has(event.getPlayer(), damages)) {
+        if (!MovecraftRepair.getInstance().getEconomy().has(event.getPlayer(), damages)) {
             event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Economy - Not Enough Money"));
             return;
         }
@@ -52,7 +53,7 @@ public class RegionDamagedSign implements Listener {
             return;
         }
         event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Assault - Repairing Region"));
-        Movecraft.getInstance().getEconomy().withdrawPlayer(event.getPlayer(), damages);
+        MovecraftRepair.getInstance().getEconomy().withdrawPlayer(event.getPlayer(), damages);
         World world = event.getClickedBlock().getWorld();
         ProtectedRegion aRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(world).getRegion(regionName);
         for (String ownerName : owners) {

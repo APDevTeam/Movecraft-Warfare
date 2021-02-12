@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
@@ -65,7 +66,7 @@ public class AssaultCommand implements CommandExecutor{
         }
 
         OfflinePlayer offP = Bukkit.getOfflinePlayer(player.getUniqueId());
-        if (Movecraft.getInstance().getEconomy().getBalance(offP) < AssaultUtils.getCostToAssault(region)) {
+        if (MovecraftRepair.getInstance().getEconomy().getBalance(offP) < AssaultUtils.getCostToAssault(region)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Insufficient Funds"));
             return true;
         }
@@ -102,7 +103,7 @@ public class AssaultCommand implements CommandExecutor{
 //				return true;
 //			}
 
-        Movecraft.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(region));
+        MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(region));
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon")
                 , player.getDisplayName(), args[0], Config.AssaultDelay / 60));
         for (Player p : Bukkit.getOnlinePlayers()) {

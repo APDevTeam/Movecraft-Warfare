@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.siege;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -51,7 +52,7 @@ public class SiegePaymentTask extends SiegeTask {
         int share = siege.getDailyIncome() / owners.size();
 
         for (OfflinePlayer player : owners) {
-            Movecraft.getInstance().getEconomy().depositPlayer(player, share);
+            MovecraftRepair.getInstance().getEconomy().depositPlayer(player, share);
             Movecraft.getInstance().getLogger().log(Level.INFO, String.format(I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"), player.getName(), share, siege.getName()));
         }
         siege.setLastPayout(System.currentTimeMillis());

@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.listener.BlockListener;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.commands.AssaultCommand;
@@ -55,11 +56,11 @@ public final class MovecraftWarfare extends JavaPlugin {
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
 
-        if(Movecraft.getInstance().getWorldGuardPlugin() == null || Movecraft.getInstance().getEconomy() == null) {
+        if(Movecraft.getInstance().getWorldGuardPlugin() == null || MovecraftRepair.getInstance().getEconomy() == null) {
             Config.AssaultEnable = false;
             Config.SiegeEnable = false;
         }
-        if(Movecraft.getInstance().getWorldEditPlugin() == null) {
+        if(MovecraftRepair.getInstance() == null) {
             Config.AssaultEnable = false;
         }
 
