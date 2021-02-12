@@ -1,16 +1,9 @@
 package net.countercraft.movecraft.warfare.sign;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.repair.mapUpdater.WorldEditUpdateCommand;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.mapUpdater.MapUpdateManager;
-import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,7 +41,7 @@ public class RegionDamagedSign implements Listener {
             return;
         }
 
-        if (!repairRegion(event.getClickedBlock().getWorld(), regionName)) {
+        if (!WarfareRepair.getInstance().repairRegionRepairState(event.getClickedBlock().getWorld(), regionName)) {
             Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
             return;
         }
@@ -85,41 +78,5 @@ public class RegionDamagedSign implements Listener {
                 }
             }
         }
-    }
-
-    public boolean repairRegion(World w, String regionName) {
-        if (w == null || regionName == null)
-            return false;
-        Clipboard clipboard = WarfareRepair.getInstance().loadRegionRepairStateClipboard(regionName, w);
-        if (clipboard == null){
-            return false;
-        }
-        int minx = clipboard.getMinimumPoint().getBlockX();
-        int miny = clipboard.getMinimumPoint().getBlockY();
-        int minz = clipboard.getMinimumPoint().getBlockZ();
-        int maxx = clipboard.getMaximumPoint().getBlockX();
-        int maxy = clipboard.getMaximumPoint().getBlockY();
-        int maxz = clipboard.getMaximumPoint().getBlockZ();
-        for (int x = minx; x < maxx; x++) {
-            for (int y = miny; y < maxy; y++) {
-                for (int z = minz; z < maxz; z++) {
-                    Vector ccloc = new Vector(x, y, z);
-                    BaseBlock bb = clipboard.getBlock(ccloc);
-                    if (!bb.isAir()) { // most blocks will be air, quickly move on to the next. This loop will run 16 million times, needs to be fast
-                        if (Config.AssaultDestroyableBlocks.contains(bb.getId())) {
-                            if (!w.getChunkAt(x >> 4, z >> 4).isLoaded())
-                                w.loadChunk(x >> 4, z >> 4);
-                            if (w.getBlockAt(x, y, z).isEmpty() || w.getBlockAt(x, y, z).isLiquid()) {
-                                MovecraftLocation moveloc = new MovecraftLocation(x, y, z);
-                                WorldEditUpdateCommand updateCommand = new WorldEditUpdateCommand(bb, w, moveloc, Material.getMaterial(bb.getType()), (byte) bb.getData());
-                                MapUpdateManager.getInstance().scheduleUpdate(updateCommand);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
     }
 }
