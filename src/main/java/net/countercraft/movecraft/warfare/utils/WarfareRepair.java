@@ -62,8 +62,8 @@ public class WarfareRepair {
 
     private HashSet<Chunk> getChunksInRegion(ProtectedRegion region, World world) {
         HashSet<Chunk> chunks = new HashSet<>();
-        for(int x = Math.floorDiv(region.getMinimumPoint().getBlockX(), 16); x <= Math.floorDiv(region.getMaximumPoint().getBlockX(), 16) + 1; x++) {
-            for(int z = Math.floorDiv(region.getMinimumPoint().getBlockZ(), 16); z <= Math.floorDiv(region.getMaximumPoint().getBlockZ(), 16) + 1; z++) {
+        for(int x = (int) Math.floor(region.getMinimumPoint().getBlockX() / 16.0); x < Math.floor(region.getMaximumPoint().getBlockX() / 16.0) + 1; x++) {
+            for(int z = (int) Math.floor(region.getMinimumPoint().getBlockZ() / 16.0); z < Math.floor(region.getMaximumPoint().getBlockZ() / 16.0) + 1; z++) {
                 chunks.add(world.getChunkAt(x, z));
             }
         }
