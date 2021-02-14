@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.utils;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.Chunk;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.function.Predicate;
 
 public class WarfareRepair {
     private static WarfareRepair instance;
@@ -48,10 +50,11 @@ public class WarfareRepair {
         File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
 
         HashSet<Chunk> chunks = getChunksInRegion(region, world);
+        Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
 
         // TODO: Make this spread across multiple ticks and possibly async
         for(Chunk c : chunks) {
-            if(!MovecraftRepair.getInstance().getWEUtils().repairChunk(c, saveDirectory, new IsInRegion(region)))
+            if(!MovecraftRepair.getInstance().getWEUtils().repairChunk(c, saveDirectory, regionTester))
                 return false;
         }
         return true;
