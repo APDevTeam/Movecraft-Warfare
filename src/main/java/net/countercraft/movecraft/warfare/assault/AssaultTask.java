@@ -7,7 +7,6 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
-import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
