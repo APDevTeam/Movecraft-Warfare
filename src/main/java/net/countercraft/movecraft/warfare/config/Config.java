@@ -1,7 +1,5 @@
 package net.countercraft.movecraft.warfare.config;
 
-import org.bukkit.Material;
-
 import java.util.HashSet;
 
 public class Config {
@@ -21,7 +19,7 @@ public class Config {
     public static double AssaultMaxBalance;
     public static double AssaultOwnerWeightPercent;
     public static double AssaultMemberWeightPercent;
-    public static HashSet<Material> AssaultDestroyableBlocks;
+    public static HashSet<Integer> AssaultDestroyableBlocks;
     public static int AssaultDamagesPerBlock;
 
     // Siege

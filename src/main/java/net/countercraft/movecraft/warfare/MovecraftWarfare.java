@@ -14,7 +14,6 @@ import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
-import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
 
@@ -80,10 +79,7 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultMaxBalance = getConfig().getDouble("AssaultMaxBalance", 5000000);
             Config.AssaultOwnerWeightPercent = getConfig().getDouble("AssaultOwnerWeightPercent", 1.0);
             Config.AssaultMemberWeightPercent = getConfig().getDouble("AssaultMemberWeightPercent", 1.0);
-            Config.AssaultDestroyableBlocks = new HashSet<>();
-            for(int i : getConfig().getIntegerList("AssaultDestroyableBlocks")) {
-                Config.AssaultDestroyableBlocks.add(Material.getMaterial(i));
-            }
+            Config.AssaultDestroyableBlocks = new HashSet<>(getConfig().getIntegerList("AssaultDestroyableBlocks"));
 
             this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
             this.getCommand("assault").setExecutor(new AssaultCommand());
