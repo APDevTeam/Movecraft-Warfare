@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.warfare.sign;
 
+import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
@@ -19,20 +20,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.UUID;
 
 public class RegionDamagedSign implements Listener {
-    private final String HEADER = ChatColor.RED + "REGION DAMAGED!";
+    public static final String HEADER = ChatColor.RED + "REGION DAMAGED!";
 
     @EventHandler
     public void onSignRightClick(PlayerInteractEvent event){
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
             return;
-        }
-        if (event.getClickedBlock().getType() != Material.WALL_SIGN){
+        if (event.getClickedBlock().getType() != Material.WALL_SIGN)
             return;
-        }
         Sign sign = (Sign) event.getClickedBlock().getState();
-        if (!sign.getLine(0).equals(HEADER)) {
+        if (!sign.getLine(0).equals(HEADER))
             return;
-        }
+
         String regionName = sign.getLine(1).substring(sign.getLine(1).indexOf(":") + 1);
         long damages = Long.parseLong(sign.getLine(2).substring(sign.getLine(2).indexOf(":") + 1));
         String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
@@ -49,14 +48,20 @@ public class RegionDamagedSign implements Listener {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(event.getPlayer(), damages);
         World world = event.getClickedBlock().getWorld();
         ProtectedRegion aRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(world).getRegion(regionName);
-        for (String ownerName : owners) {
-            if (ownerName.length() > 16) {
-                aRegion.getOwners().addPlayer(UUID.fromString(ownerName));
-            } else {
-                if (Bukkit.getPlayer(ownerName) != null) { //Cannot add names directly as bug will allow free assaults
-                    aRegion.getOwners().addPlayer(Bukkit.getPlayer(ownerName).getUniqueId());
+        DefaultDomain wgOwners = aRegion.getOwners();
+        if(wgOwners == null) {
+            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"), regionName));
+        }
+        else {
+            for (String ownerName : owners) {
+                if (ownerName.length() > 16) {
+                    wgOwners.addPlayer(UUID.fromString(ownerName));
                 } else {
-                    aRegion.getOwners().addPlayer(Bukkit.getOfflinePlayer(ownerName).getUniqueId());
+                    if (Bukkit.getPlayer(ownerName) != null) { //Cannot add names directly as bug will allow free assaults
+                        wgOwners.addPlayer(Bukkit.getPlayer(ownerName).getUniqueId());
+                    } else {
+                        wgOwners.addPlayer(Bukkit.getOfflinePlayer(ownerName).getUniqueId());
+                    }
                 }
             }
         }
@@ -71,7 +76,7 @@ public class RegionDamagedSign implements Listener {
             for (int y = minY ; y <= maxY ; y++){
                 for (int z = minZ; z <= maxZ ; z++){
                     Block b = sign.getWorld().getBlockAt(x,y,z);
-                    if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON || b.getType() == Material.IRON_BLOCK ){
+                    if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON || b.getType() == Material.IRON_BLOCK){
                         b.setType(Material.AIR);
                     }
                 }

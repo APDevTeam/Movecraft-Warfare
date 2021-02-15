@@ -3,6 +3,7 @@ package net.countercraft.movecraft.warfare.assault;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -136,7 +137,7 @@ public class Assault {
         // finally the sign on the beacon
         world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).setType(Material.WALL_SIGN);
         Sign s = (Sign) world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).getState();
-        s.setLine(0, ChatColor.RED + I18nSupport.getInternationalisedString("Region Damaged"));
+        s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());
         s.setLine(2, I18nSupport.getInternationalisedString("Damages") + ":" + getMaxDamages());
         s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":" + AssaultUtils.getRegionOwnerList(region));
