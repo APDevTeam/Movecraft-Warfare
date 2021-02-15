@@ -5,6 +5,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -43,6 +44,8 @@ public class WarfareRepair {
         if (world == null || regionName == null)
             return false;
 
+        Bukkit.broadcastMessage("Repairing " + regionName);
+
         ProtectedRegion region = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(world).getRegion(regionName);
         if(region == null)
             return false;
@@ -54,6 +57,7 @@ public class WarfareRepair {
 
         // TODO: Make this spread across multiple ticks and possibly async
         for(Chunk c : chunks) {
+            Bukkit.broadcastMessage("Repairing: " + c);
             if(!MovecraftRepair.getInstance().getWEUtils().repairChunk(c, saveDirectory, regionTester))
                 return false;
         }

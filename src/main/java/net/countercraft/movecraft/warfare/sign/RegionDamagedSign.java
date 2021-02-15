@@ -30,7 +30,7 @@ public class RegionDamagedSign implements Listener {
             return;
         }
         Sign sign = (Sign) event.getClickedBlock().getState();
-        if (!sign.getLine(0).equals(HEADER)){
+        if (!sign.getLine(0).equals(HEADER)) {
             return;
         }
         String regionName = sign.getLine(1).substring(sign.getLine(1).indexOf(":") + 1);
@@ -53,8 +53,7 @@ public class RegionDamagedSign implements Listener {
             if (ownerName.length() > 16) {
                 aRegion.getOwners().addPlayer(UUID.fromString(ownerName));
             } else {
-
-                if (Bukkit.getPlayer(ownerName) != null) {//Cannot add names directly as bug will allow free assaults
+                if (Bukkit.getPlayer(ownerName) != null) { //Cannot add names directly as bug will allow free assaults
                     aRegion.getOwners().addPlayer(Bukkit.getPlayer(ownerName).getUniqueId());
                 } else {
                     aRegion.getOwners().addPlayer(Bukkit.getOfflinePlayer(ownerName).getUniqueId());
