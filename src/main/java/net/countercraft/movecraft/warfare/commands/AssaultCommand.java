@@ -6,13 +6,13 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
+import net.countercraft.movecraft.warfare.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.events.AssaultBeginEvent;
+import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -108,11 +108,11 @@ public class AssaultCommand implements CommandExecutor {
 
         Assault assault = new Assault(region, player, player.getWorld(), System.currentTimeMillis()+(Config.AssaultDelay*1000), taskMaxDamages, min, max);
 
-        AssaultStartEvent assaultStartEvent = new AssaultStartEvent(assault);
-        Bukkit.getPluginManager().callEvent(assaultStartEvent);
+        AssaultPreStartEvent assaultPreStartEvent = new AssaultPreStartEvent(assault);
+        Bukkit.getPluginManager().callEvent(assaultPreStartEvent);
 
-        if (assaultStartEvent.isCancelled()) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultStartEvent.getCancelReason());
+        if (assaultPreStartEvent.isCancelled()) {
+            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultPreStartEvent.getCancelReason());
             return true;
         }
 
@@ -129,11 +129,11 @@ public class AssaultCommand implements CommandExecutor {
         new BukkitRunnable() {
             @Override
             public void run() {
-                AssaultBeginEvent assaultBeginEvent = new AssaultBeginEvent(assault);
-                Bukkit.getPluginManager().callEvent(assaultBeginEvent);
+                AssaultStartEvent assaultStartEvent = new AssaultStartEvent(assault);
+                Bukkit.getPluginManager().callEvent(assaultStartEvent);
 
-                if (assaultBeginEvent.isCancelled()) {
-                    commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultBeginEvent.getCancelReason());
+                if (assaultStartEvent.isCancelled()) {
+                    commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultStartEvent.getCancelReason());
                     return;
                 }
 

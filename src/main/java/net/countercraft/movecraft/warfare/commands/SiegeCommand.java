@@ -10,7 +10,7 @@ import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.TopicPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import net.countercraft.movecraft.warfare.events.SiegeBeginEvent;
+import net.countercraft.movecraft.warfare.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.siege.SiegeStage;
@@ -221,11 +221,11 @@ public class SiegeCommand implements TabExecutor {
             return true;
         }
 
-        SiegeBeginEvent siegeBeginEvent = new SiegeBeginEvent(siege);
-        Bukkit.getPluginManager().callEvent(siegeBeginEvent);
+        SiegePreStartEvent siegePreStartEvent = new SiegePreStartEvent(siege);
+        Bukkit.getPluginManager().callEvent(siegePreStartEvent);
 
-        if (siegeBeginEvent.isCancelled()) {
-            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + siegeBeginEvent.getCancelReason());
+        if (siegePreStartEvent.isCancelled()) {
+            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + siegePreStartEvent.getCancelReason());
             return true;
         }
 

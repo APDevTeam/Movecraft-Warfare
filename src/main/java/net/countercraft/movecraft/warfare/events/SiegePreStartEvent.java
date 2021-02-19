@@ -6,12 +6,15 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class SiegeBeginEvent extends SiegeEvent implements Cancellable {
+/**
+ * Fires after Siege validation, before the Siege Preparation stage.
+ */
+public class SiegePreStartEvent extends SiegeEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled;
     private String cancelReason;
 
-    public SiegeBeginEvent(@NotNull Siege siege) {
+    public SiegePreStartEvent(@NotNull Siege siege) {
         super(siege);
         cancelled = false;
         cancelReason = I18nSupport.getInternationalisedString("Event - Default Cancel Reason");

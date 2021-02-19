@@ -6,15 +6,18 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class AssaultBeginEvent extends AssaultEvent implements Cancellable {
+/**
+ * Fires after Assault validation, before the Assault Preparation stage.
+ */
+public class AssaultPreStartEvent extends AssaultEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled;
     private String cancelReason;
 
-    public AssaultBeginEvent(@NotNull Assault assault) {
+    public AssaultPreStartEvent(@NotNull Assault assault) {
         super(assault);
         cancelled = false;
-        cancelReason = I18nSupport.getInternationalisedString("Assault - Default Assault Begin Cancel Reason");
+        cancelReason = I18nSupport.getInternationalisedString("Event - Default Cancel Reason");
     }
 
     @Override

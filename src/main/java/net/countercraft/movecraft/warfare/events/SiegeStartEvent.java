@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.bukkit.event.HandlerList;
 import net.countercraft.movecraft.warfare.siege.Siege;
 
+/**
+ * Fires when a Siege starts.
+ */
 public class SiegeStartEvent extends SiegeEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled;
