@@ -48,7 +48,7 @@ public class BlockListener implements Listener {
                         b.getLocation().getBlockX() > max.getBlockX() ||
                         b.getLocation().getBlockZ() < min.getBlockZ() ||
                         b.getLocation().getBlockZ() > max.getBlockZ() ||
-                        !Config.AssaultDestroyableBlocks.contains(b.getTypeId()) ||
+                        !Config.AssaultDestroyableBlocks.contains(b.getType()) ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.SOUTH).getTypeId()) >= 0 ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.DOWN).getTypeId()) >= 0 ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.UP).getTypeId()) >= 0 ||

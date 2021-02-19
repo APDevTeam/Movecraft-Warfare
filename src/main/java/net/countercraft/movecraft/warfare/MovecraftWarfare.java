@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.listener.BlockListener;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.commands.AssaultCommand;
@@ -13,6 +14,8 @@ import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
 
@@ -55,11 +58,11 @@ public final class MovecraftWarfare extends JavaPlugin {
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
 
-        if(Movecraft.getInstance().getWorldGuardPlugin() == null || Movecraft.getInstance().getEconomy() == null) {
+        if(Movecraft.getInstance().getWorldGuardPlugin() == null || MovecraftRepair.getInstance().getEconomy() == null) {
             Config.AssaultEnable = false;
             Config.SiegeEnable = false;
         }
-        if(Movecraft.getInstance().getWorldEditPlugin() == null) {
+        if(MovecraftRepair.getInstance() == null) {
             Config.AssaultEnable = false;
         }
 
@@ -78,7 +81,10 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultMaxBalance = getConfig().getDouble("AssaultMaxBalance", 5000000);
             Config.AssaultOwnerWeightPercent = getConfig().getDouble("AssaultOwnerWeightPercent", 1.0);
             Config.AssaultMemberWeightPercent = getConfig().getDouble("AssaultMemberWeightPercent", 1.0);
-            Config.AssaultDestroyableBlocks = new HashSet<>(getConfig().getIntegerList("AssaultDestroyableBlocks"));
+            Config.AssaultDestroyableBlocks = new HashSet<>();
+            for(String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
+                Config.AssaultDestroyableBlocks.add(Material.getMaterial(s));
+            }
 
             this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
             this.getCommand("assault").setExecutor(new AssaultCommand());

@@ -7,7 +7,7 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
-import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
+import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -55,7 +55,7 @@ public class AssaultTask extends BukkitRunnable {
         assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
 
         // repair the damages that have occurred so far
-        if (!new RegionDamagedSign().repairRegion(assault.getWorld(), assault.getRegionName()))
+        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName()))
             Bukkit.getServer().broadcastMessage(ERROR_PREFIX+String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), assault.getRegionName().toUpperCase()));
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().remove(assault);

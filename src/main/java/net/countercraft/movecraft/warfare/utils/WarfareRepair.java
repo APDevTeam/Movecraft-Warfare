@@ -1,37 +1,18 @@
 package net.countercraft.movecraft.warfare.utils;
 
-import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.extent.Extent;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
-import com.sk89q.worldedit.function.mask.BlockMask;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operations;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.Polygonal2DRegion;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.registry.WorldData;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.function.Predicate;
 
 public class WarfareRepair {
     private static WarfareRepair instance;
@@ -47,69 +28,46 @@ public class WarfareRepair {
     }
 
     public boolean saveRegionRepairState(World world, ProtectedRegion region) {
-        File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots");
-        com.sk89q.worldedit.world.World weWorld = new BukkitWorld(world);
-        WorldData worldData = weWorld.getWorldData();
-        Vector weMinPos = region.getMinimumPoint();
-        Vector weMaxPos = region.getMaximumPoint();
-        if (!saveDirectory.exists()) {
-            saveDirectory.mkdirs();
-        }
-        Set<BaseBlock> baseBlockSet = new HashSet<>();
-        Region weRegion = null;
-        if (region instanceof ProtectedCuboidRegion) {
-            weRegion = new CuboidRegion(weMinPos, weMaxPos);
-        } else if (region instanceof ProtectedPolygonalRegion) {
-            ProtectedPolygonalRegion polyReg = (ProtectedPolygonalRegion) region;
-            weRegion = new Polygonal2DRegion(weWorld, polyReg.getPoints(), polyReg.getMinimumPoint().getBlockY(), polyReg.getMaximumPoint().getBlockY());
-        }
+        File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + region.getId().replaceAll("´\\s+", "_"));
 
+        HashSet<Chunk> chunks = getChunksInRegion(region, world);
 
-        File repairStateFile = new File(saveDirectory, region.getId().replaceAll("´\\s+", "_") + ".schematic");
-        for (int x = weMinPos.getBlockX(); x <= weMaxPos.getBlockX(); x++) {
-            for (int y = weMinPos.getBlockY(); y <= weMaxPos.getBlockY(); y++) {
-                for (int z = weMinPos.getBlockZ(); z <= weMaxPos.getBlockZ(); z++) {
-                    Block block = world.getBlockAt(x, y, z);
-                    if (block.getType().equals(Material.AIR)) {
-                        continue;
-                    }
-                    if (Config.AssaultDestroyableBlocks.contains(block.getTypeId())) {
-                        baseBlockSet.add(new BaseBlock(block.getTypeId(), block.getData()));
-                    }
-                }
-            }
+        // TODO: Make this spread across multiple ticks and possibly async
+        for(Chunk c : chunks) {
+            if(!MovecraftRepair.getInstance().getWEUtils().saveChunk(c, saveDirectory, Config.AssaultDestroyableBlocks))
+                return false;
         }
-        try {
-
-            BlockArrayClipboard clipboard = new BlockArrayClipboard(weRegion);
-            Extent source = WorldEdit.getInstance().getEditSessionFactory().getEditSession(weWorld, -1);
-            Extent destination = clipboard;
-            ForwardExtentCopy copy = new ForwardExtentCopy(source, weRegion, clipboard.getOrigin(), destination, weMinPos);
-            BlockMask mask = new BlockMask(source, baseBlockSet);
-            copy.setSourceMask(mask);
-            Operations.completeLegacy(copy);
-            ClipboardWriter writer = ClipboardFormat.SCHEMATIC.getWriter(new FileOutputStream(repairStateFile, false));
-            writer.write(clipboard, worldData);
-            writer.close();
-            return true;
-
-        } catch (MaxChangedBlocksException | IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return true;
     }
 
-    public Clipboard loadRegionRepairStateClipboard(String s, World world) {
-        File dataDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots");
-        File file = new File(dataDirectory, s + ".schematic"); // The schematic file
-        com.sk89q.worldedit.world.World weWorld = new BukkitWorld(world);
-        WorldData worldData = weWorld.getWorldData();
-        try {
-            return ClipboardFormat.SCHEMATIC.getReader(new FileInputStream(file)).read(worldData);
+    public boolean repairRegionRepairState(World world, String regionName) {
+        if (world == null || regionName == null)
+            return false;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        ProtectedRegion region = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(world).getRegion(regionName);
+        if(region == null)
+            return false;
+
+        File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
+
+        HashSet<Chunk> chunks = getChunksInRegion(region, world);
+        Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
+
+        // TODO: Make this spread across multiple ticks and possibly async
+        for(Chunk c : chunks) {
+            if(!MovecraftRepair.getInstance().getWEUtils().repairChunk(c, saveDirectory, regionTester))
+                return false;
         }
+        return true;
+    }
+
+    private HashSet<Chunk> getChunksInRegion(ProtectedRegion region, World world) {
+        HashSet<Chunk> chunks = new HashSet<>();
+        for(int x = (int) Math.floor(region.getMinimumPoint().getBlockX() / 16.0); x < Math.floor(region.getMaximumPoint().getBlockX() / 16.0) + 1; x++) {
+            for(int z = (int) Math.floor(region.getMinimumPoint().getBlockZ() / 16.0); z < Math.floor(region.getMaximumPoint().getBlockZ() / 16.0) + 1; z++) {
+                chunks.add(world.getChunkAt(x, z));
+            }
+        }
+        return chunks;
     }
 }

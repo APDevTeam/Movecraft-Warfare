@@ -6,6 +6,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.TopicPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -192,7 +193,7 @@ public class SiegeCommand implements TabExecutor {
         }
         long cost = calcSiegeCost(siege, siegeManager, player);
 
-        if (!Movecraft.getInstance().getEconomy().has(player, cost)) {
+        if (!MovecraftRepair.getInstance().getEconomy().has(player, cost)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + String.format(I18nSupport.getInternationalisedString("Siege - Insufficient Funds"),cost));
             return true;
         }
@@ -242,7 +243,7 @@ public class SiegeCommand implements TabExecutor {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
         }
         Movecraft.getInstance().getLogger().log(Level.INFO, String.format(I18nSupport.getInternationalisedString("Siege - Log Siege Start"), siege.getName(), player.getName(), cost));
-        Movecraft.getInstance().getEconomy().withdrawPlayer(player, cost);
+        MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, cost);
         siege.setPlayerUUID(player.getUniqueId());
         siege.setStartTime(System.currentTimeMillis());
         siege.setStage(SiegeStage.PREPERATION);
@@ -344,7 +345,7 @@ public class SiegeCommand implements TabExecutor {
         ChatColor cost, start, end;
 
         if(sender instanceof Player) {
-            cost = Movecraft.getInstance().getEconomy().has((Player) sender, siege.getCost()) ? ChatColor.GREEN : ChatColor.RED;
+            cost = MovecraftRepair.getInstance().getEconomy().has((Player) sender, siege.getCost()) ? ChatColor.GREEN : ChatColor.RED;
         }
         else {
             cost = ChatColor.DARK_RED;

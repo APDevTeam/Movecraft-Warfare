@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft.movecraft.warfare</groupId>
     <artifactId>Movecraft-Warfare</artifactId>
-    <version>0.5.0-SNAPSHOT.7</version>
+    <version>0.5.0-SNAPSHOT.18</version>
     <packaging>jar</packaging>
 
     <name>Movecraft-Warfare</name>
@@ -92,6 +92,14 @@
             <version>7.0.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../Movecraft/target/Movecraft.jar</systemPath>
+        </dependency>
+        <!--Movecraft-Repair-->
+        <dependency>
+            <groupId>net.countercraft.movecraft.repair</groupId>
+            <artifactId>Movecraft-Repair</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../Movecraft-Repair/target/Movecraft-Repair.jar</systemPath>
         </dependency>
         <!--Annotations-->
         <dependency>
