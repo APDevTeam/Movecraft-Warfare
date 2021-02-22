@@ -2,10 +2,12 @@ package net.countercraft.movecraft.warfare.siege;
 
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.events.SiegeBeginEvent;
+import net.countercraft.movecraft.warfare.events.SiegeStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import static net.countercraft.movecraft.utils.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
 
 public class SiegePreparationTask extends SiegeTask {
 
@@ -19,6 +21,15 @@ public class SiegePreparationTask extends SiegeTask {
         int timePassed = ((int)(System.currentTimeMillis() - siege.getStartTime())); //time passed in milliseconds
         int timePassedInSeconds = timePassed / 1000;
         if (timePassedInSeconds >= siege.getDelayBeforeStart()){
+            SiegeStartEvent siegeStartEvent = new SiegeStartEvent(siege);
+            Bukkit.getPluginManager().callEvent(siegeStartEvent);
+
+            if (siegeStartEvent.isCancelled()) {
+                Bukkit.getPlayer(siege.getPlayerUUID()).sendMessage(MOVECRAFT_COMMAND_PREFIX + siegeStartEvent.getCancelReason());
+                siege.setStage(SiegeStage.INACTIVE);
+                return;
+            }
+
             siege.setJustCommenced(true);
             siege.setStage(SiegeStage.IN_PROGRESS);
         }
@@ -27,7 +38,6 @@ public class SiegePreparationTask extends SiegeTask {
         }
         int timeLeft = siege.getDelayBeforeStart() - timePassedInSeconds;
         broadcastSiegePreparation(Bukkit.getPlayer(siege.getPlayerUUID()), siege.getName(), timeLeft);
-        Bukkit.getPluginManager().callEvent(new SiegeBeginEvent(siege));
     }
 
     private void broadcastSiegePreparation(Player player, String siegeName, int timeLeft){

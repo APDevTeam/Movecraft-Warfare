@@ -15,4 +15,8 @@ public class AssaultWinEvent extends AssaultEvent {
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

@@ -1,23 +1,23 @@
 package net.countercraft.movecraft.warfare.events;
 
 import net.countercraft.movecraft.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.assault.Assault;
+import net.countercraft.movecraft.warfare.siege.Siege;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fires when an assault starts.
+ * Fires after Siege validation, before the Siege Preparation stage.
  */
-public class AssaultStartEvent extends AssaultEvent implements Cancellable {
+public class SiegePreStartEvent extends SiegeEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled;
     private String cancelReason;
 
-    public AssaultStartEvent(@NotNull Assault assault) {
-        super(assault);
+    public SiegePreStartEvent(@NotNull Siege siege) {
+        super(siege);
         cancelled = false;
-        cancelReason = I18nSupport.getInternationalisedString("Assault - Default Assault Begin Cancel Reason");
+        cancelReason = I18nSupport.getInternationalisedString("Event - Default Cancel Reason");
     }
 
     @Override
