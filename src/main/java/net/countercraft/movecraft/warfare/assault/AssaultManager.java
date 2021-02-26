@@ -1,8 +1,10 @@
 package net.countercraft.movecraft.warfare.assault;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,5 +29,14 @@ public class AssaultManager extends BukkitRunnable {
 
     public List<Assault> getAssaults() {
         return assaults;
+    }
+
+    @Nullable
+    public Assault getAssault(@NotNull ProtectedRegion region) {
+        for(Assault assault : assaults) {
+            if(assault.getRegion() == region)
+                return assault;
+        }
+        return null;
     }
 }

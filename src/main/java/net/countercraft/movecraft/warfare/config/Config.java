@@ -23,6 +23,8 @@ public class Config {
     public static double AssaultMemberWeightPercent;
     public static HashSet<Material> AssaultDestroyableBlocks;
     public static int AssaultDamagesPerBlock;
+    public static int AssaultChunkSavePerTick;
+    public static int AssaultChunkRepairPerTick;
 
     // Siege
     public static boolean SiegeEnable;

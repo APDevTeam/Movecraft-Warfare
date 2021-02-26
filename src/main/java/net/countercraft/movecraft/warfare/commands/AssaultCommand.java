@@ -1,18 +1,15 @@
 package net.countercraft.movecraft.warfare.commands;
 
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.assault.AssaultBeginTask;
 import net.countercraft.movecraft.warfare.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,7 +18,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 
 import static net.countercraft.movecraft.utils.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
@@ -74,12 +70,6 @@ public class AssaultCommand implements CommandExecutor {
 
 
 //			if(region.getType() instanceof ProtectedCuboidRegion) { // Originally I wasn't going to do non-cubes, but we'll try it and see how it goes. In theory it may repair more than it should but... meh...
-        if (!WarfareRepair.getInstance().saveRegionRepairState(player.getWorld(), region)){
-            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Repair - Could not save file"));
-            return true;
-        }
-
-
         Vector min = new Vector(region.getMinimumPoint().getBlockX(), region.getMinimumPoint().getBlockY(), region.getMinimumPoint().getBlockZ());
         Vector max = new Vector(region.getMaximumPoint().getBlockX(), region.getMaximumPoint().getBlockY(), region.getMaximumPoint().getBlockZ());
 
@@ -106,7 +96,7 @@ public class AssaultCommand implements CommandExecutor {
 
         final Long taskMaxDamages = (long) AssaultUtils.getMaxDamages(region);
 
-        Assault assault = new Assault(region, player, player.getWorld(), System.currentTimeMillis()+(Config.AssaultDelay*1000), taskMaxDamages, min, max);
+        Assault assault = new Assault(region, player, player.getWorld(), System.currentTimeMillis()+(Config.AssaultDelay * 1000L), taskMaxDamages, min, max);
 
         AssaultPreStartEvent assaultPreStartEvent = new AssaultPreStartEvent(assault);
         Bukkit.getPluginManager().callEvent(assaultPreStartEvent);
@@ -115,6 +105,8 @@ public class AssaultCommand implements CommandExecutor {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultPreStartEvent.getCancelReason());
             return true;
         }
+
+        WarfareRepair.getInstance().saveRegionRepairState(player.getWorld(), assault);
 
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(region));
 
@@ -125,29 +117,8 @@ public class AssaultCommand implements CommandExecutor {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, (float) 0.25);
         }
 
-        // TODO: Make async
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                AssaultStartEvent assaultStartEvent = new AssaultStartEvent(assault);
-                Bukkit.getPluginManager().callEvent(assaultStartEvent);
-
-                if (assaultStartEvent.isCancelled()) {
-                    commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultStartEvent.getCancelReason());
-                    return;
-                }
-
-                Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Begun")
-                        , region.getId(), player.getDisplayName()));
-
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
-                }
-
-                MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
-                region.setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
-            }
-        }.runTaskLater(Movecraft.getInstance(), (20L * Config.AssaultDelay));
+        AssaultBeginTask beginTask = new AssaultBeginTask(player, assault);
+        beginTask.runTaskLater(Movecraft.getInstance(), (20L * Config.AssaultDelay));
         return true;
     }
 }

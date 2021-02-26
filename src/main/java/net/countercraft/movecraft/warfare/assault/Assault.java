@@ -11,11 +11,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Represents an assault
  */
 public class Assault {
+    public static class SavedState {
+        public static final int UNSAVED = 0;
+        public static final int SAVED = 1;
+        public static final int FAILED = -1;
+    }
+    public static class RepairedState {
+        public static final int UNREPAIRED = 0;
+        public static final int REPAIRED = 1;
+        public static final int FAILED = -1;
+    }
+
     private final @NotNull ProtectedRegion region;
     private final UUID starterUUID;
     private final long startTime;
@@ -24,6 +36,8 @@ public class Assault {
     private final World world;
     private final Vector minPos, maxPos;
     private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicInteger savedCorrectly = new AtomicInteger(SavedState.UNSAVED);
+    private final AtomicInteger repairedCorrectly = new AtomicInteger(RepairedState.UNREPAIRED);
 
     public Assault(@NotNull ProtectedRegion region, Player starter, World world, long startTime, long maxDamages, Vector minPos, Vector maxPos) {
         this.region = region;
@@ -143,5 +157,13 @@ public class Assault {
         s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":" + AssaultUtils.getRegionOwnerList(region));
         s.update();
         return true;
+    }
+
+    public AtomicInteger getSavedCorrectly() {
+        return savedCorrectly;
+    }
+
+    public AtomicInteger getRepairedCorrectly() {
+        return repairedCorrectly;
     }
 }
