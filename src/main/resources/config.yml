@@ -12,6 +12,8 @@ AssaultRequiredDefendersOnline: 2 # At least this many members or owners must be
 AssaultRequiredOwnersOnline: 1 # At least this many owners must be online for the region to be assaulted, set to 0 to ignore
 AssaultOwnerWeightPercent: 1.0 # Percentage of each Owner's balance (under the maximum) to include in the total cost & damages (Can be greater than 100)
 AssaultMemberWeightPercent: 1.0 # Percentage of each Member's balance (under the maximum) to include in the total cost & damages (Can be greater than 100)
+AssaultChunkSaveTime: 5 # Max time (in milliseconds) per tick spent saving chunks (per assault).  Reduce this if the server lags when an assault is started.
+AssaultChunkRepairTime: 5 # Max time (in milliseconds) per tick spent repairing chunks (per assault).  Reduce this if the server lags when an assaulted region is repaired.
 AssaultDestroyableBlocks: # these blocks will be removed if destroyed in assault. Other blocks will not be removed, but still count for damages. Don't include craft flyblocks, or blocks with metadata, or you can have issues.
   - 1
   - 2

@@ -81,6 +81,8 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultMaxBalance = getConfig().getDouble("AssaultMaxBalance", 5000000);
             Config.AssaultOwnerWeightPercent = getConfig().getDouble("AssaultOwnerWeightPercent", 1.0);
             Config.AssaultMemberWeightPercent = getConfig().getDouble("AssaultMemberWeightPercent", 1.0);
+            Config.AssaultChunkSaveTime = getConfig().getInt("AssaultChunkSaveTime", 5);
+            Config.AssaultChunkRepairTime = getConfig().getInt("AssaultChunkRepairTime", 5);
             Config.AssaultDestroyableBlocks = new HashSet<>();
             for(String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
                 Config.AssaultDestroyableBlocks.add(Material.getMaterial(s));
