@@ -95,10 +95,6 @@ public final class MovecraftWarfare extends JavaPlugin {
                 }
             }
 
-            this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
-            this.getCommand("assault").setExecutor(new AssaultCommand());
-            this.getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
-
             getServer().getPluginManager().registerEvents(new BlockListener(), this);
 
             getServer().getPluginManager().registerEvents(new RegionDamagedSign(), this);
@@ -146,9 +142,13 @@ public final class MovecraftWarfare extends JavaPlugin {
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
 
             getServer().getPluginManager().registerEvents(new TypesReloadedListener(), this);
-
-            this.getCommand("siege").setExecutor(new SiegeCommand());
         }
+
+        this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
+        this.getCommand("assault").setExecutor(new AssaultCommand());
+        this.getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
+
+        this.getCommand("siege").setExecutor(new SiegeCommand());
     }
 
     @Override
