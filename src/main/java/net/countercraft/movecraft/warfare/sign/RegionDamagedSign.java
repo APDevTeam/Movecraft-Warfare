@@ -23,15 +23,17 @@ public class RegionDamagedSign implements Listener {
     public static final String HEADER = ChatColor.RED + "REGION DAMAGED!";
 
     @EventHandler
-    public void onSignRightClick(PlayerInteractEvent event){
-        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-            return;
+    public void onSignRightClick(PlayerInteractEvent event) {
         if (event.getClickedBlock().getType() != Material.WALL_SIGN)
             return;
         Sign sign = (Sign) event.getClickedBlock().getState();
         if (!sign.getLine(0).equals(HEADER))
             return;
 
+        event.setCancelled(true);
+
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            return;
         String regionName = sign.getLine(1).substring(sign.getLine(1).indexOf(":") + 1);
         long damages = Long.parseLong(sign.getLine(2).substring(sign.getLine(2).indexOf(":") + 1));
         String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
