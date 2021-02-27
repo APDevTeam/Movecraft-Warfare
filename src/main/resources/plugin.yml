@@ -16,3 +16,6 @@ commands:
   assault:
     description: Begins an Assault on the specified region
     usage: /assault <regionname>
+  assaultrepair:
+    description: Repairs a region using admin magic
+    usage: /assaultrepair

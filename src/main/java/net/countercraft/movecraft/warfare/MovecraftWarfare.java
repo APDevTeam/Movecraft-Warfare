@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.listener.BlockListener;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.commands.AssaultCommand;
@@ -90,6 +91,7 @@ public final class MovecraftWarfare extends JavaPlugin {
 
             this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
             this.getCommand("assault").setExecutor(new AssaultCommand());
+            this.getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
 
             getServer().getPluginManager().registerEvents(new BlockListener(), this);
 
