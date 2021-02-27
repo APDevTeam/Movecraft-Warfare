@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
- * Procces assaults every 20 ticks
+ * Process assaults every 20 ticks
  */
 public class AssaultManager extends BukkitRunnable {
     private final List<Assault> assaults = new CopyOnWriteArrayList<>();
@@ -34,7 +34,7 @@ public class AssaultManager extends BukkitRunnable {
     @Nullable
     public Assault getAssault(@NotNull ProtectedRegion region) {
         for(Assault assault : assaults) {
-            if(assault.getRegion() == region)
+            if(assault.getRegion().equals(region))
                 return assault;
         }
         return null;

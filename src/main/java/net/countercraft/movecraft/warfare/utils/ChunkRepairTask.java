@@ -9,6 +9,7 @@ import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Queue;
@@ -20,7 +21,7 @@ public class ChunkRepairTask extends BukkitRunnable {
     private final File saveDirectory;
     private final Predicate<MovecraftLocation> regionTester;
 
-    public ChunkRepairTask(Assault a, Queue<Chunk> chunks, File saveDirectory, Predicate<MovecraftLocation> regionTester) {
+    public ChunkRepairTask(@NotNull Assault a, Queue<Chunk> chunks, File saveDirectory, Predicate<MovecraftLocation> regionTester) {
         this.a = a;
         this.chunks = chunks;
         this.saveDirectory = saveDirectory;

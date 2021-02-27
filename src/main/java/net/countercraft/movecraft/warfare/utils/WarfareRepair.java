@@ -8,6 +8,8 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -49,6 +51,9 @@ public class WarfareRepair {
         File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
 
         Assault assault = MovecraftWarfare.getInstance().getAssaultManager().getAssault(region);
+        if(assault == null) {
+            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
+        }
         Queue<Chunk> chunks = getChunksInRegion(region, world);
         Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
 
