@@ -22,11 +22,6 @@ public class Assault {
         public static final int SAVED = 1;
         public static final int FAILED = -1;
     }
-    public static class RepairedState {
-        public static final int UNREPAIRED = 0;
-        public static final int REPAIRED = 1;
-        public static final int FAILED = -1;
-    }
 
     private final @NotNull ProtectedRegion region;
     private final UUID starterUUID;
@@ -37,7 +32,6 @@ public class Assault {
     private final Vector minPos, maxPos;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final AtomicInteger savedCorrectly = new AtomicInteger(SavedState.UNSAVED);
-    private final AtomicInteger repairedCorrectly = new AtomicInteger(RepairedState.UNREPAIRED);
 
     public Assault(@NotNull ProtectedRegion region, Player starter, World world, long startTime, long maxDamages, Vector minPos, Vector maxPos) {
         this.region = region;
@@ -161,9 +155,5 @@ public class Assault {
 
     public AtomicInteger getSavedCorrectly() {
         return savedCorrectly;
-    }
-
-    public AtomicInteger getRepairedCorrectly() {
-        return repairedCorrectly;
     }
 }

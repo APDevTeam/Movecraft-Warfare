@@ -9,8 +9,10 @@ import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.function.Predicate;
@@ -37,7 +39,7 @@ public class WarfareRepair {
         saveTask.runTaskTimer(MovecraftWarfare.getInstance(), 1, 1);
     }
 
-    public boolean repairRegionRepairState(World world, String regionName) {
+    public boolean repairRegionRepairState(World world, String regionName, @Nullable Player player) {
         if (world == null || regionName == null)
             return false;
 
@@ -47,15 +49,10 @@ public class WarfareRepair {
 
         File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
 
-        Assault assault = MovecraftWarfare.getInstance().getAssaultManager().getAssault(region);
-        if(assault == null) {
-            return false;
-        }
-
         Queue<Chunk> chunks = getChunksInRegion(region, world);
         Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
 
-        ChunkRepairTask repairTask = new ChunkRepairTask(assault, chunks, saveDirectory, regionTester);
+        ChunkRepairTask repairTask = new ChunkRepairTask(region, chunks, saveDirectory, regionTester, player);
         repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 1, 1);
         return true;
     }

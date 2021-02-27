@@ -44,7 +44,7 @@ public class RegionDamagedSign implements Listener {
             return;
         }
 
-        if (!WarfareRepair.getInstance().repairRegionRepairState(event.getClickedBlock().getWorld(), regionName)) {
+        if (!WarfareRepair.getInstance().repairRegionRepairState(event.getClickedBlock().getWorld(), regionName, event.getPlayer())) {
             event.getPlayer().sendMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
             return;
         }

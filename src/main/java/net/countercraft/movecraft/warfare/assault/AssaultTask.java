@@ -55,7 +55,7 @@ public class AssaultTask extends BukkitRunnable {
         assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
 
         // repair the damages that have occurred so far
-        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName()))
+        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null))
             Bukkit.getServer().broadcastMessage(ERROR_PREFIX+String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), assault.getRegionName().toUpperCase()));
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().remove(assault);

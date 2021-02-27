@@ -2,8 +2,6 @@ package net.countercraft.movecraft.warfare.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
@@ -47,10 +45,8 @@ public class AssaultRepairCommand implements CommandExecutor {
             return true;
         }
 
-        Assault assault = MovecraftWarfare.getInstance().getAssaultManager().getAssault(region);
-
-        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName()))
-            Bukkit.getServer().broadcastMessage(ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), assault.getRegionName().toUpperCase()));
+        if (!WarfareRepair.getInstance().repairRegionRepairState(player.getWorld(), region.getId(), player))
+            Bukkit.getServer().broadcastMessage(ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), region.getId().toUpperCase()));
 
         return true;
     }
