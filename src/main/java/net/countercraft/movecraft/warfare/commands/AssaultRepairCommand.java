@@ -17,15 +17,11 @@ import static net.countercraft.movecraft.utils.ChatUtils.MOVECRAFT_COMMAND_PREFI
 public class AssaultRepairCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        if (!command.getName().equalsIgnoreCase("assault"))
+        if (!command.getName().equalsIgnoreCase("assaultrepair"))
             return false;
 
         if (!Config.AssaultEnable) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Disabled"));
-            return true;
-        }
-        if (args.length == 0) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Region Specified"));
             return true;
         }
         if(!(commandSender instanceof Player)) {
