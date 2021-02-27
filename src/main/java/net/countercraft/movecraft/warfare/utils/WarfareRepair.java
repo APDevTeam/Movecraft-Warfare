@@ -3,11 +3,8 @@ package net.countercraft.movecraft.warfare.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
-import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
-import net.countercraft.movecraft.warfare.assault.AssaultManager;
-import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -52,8 +49,9 @@ public class WarfareRepair {
 
         Assault assault = MovecraftWarfare.getInstance().getAssaultManager().getAssault(region);
         if(assault == null) {
-            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
+            return false;
         }
+
         Queue<Chunk> chunks = getChunksInRegion(region, world);
         Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
 
