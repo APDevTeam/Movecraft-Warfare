@@ -7,6 +7,7 @@ import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.TopicPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -39,17 +40,16 @@ public class SiegeCommand implements TabExecutor {
         if (!command.getName().equalsIgnoreCase("siege")) {
             return false;
         }
+        if (!Config.SiegeEnable || MovecraftWarfare.getInstance().getSiegeManager().getSieges().size() == 0) {
+            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Siege Not Configured"));
+            return true;
+        }
         if (!commandSender.hasPermission("movecraft.siege")) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
             return true;
         }
         if (args.length == 0) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - No Argument"));
-            return true;
-        }
-        SiegeManager siegeManager = MovecraftWarfare.getInstance().getSiegeManager();
-        if (siegeManager.getSieges().size() == 0) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Siege Not Configured"));
             return true;
         }
 
