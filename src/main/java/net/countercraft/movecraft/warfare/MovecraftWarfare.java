@@ -86,7 +86,13 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultChunkRepairTime = getConfig().getInt("AssaultChunkRepairTime", 5);
             Config.AssaultDestroyableBlocks = new HashSet<>();
             for(String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
-                Config.AssaultDestroyableBlocks.add(Material.getMaterial(s));
+                Material m = Material.getMaterial(s.toUpperCase());
+                if(m == null) {
+                    getLogger().info("Failed to load AssaultDestroyableBlock: '" + s + "'");
+                }
+                else {
+                    Config.AssaultDestroyableBlocks.add(m);
+                }
             }
 
             this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
