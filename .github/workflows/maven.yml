@@ -58,15 +58,15 @@ jobs:
     
     # Build Movecraft
     - name: Build Movecraft
-      run:  mvn -B package --file Movecraft/pom.xml
+      run:  mvn -B package -T 1C --file Movecraft/pom.xml
 
     # Build Movecraft-Repair
     - name: Build Movecraft-Repair
-      run:  mvn -B package --file Movecraft-Repair/pom.xml
+      run:  mvn -B package -T 1C --file Movecraft-Repair/pom.xml
 
     # Build Movecraft-Warfare
     - name: Build Movecraft-Warfare
-      run: mvn -B package --file Movecraft-Warfare/pom.xml
+      run: mvn -B package -T 1C --file Movecraft-Warfare/pom.xml
 
     - name: Stage jar
       run: mkdir staging && cp Movecraft-Warfare/target/Movecraft-Warfare.jar staging
