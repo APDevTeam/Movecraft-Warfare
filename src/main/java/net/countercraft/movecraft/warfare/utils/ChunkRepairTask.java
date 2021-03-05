@@ -3,7 +3,6 @@ package net.countercraft.movecraft.warfare.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.Bukkit;
@@ -34,13 +33,10 @@ public class ChunkRepairTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        long start = System.currentTimeMillis();
-
-        while(System.currentTimeMillis() - start < Config.AssaultChunkRepairTime) {
+        for(int i = 0; i < Config.AssaultChunkRepairPerTick; i++) {
             Chunk c = chunks.poll();
             if(c == null) {
                 if(chunks.size() == 0) {
-                    MovecraftWarfare.getInstance().getLogger().info("Finished");
                     if(player == null)
                         Bukkit.broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Finished"), region.getId()));
                     else
@@ -48,20 +44,16 @@ public class ChunkRepairTask extends BukkitRunnable {
                     this.cancel();
                 }
                 else {
-                    MovecraftWarfare.getInstance().getLogger().info("Failed");
                     Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), region.getId()));
                     this.cancel();
                 }
                 return;
             }
 
-            MovecraftWarfare.getInstance().getLogger().info("Repairing: " + c);
             if (!MovecraftRepair.getInstance().getWEUtils().repairChunk(c, saveDirectory, regionTester)) {
-                MovecraftWarfare.getInstance().getLogger().info("Failed on: " + c);
                 this.cancel();
                 return;
             }
         }
-        MovecraftWarfare.getInstance().getLogger().info("Continuing");
     }
 }

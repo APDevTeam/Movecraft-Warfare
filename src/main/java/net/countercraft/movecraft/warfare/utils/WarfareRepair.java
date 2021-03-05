@@ -5,6 +5,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -36,7 +37,7 @@ public class WarfareRepair {
         Queue<Chunk> chunks = getChunksInRegion(assault.getRegion(), world);
 
         ChunkSaveTask saveTask = new ChunkSaveTask(assault, chunks, saveDirectory);
-        saveTask.runTaskTimer(MovecraftWarfare.getInstance(), 1, 1);
+        saveTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkSavePeriod);
     }
 
     public boolean repairRegionRepairState(World world, String regionName, @Nullable Player player) {
@@ -53,7 +54,7 @@ public class WarfareRepair {
         Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
 
         ChunkRepairTask repairTask = new ChunkRepairTask(region, chunks, saveDirectory, regionTester, player);
-        repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 1, 1);
+        repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkRepairPeriod);
         return true;
     }
 
