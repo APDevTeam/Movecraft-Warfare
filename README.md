@@ -6,7 +6,11 @@ Home of the code for the following features:
  
  ## Download
 
-Devevlopment builds can be found on the [GitHub Actions tab](https://github.com/APDevTeam/Movecraft-Warfare/actions) of this repository.  Stable builds can be found on [our SpigotMC page](https://www.spigotmc.org/resources/movecraft-warfare.87359/).
+This plugin supports Minecraft versions 1.10.2 to 1.16.5, and Movecraft 7.0.0 Beta 8+.  It does not support Eirik's fork yet.
+
+Devevlopment builds can be found on the [GitHub Actions tab](https://github.com/APDevTeam/Movecraft-Warfare/actions) of this repository.
+
+Stable builds can be found on [our SpigotMC page](https://www.spigotmc.org/resources/movecraft-warfare.87359/).
 
 ## Building
 This plugin requires that the user setup and build their [Movecraft](https://github.com/APDevTeam/Movecraft) development environment, and then clone this into the same folder as your Movecraft development environment such that both Movecraft-Warfare and Movecraft are contained in the same folder.  This plugin also requires you to build the latest version of 1.13.2 using build tools.
