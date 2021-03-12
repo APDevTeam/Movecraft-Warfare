@@ -15,6 +15,7 @@ import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,7 +60,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
 
-        if(Movecraft.getInstance().getWorldGuardPlugin() == null || MovecraftRepair.getInstance().getEconomy() == null) {
+        if(MovecraftWorldGuard.getInstance() == null || MovecraftRepair.getInstance().getEconomy() == null) {
             Config.AssaultEnable = false;
             Config.SiegeEnable = false;
         }

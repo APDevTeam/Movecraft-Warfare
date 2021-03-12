@@ -1,10 +1,12 @@
 package net.countercraft.movecraft.warfare.listener;
 
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -37,17 +39,18 @@ public class BlockListener implements Listener {
                 if (b.getWorld() != assault.getWorld())
                     continue;
 
-                if (!assault.getRegion().contains(b.getX(), b.getY(), b.getZ()))
+                Location l = b.getLocation();
+                if (!MovecraftWorldGuard.getInstance().getWGUtils().regionContains(assault.getRegionName(), l))
                     continue;
 
                 // first see if it is outside the destroyable area
-                com.sk89q.worldedit.Vector min = assault.getMinPos();
-                com.sk89q.worldedit.Vector max = assault.getMaxPos();
+                MovecraftLocation min = assault.getMinPos();
+                MovecraftLocation max = assault.getMaxPos();
 
-                if (b.getLocation().getBlockX() < min.getBlockX() ||
-                        b.getLocation().getBlockX() > max.getBlockX() ||
-                        b.getLocation().getBlockZ() < min.getBlockZ() ||
-                        b.getLocation().getBlockZ() > max.getBlockZ() ||
+                if (l.getBlockX() < min.getX() ||
+                        l.getBlockX() > max.getX() ||
+                        l.getBlockZ() < min.getZ() ||
+                        l.getBlockZ() > max.getZ() ||
                         !Config.AssaultDestroyableBlocks.contains(b.getType()) ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.SOUTH).getTypeId()) >= 0 ||
                         Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.DOWN).getTypeId()) >= 0 ||
@@ -67,7 +70,7 @@ public class BlockListener implements Listener {
                 if (System.currentTimeMillis() < lastDamagesUpdate + 4000) {
                     continue;
                 }
-                final Location floc = b.getLocation();
+                final Location floc = l;
                 final World fworld = b.getWorld();
                 new BukkitRunnable() {
                     @Override

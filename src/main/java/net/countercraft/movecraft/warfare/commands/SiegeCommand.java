@@ -1,9 +1,6 @@
 package net.countercraft.movecraft.warfare.commands;
 
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.repair.MovecraftRepair;
@@ -15,6 +12,7 @@ import net.countercraft.movecraft.warfare.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.siege.SiegeStage;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -215,8 +213,7 @@ public class SiegeCommand implements TabExecutor {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("You must be piloting a craft that can siege!"));
             return true;
         }
-        MovecraftLocation mid = siegeCraft.getHitBox().getMidPoint();
-        if(!Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getRegion(siege.getAttackRegion()).contains(mid.getX(), mid.getY(), mid.getZ())) {
+        if(!MovecraftWorldGuard.getInstance().getWGUtils().craftFullyInRegion(siege.getAttackRegion(), siegeCraft.getW(), siegeCraft)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("You must be piloting a craft in the siege region!"));
             return true;
         }
@@ -263,12 +260,11 @@ public class SiegeCommand implements TabExecutor {
 
     @Nullable
     private Siege getSiege(Player player, SiegeManager siegeManager) {
-        ApplicableRegionSet regions = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
-        for (ProtectedRegion tRegion : regions.getRegions()) {
-            for (Siege tempSiege : siegeManager.getSieges()) {
-                if (tRegion.getId().equalsIgnoreCase(tempSiege.getAttackRegion())) {
-                    return tempSiege;
-                }
+        Set<String> regions = MovecraftWorldGuard.getInstance().getWGUtils().getRegions(player.getLocation());
+        for(String region : regions) {
+            for(Siege siege : siegeManager.getSieges()) {
+                if(siege.getAttackRegion().equalsIgnoreCase(region))
+                    return siege;
             }
         }
         return null;
@@ -277,9 +273,11 @@ public class SiegeCommand implements TabExecutor {
     private long calcSiegeCost(Siege siege, SiegeManager siegeManager, Player player) {
         long cost = siege.getCost();
         for (Siege tempSiege : siegeManager.getSieges()) {
-            ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getRegion(tempSiege.getCaptureRegion());
-            assert tRegion != null;
-            if (tempSiege.isDoubleCostPerOwnedSiegeRegion() && tRegion.getOwners().contains(player.getUniqueId()))
+            Set<UUID> regionOwners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(tempSiege.getCaptureRegion(), player.getWorld());
+            if(regionOwners == null)
+                continue;
+
+            if (tempSiege.isDoubleCostPerOwnedSiegeRegion() && regionOwners.contains(player.getUniqueId()))
                 cost *= 2;
         }
         return cost;

@@ -85,11 +85,11 @@ public class AssaultInfoCommand implements CommandExecutor {
                 break;
             }
         }
-        if (!AssaultUtils.areDefendersOnline(assaultRegion)) {
+        if (!AssaultUtils.areDefendersOnline(assaultRegion, player.getWorld())) {
             canBeAssaulted = false;
             lines.add("- "+I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable - Insufficient Defenders"));
         }
-        if (assaultRegion.isMember(lp)) {
+        if (AssaultUtils.isMember(assaultRegion, player.getWorld(), player)) {
             lines.add("- "+I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable - You Are Member"));
             canBeAssaulted = false;
         }

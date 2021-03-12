@@ -1,8 +1,7 @@
 package net.countercraft.movecraft.warfare.commands;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.assault.AssaultBeginTask;
 import net.countercraft.movecraft.warfare.events.AssaultPreStartEvent;
@@ -11,9 +10,11 @@ import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,13 +44,14 @@ public class AssaultCommand implements CommandExecutor {
         }
 
         Player player = (Player) commandSender;
+        World w = player.getWorld();
+        String regionName = args[0];
         if (!player.hasPermission("movecraft.assault")) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
             return true;
         }
 
-        ProtectedRegion region = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getRegion(args[0]);
-        if (region == null) {
+        if (!MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, w)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Region Not Found"));
             return true;
         }
@@ -57,36 +59,36 @@ public class AssaultCommand implements CommandExecutor {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Region Owned"));
             return true;
         }
-        if (!AssaultUtils.canAssault(region) || !AssaultUtils.areDefendersOnline(region) || AssaultUtils.isMember(player, region)) {
+        if (!AssaultUtils.canAssault(regionName, w) || !AssaultUtils.areDefendersOnline(regionName, w) || AssaultUtils.isMember(regionName, w, player)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Cannot Assault"));
             return true;
         }
 
         OfflinePlayer offP = Bukkit.getOfflinePlayer(player.getUniqueId());
-        if (MovecraftRepair.getInstance().getEconomy().getBalance(offP) < AssaultUtils.getCostToAssault(region)) {
+        if (MovecraftRepair.getInstance().getEconomy().getBalance(offP) < AssaultUtils.getCostToAssault(regionName, w)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Insufficient Funds"));
             return true;
         }
 
 
 //			if(region.getType() instanceof ProtectedCuboidRegion) { // Originally I wasn't going to do non-cubes, but we'll try it and see how it goes. In theory it may repair more than it should but... meh...
-        Vector min = new Vector(region.getMinimumPoint().getBlockX(), region.getMinimumPoint().getBlockY(), region.getMinimumPoint().getBlockZ());
-        Vector max = new Vector(region.getMaximumPoint().getBlockX(), region.getMaximumPoint().getBlockY(), region.getMaximumPoint().getBlockZ());
+        MovecraftLocation min = MovecraftWorldGuard.getInstance().getWGUtils().getMinLocation(regionName, w);
+        MovecraftLocation max = MovecraftWorldGuard.getInstance().getWGUtils().getMaxLocation(regionName, w);
 
-        if (max.subtract(min).getBlockX() > 256) {
-            if (min.getBlockX() < player.getLocation().getBlockX() - 128) {
-                min = min.setX(player.getLocation().getBlockX() - 128);
+        if (max.subtract(min).getX() > 256) {
+            if (min.getX() < player.getLocation().getBlockX() - 128) {
+                min = new MovecraftLocation(player.getLocation().getBlockX() - 128, min.getY(), min.getZ());
             }
-            if (max.getBlockX() > player.getLocation().getBlockX() + 128) {
-                max = max.setX(player.getLocation().getBlockX() + 128);
+            if (max.getX() > player.getLocation().getBlockX() + 128) {
+                min = new MovecraftLocation(player.getLocation().getBlockX() + 128, min.getY(), min.getZ());
             }
         }
-        if (max.subtract(min).getBlockZ() > 256) {
-            if (min.getBlockZ() < player.getLocation().getBlockZ() - 128) {
-                min = min.setZ(player.getLocation().getBlockZ() - 128);
+        if (max.subtract(min).getZ() > 256) {
+            if (min.getZ() < player.getLocation().getBlockZ() - 128) {
+                min = new MovecraftLocation(min.getX(), min.getY(), player.getLocation().getBlockZ() - 128);
             }
-            if (max.getBlockZ() > player.getLocation().getBlockZ() + 128) {
-                max = max.setZ(player.getLocation().getBlockZ() + 128);
+            if (max.getZ() > player.getLocation().getBlockZ() + 128) {
+                min = new MovecraftLocation(min.getX(), min.getY(), player.getLocation().getBlockZ() + 128);
             }
         }
 //			} else {
@@ -94,9 +96,9 @@ public class AssaultCommand implements CommandExecutor {
 //				return true;
 //			}
 
-        final Long taskMaxDamages = (long) AssaultUtils.getMaxDamages(region);
+        final Long taskMaxDamages = (long) AssaultUtils.getMaxDamages(regionName, w);
 
-        Assault assault = new Assault(region, player, player.getWorld(), System.currentTimeMillis()+(Config.AssaultDelay * 1000L), taskMaxDamages, min, max);
+        Assault assault = new Assault(regionName, player, w, System.currentTimeMillis()+(Config.AssaultDelay * 1000L), taskMaxDamages, min, max);
 
         AssaultPreStartEvent assaultPreStartEvent = new AssaultPreStartEvent(assault);
         Bukkit.getPluginManager().callEvent(assaultPreStartEvent);
@@ -108,7 +110,7 @@ public class AssaultCommand implements CommandExecutor {
 
         WarfareRepair.getInstance().saveRegionRepairState(player.getWorld(), assault);
 
-        MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(region));
+        MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(regionName, w));
 
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon")
                 , player.getDisplayName(), args[0], Config.AssaultDelay / 60));

@@ -1,11 +1,9 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -47,6 +45,6 @@ public class AssaultBeginTask extends BukkitRunnable {
         }
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
-        assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
+        MovecraftWorldGuard.getInstance().getWGUtils().setTNTAllow(assault.getRegionName(), assault.getWorld());
     }
 }

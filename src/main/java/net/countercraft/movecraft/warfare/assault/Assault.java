@@ -1,9 +1,9 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -23,18 +23,18 @@ public class Assault {
         public static final int FAILED = -1;
     }
 
-    private final @NotNull ProtectedRegion region;
+    private final String regionName;
     private final UUID starterUUID;
     private final long startTime;
     private long damages;
     private final long maxDamages;
     private final World world;
-    private final Vector minPos, maxPos;
+    private final MovecraftLocation minPos, maxPos;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final AtomicInteger savedCorrectly = new AtomicInteger(SavedState.UNSAVED);
 
-    public Assault(@NotNull ProtectedRegion region, Player starter, World world, long startTime, long maxDamages, Vector minPos, Vector maxPos) {
-        this.region = region;
+    public Assault(String regionName, Player starter, World world, long startTime, long maxDamages, MovecraftLocation minPos, MovecraftLocation maxPos) {
+        this.regionName = regionName;
         starterUUID = starter.getUniqueId();
         this.world = world;
         this.startTime = startTime;
@@ -43,21 +43,16 @@ public class Assault {
         this.maxPos = maxPos;
     }
 
-    public Vector getMaxPos() {
+    public MovecraftLocation getMaxPos() {
         return maxPos;
     }
 
-    public Vector getMinPos() {
+    public MovecraftLocation getMinPos() {
         return minPos;
     }
 
     public World getWorld() {
         return world;
-    }
-
-    @NotNull
-    public ProtectedRegion getRegion() {
-        return region;
     }
 
     public long getStartTime() {
@@ -82,7 +77,7 @@ public class Assault {
 
 
     public String getRegionName() {
-        return region.getId();
+        return regionName;
     }
 
     public AtomicBoolean getRunning() {
@@ -92,8 +87,8 @@ public class Assault {
 
     public boolean makeBeacon() {
         //first, find a position for the repair beacon
-        int beaconX = minPos.getBlockX();
-        int beaconZ = minPos.getBlockZ();
+        int beaconX = minPos.getX();
+        int beaconZ = minPos.getZ();
         int beaconY;
         for(beaconY = 255; beaconY > 0; beaconY--) {
             if(world.getBlockAt(beaconX, beaconY, beaconZ).getType().isOccluding()) {
@@ -148,7 +143,7 @@ public class Assault {
         s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());
         s.setLine(2, I18nSupport.getInternationalisedString("Damages") + ":" + getMaxDamages());
-        s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":" + AssaultUtils.getRegionOwnerList(region));
+        s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":" + MovecraftWorldGuard.getInstance().getWGUtils().getRegionOwnerList(regionName, world));
         s.update();
         return true;
     }

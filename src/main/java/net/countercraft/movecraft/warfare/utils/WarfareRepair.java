@@ -1,19 +1,17 @@
 package net.countercraft.movecraft.warfare.utils;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import org.bukkit.Bukkit;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.function.Predicate;
@@ -32,9 +30,9 @@ public class WarfareRepair {
     }
 
     public void saveRegionRepairState(World world, Assault assault) {
-        File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + assault.getRegion().getId().replaceAll("´\\s+", "_"));
+        File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + assault.getRegionName().replaceAll("´\\s+", "_"));
 
-        Queue<Chunk> chunks = getChunksInRegion(assault.getRegion(), world);
+        Queue<Chunk> chunks = getChunksInRegion(assault.getRegionName(), world);
 
         ChunkSaveTask saveTask = new ChunkSaveTask(assault, chunks, saveDirectory);
         saveTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkSavePeriod);
@@ -44,27 +42,23 @@ public class WarfareRepair {
         if (world == null || regionName == null)
             return false;
 
-        ProtectedRegion region = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(world).getRegion(regionName);
-        if(region == null)
+        if(!MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, world))
             return false;
 
         File saveDirectory = new File(plugin.getDataFolder(), "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
 
-        Queue<Chunk> chunks = getChunksInRegion(region, world);
-        Predicate<MovecraftLocation> regionTester = new IsInRegion(region);
+        Queue<Chunk> chunks = getChunksInRegion(regionName, world);
+        Predicate<MovecraftLocation> regionTester = MovecraftWorldGuard.getInstance().getWGUtils().getIsInRegion(regionName, world);
+        if(regionTester == null)
+            return false;
 
-        ChunkRepairTask repairTask = new ChunkRepairTask(region, chunks, saveDirectory, regionTester, player);
+        ChunkRepairTask repairTask = new ChunkRepairTask(regionName, world, chunks, saveDirectory, regionTester, player);
         repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkRepairPeriod);
         return true;
     }
 
-    private Queue<Chunk> getChunksInRegion(ProtectedRegion region, World world) {
-        Queue<Chunk> chunks = new LinkedList();
-        for(int x = (int) Math.floor(region.getMinimumPoint().getBlockX() / 16.0); x < Math.floor(region.getMaximumPoint().getBlockX() / 16.0) + 1; x++) {
-            for(int z = (int) Math.floor(region.getMinimumPoint().getBlockZ() / 16.0); z < Math.floor(region.getMaximumPoint().getBlockZ() / 16.0) + 1; z++) {
-                chunks.add(world.getChunkAt(x, z));
-            }
-        }
-        return chunks;
+    @Nullable
+    private Queue<Chunk> getChunksInRegion(String regionName, World w) {
+        return MovecraftWorldGuard.getInstance().getWGUtils().getChunksInRegion(regionName, w);
     }
 }

@@ -1,9 +1,5 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -102,25 +98,21 @@ public class AssaultUtils {
         return MovecraftWorldGuard.getInstance().getWGUtils().ownsAssaultableRegion(p);
     }
 
-    public static boolean isMember(Player p, @NotNull ProtectedRegion r) {
-        LocalPlayer lp = Movecraft.getInstance().getWorldGuardPlugin().wrapPlayer(p);
-        return r.isMember(lp) || r.isOwner(lp);
+    public static boolean isMember(String regionName, World w, Player p) {
+        return MovecraftWorldGuard.getInstance().getWGUtils().isMember(regionName, w, p);
     }
 
-    public static boolean canAssault(@NotNull ProtectedRegion region) {
-        // a region can only be assaulted if it disables TNT, this is to prevent child regions or sub regions from being assaulted
-        // regions with no owners can not be assaulted
-        if (region.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || region.getOwners().size() == 0)
+    public static boolean canAssault(String regionName, World w) {
+        if(!MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, w))
             return false;
 
-        if(Config.SiegeEnable) {
-            for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-                // siegable regions can not be assaulted
-                if (region.getId().equalsIgnoreCase(siege.getAttackRegion()) || region.getId().equalsIgnoreCase(siege.getCaptureRegion())) {
-                    return false;
-                }
-            }
-        }
+        // a region can only be assaulted if it disables TNT, this is to prevent child regions or sub regions from being assaulted
+        if(!MovecraftWorldGuard.getInstance().getWGUtils().isTNTDenied(regionName, w))
+            return false;
+
+        // regions with no owners can not be assaulted
+        if (MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w).size() == 0)
+            return false;
 
         // TODO: This is 100% broken, instead we need to use a file to store the last assault data.
         /*{
@@ -139,37 +131,15 @@ public class AssaultUtils {
                 }
             }
         }*/
-        return true;
-    }
 
-    @NotNull
-    public static String getRegionOwnerList(ProtectedRegion tRegion) {
-        StringBuilder output = new StringBuilder();
-        if (tRegion == null)
-            return "";
-        boolean first = true;
-        if (tRegion.getOwners().getUniqueIds().size() > 0) {
-            for (UUID uid : tRegion.getOwners().getUniqueIds()) {
-                if (!first)
-                    output.append(",");
-                else
-                    first = false;
-                OfflinePlayer offP = Bukkit.getOfflinePlayer(uid);
-                if (offP.getName() == null)
-                    output.append(uid.toString());
-                else
-                    output.append(offP.getName());
-            }
+        if(!Config.SiegeEnable)
+            return true;
+
+        for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+            // siegable regions can not be assaulted
+            if (regionName.equalsIgnoreCase(siege.getAttackRegion()) || regionName.equalsIgnoreCase(siege.getCaptureRegion()))
+                return false;
         }
-        if (tRegion.getOwners().getPlayers().size() > 0) {
-            for (String player : tRegion.getOwners().getPlayers()) {
-                if (!first)
-                    output.append(",");
-                else
-                    first = false;
-                output.append(player);
-            }
-        }
-        return output.toString();
+        return true;
     }
 }

@@ -1,9 +1,7 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,9 +30,9 @@ public class AssaultManager extends BukkitRunnable {
     }
 
     @Nullable
-    public Assault getAssault(@NotNull ProtectedRegion region) {
+    public Assault getAssault(String regionName) {
         for(Assault assault : assaults) {
-            if(assault.getRegion().equals(region))
+            if(assault.getRegionName().equalsIgnoreCase(regionName))
                 return assault;
         }
         return null;

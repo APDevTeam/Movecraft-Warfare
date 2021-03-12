@@ -1,13 +1,12 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -38,12 +37,12 @@ public class AssaultTask extends BukkitRunnable {
         assault.getRunning().set(false);
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"), assault.getRegionName()));
         Bukkit.getPluginManager().callEvent(new AssaultWinEvent(assault));
-        assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
+        MovecraftWorldGuard.getInstance().getWGUtils().setTNTDeny(assault.getRegionName(), assault.getWorld());
 
         if(!assault.makeBeacon())
             Bukkit.getServer().broadcastMessage(ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"), this));
 
-        assault.getRegion().getOwners().clear();
+        MovecraftWorldGuard.getInstance().getWGUtils().clearOwners(assault.getRegionName(), assault.getWorld());
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().remove(assault);
     }
 
@@ -52,7 +51,7 @@ public class AssaultTask extends BukkitRunnable {
         assault.getRunning().set(false);
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName()));
         Bukkit.getPluginManager().callEvent(new AssaultLoseEvent(assault));
-        assault.getRegion().setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
+        MovecraftWorldGuard.getInstance().getWGUtils().setTNTDeny(assault.getRegionName(), assault.getWorld());
 
         // repair the damages that have occurred so far
         if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null))

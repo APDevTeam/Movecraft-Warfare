@@ -1,11 +1,10 @@
 package net.countercraft.movecraft.warfare.sign;
 
-import com.sk89q.worldguard.domains.DefaultDomain;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,6 +16,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class RegionDamagedSign implements Listener {
@@ -38,7 +39,6 @@ public class RegionDamagedSign implements Listener {
             return;
         String regionName = sign.getLine(1).substring(sign.getLine(1).indexOf(":") + 1);
         long damages = Long.parseLong(sign.getLine(2).substring(sign.getLine(2).indexOf(":") + 1));
-        String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
         if (!MovecraftRepair.getInstance().getEconomy().has(event.getPlayer(), damages)) {
             event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Economy - Not Enough Money"));
             return;
@@ -50,25 +50,15 @@ public class RegionDamagedSign implements Listener {
         }
         event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Assault - Repairing Region"));
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(event.getPlayer(), damages);
-        World world = event.getClickedBlock().getWorld();
-        ProtectedRegion aRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(world).getRegion(regionName);
-        DefaultDomain wgOwners = aRegion.getOwners();
-        if(wgOwners == null) {
+
+
+
+        String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
+        HashSet<String> ownerSet = new HashSet<>(Arrays.asList(owners));
+        if(!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
             Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"), regionName));
         }
-        else {
-            for (String ownerName : owners) {
-                if (ownerName.length() > 16) {
-                    wgOwners.addPlayer(UUID.fromString(ownerName));
-                } else {
-                    if (Bukkit.getPlayer(ownerName) != null) { //Cannot add names directly as bug will allow free assaults
-                        wgOwners.addPlayer(Bukkit.getPlayer(ownerName).getUniqueId());
-                    } else {
-                        wgOwners.addPlayer(Bukkit.getOfflinePlayer(ownerName).getUniqueId());
-                    }
-                }
-            }
-        }
+
         //Clear the beacon
         int minX = sign.getX() - 2;
         int minY = sign.getY() - 3;
