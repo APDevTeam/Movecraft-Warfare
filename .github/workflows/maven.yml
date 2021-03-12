@@ -23,6 +23,11 @@ jobs:
       with:
         repository: 'APDevTeam/Movecraft-Repair'
         path: Movecraft-Repair
+    - name: Checkout Movecraft-Combat
+      uses: actions/checkout@v2
+      with:
+        repository: 'TylerS1066/Movecraft-Combat'
+        path: Movecraft-Combat
     - name: Checkout Movecraft-WorldGuard
       uses: actions/checkout@v2
       with:
@@ -69,6 +74,10 @@ jobs:
     # Build Movecraft-Repair
     - name: Build Movecraft-Repair
       run:  mvn -B package -T 1C --file Movecraft-Repair/pom.xml
+
+    # Build Movecraft-Combat
+    - name: Build Movecraft-Combat
+      run:  mvn -B package -T 1C --file Movecraft-Combat/pom.xml
 
     # Build Movecraft-WorldGuard
     - name: Build Movecraft-WorldGuard
