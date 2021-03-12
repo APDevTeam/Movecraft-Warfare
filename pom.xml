@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft.movecraft.warfare</groupId>
     <artifactId>Movecraft-Warfare</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
     <packaging>jar</packaging>
 
     <name>Movecraft-Warfare</name>
@@ -101,25 +101,19 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../Movecraft-Repair/target/Movecraft-Repair.jar</systemPath>
         </dependency>
+        <!--Movecraft-WorldGuard-->
+        <dependency>
+            <groupId>net.countercraft.movecraft.worldguard</groupId>
+            <artifactId>Movecraft-WorldGuard</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../Movecraft-WorldGuard/target/Movecraft-WorldGuard.jar</systemPath>
+        </dependency>
         <!--Annotations-->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations-java5</artifactId>
             <version>RELEASE</version>
-        </dependency>
-        <!--WorldGuard-->
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--WorldEdit-->
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldedit</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
         </dependency>
         <!--VaultAPI-->
         <dependency>

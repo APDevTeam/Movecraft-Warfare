@@ -9,32 +9,35 @@ import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.siege.Siege;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class AssaultUtils {
-    public static boolean areDefendersOnline(ProtectedRegion region) {
+    public static boolean areDefendersOnline(String regionName, World w) {
         int numOnline = 0;
 
-        numOnline += ownersOnline(region);
+        numOnline += ownersOnline(regionName, w);
         if(Config.AssaultRequiredOwnersOnline > 0 && numOnline < Config.AssaultRequiredOwnersOnline) {
             return false;
         }
 
-        numOnline += membersOnline(region);
+        numOnline += membersOnline(regionName, w);
         return numOnline >= Config.AssaultRequiredDefendersOnline;
     }
 
-    private static int ownersOnline(@NotNull ProtectedRegion region) {
+    private static int ownersOnline(String regionName, World w) {
         int numOnline = 0;
-        Set<UUID> owners = region.getOwners().getUniqueIds();
+        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w);
+        if(owners == null)
+            return 0;
+
         for(UUID playerID : owners) {
             if (Bukkit.getPlayer(playerID) != null)
                 numOnline++;
@@ -42,9 +45,12 @@ public class AssaultUtils {
         return numOnline;
     }
 
-    private static int membersOnline(@NotNull ProtectedRegion region) {
+    private static int membersOnline(String regionName, World w) {
         int numOnline = 0;
-        Set<UUID> members = region.getMembers().getUniqueIds();
+        Set<UUID> members = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDMembers(regionName, w);
+        if(members == null)
+            return 0;
+
         for(UUID playerID : members) {
             if (Bukkit.getPlayer(playerID) != null)
                 numOnline++;
@@ -52,22 +58,25 @@ public class AssaultUtils {
         return numOnline;
     }
 
-    public static double getCostToAssault(ProtectedRegion tRegion) {
-        return getAssaultBalance(tRegion) * Config.AssaultCostPercent;
+    public static double getCostToAssault(String regionName, World w) {
+        return getAssaultBalance(regionName, w) * Config.AssaultCostPercent;
     }
 
-    public static double getMaxDamages(ProtectedRegion tRegion) {
-        return getAssaultBalance(tRegion) * Config.AssaultDamagesCapPercent;
+    public static double getMaxDamages(String regionName, World w) {
+        return getAssaultBalance(regionName, w) * Config.AssaultDamagesCapPercent;
     }
 
-    private static double getAssaultBalance(ProtectedRegion tRegion) {
-        return getOwnerBalance(tRegion) + getMemberBalance(tRegion);
+    private static double getAssaultBalance(String regionName, World w) {
+        return getOwnerBalance(regionName, w) + getMemberBalance(regionName, w);
     }
 
-    private static double getOwnerBalance(@NotNull ProtectedRegion tRegion) {
-        HashSet<UUID> players = new HashSet<>(tRegion.getOwners().getUniqueIds());
+    private static double getOwnerBalance(String regionName, World w) {
+        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w);
+        if(owners == null)
+            return 0.0;
+
         double total = 0.0;
-        for (UUID playerID : players) {
+        for (UUID playerID : owners) {
             OfflinePlayer offP = Bukkit.getOfflinePlayer(playerID);
             if (offP.getName() != null)
                 total += Math.min(MovecraftRepair.getInstance().getEconomy().getBalance(offP), Config.AssaultMaxBalance);
@@ -75,10 +84,13 @@ public class AssaultUtils {
         return total * (Config.AssaultOwnerWeightPercent / 100.0);
     }
 
-    private static double getMemberBalance(@NotNull ProtectedRegion tRegion) {
-        HashSet<UUID> players = new HashSet<>(tRegion.getMembers().getUniqueIds());
+    private static double getMemberBalance(String regionName, World w) {
+        Set<UUID> members = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDMembers(regionName, w);
+        if(members == null)
+            return 0.0;
+
         double total = 0.0;
-        for (UUID playerID : players) {
+        for (UUID playerID : members) {
             OfflinePlayer offP = Bukkit.getOfflinePlayer(playerID);
             if (offP.getName() != null)
                 total += Math.min(MovecraftRepair.getInstance().getEconomy().getBalance(offP), Config.AssaultMaxBalance);
@@ -87,14 +99,7 @@ public class AssaultUtils {
     }
 
     public static boolean ownsRegions(Player p) {
-        LocalPlayer lp = Movecraft.getInstance().getWorldGuardPlugin().wrapPlayer(p);
-        Map<String, ProtectedRegion> allRegions = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(p.getWorld()).getRegions();
-        for (ProtectedRegion iRegion : allRegions.values()) {
-            if (iRegion.isOwner(lp) && iRegion.getFlag(DefaultFlag.TNT) == StateFlag.State.DENY) {
-                return true;
-            }
-        }
-        return false;
+        return MovecraftWorldGuard.getInstance().getWGUtils().ownsAssaultableRegion(p);
     }
 
     public static boolean isMember(Player p, @NotNull ProtectedRegion r) {

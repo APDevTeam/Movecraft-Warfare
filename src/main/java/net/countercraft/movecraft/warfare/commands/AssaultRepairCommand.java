@@ -1,10 +1,9 @@
 package net.countercraft.movecraft.warfare.commands;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,14 +38,13 @@ public class AssaultRepairCommand implements CommandExecutor {
             return true;
         }
 
-        ProtectedRegion region = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getRegion(args[0]);
-        if (region == null) {
+        if(MovecraftWorldGuard.getInstance().getWGUtils().regionExists(args[0], player.getWorld())) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Region Not Found"));
             return true;
         }
 
-        if (!WarfareRepair.getInstance().repairRegionRepairState(player.getWorld(), region.getId(), player))
-            Bukkit.getServer().broadcastMessage(ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), region.getId().toUpperCase()));
+        if (!WarfareRepair.getInstance().repairRegionRepairState(player.getWorld(), args[0], player))
+            Bukkit.getServer().broadcastMessage(ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), args[0].toUpperCase()));
 
         return true;
     }

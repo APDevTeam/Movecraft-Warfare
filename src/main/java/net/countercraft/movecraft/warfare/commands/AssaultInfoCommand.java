@@ -1,24 +1,20 @@
 package net.countercraft.movecraft.warfare.commands;
 
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.utils.WorldguardUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.siege.Siege;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -45,40 +41,22 @@ public class AssaultInfoCommand implements CommandExecutor {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
             return true;
         }
-        ApplicableRegionSet regions = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getApplicableRegions(player.getLocation());
-        if (regions.size() == 0) {
+
+        if (MovecraftWorldGuard.getInstance().getWGUtils().isInRegion(player.getLocation())) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("AssaultInfo - No Region Found"));
             return true;
         }
-        LocalPlayer lp = Movecraft.getInstance().getWorldGuardPlugin().wrapPlayer(player);
-        Map<String, ProtectedRegion> allRegions = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(player.getWorld()).getRegions();
-        boolean foundOwnedRegion = false;
-        for (ProtectedRegion iRegion : allRegions.values()) {
-            if (iRegion.isOwner(lp) && iRegion.getFlag(DefaultFlag.TNT) == StateFlag.State.DENY) {
-                foundOwnedRegion = true;
-            }
-        }
-        if (!foundOwnedRegion) {
+
+        if (!AssaultUtils.ownsRegions(player)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Regions Owned"));
             return true;
         }
 
-        ProtectedRegion assaultRegion = null;
-        Search:
-        for (ProtectedRegion tRegion : regions.getRegions()) {
-            // a region can only be assaulted if it disables TNT, this is to prevent child regions or sub regions from being assaulted
-            // regions with no owners can not be assaulted
-            if (tRegion.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || tRegion.getOwners().size() == 0)
-                continue;
-            if(Config.SiegeEnable) {
-                for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-                    // siegable regions can not be assaulted
-                    if (tRegion.getId().equalsIgnoreCase(siege.getAttackRegion()) || tRegion.getId().equalsIgnoreCase(siege.getCaptureRegion()))
-                        continue Search;
-                }
-            }
-            assaultRegion = tRegion;
+        HashSet<String> siegeRegions = new HashSet<>();
+        for(Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
+            siegeRegions.add(siege.getName());
         }
+        String assaultRegion = MovecraftWorldGuard.getInstance().getWGUtils().getAssaultableRegion(player.getLocation(), siegeRegions);
         if (assaultRegion == null) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("AssaultInfo - No Region Found"));
             return true;
@@ -87,21 +65,21 @@ public class AssaultInfoCommand implements CommandExecutor {
         boolean canBeAssaulted = true;
         List<String> lines = new ArrayList<>();
         String output = I18nSupport.getInternationalisedString("AssaultInfo - Name") + ": ";
-        output += assaultRegion.getId();
+        output += assaultRegion;
         lines.add(output);
-        output = I18nSupport.getInternationalisedString("AssaultInfo - Owner")+": " ;
-        output += WorldguardUtils.getRegionOwnerList(assaultRegion);
+        output = I18nSupport.getInternationalisedString("AssaultInfo - Owner") + ": " ;
+        output += MovecraftWorldGuard.getInstance().getWGUtils().getRegionOwnerList(assaultRegion, player.getWorld());
         lines.add(output);
-        output = I18nSupport.getInternationalisedString("AssaultInfo - Cap")+": ";
-        double maxDamage = AssaultUtils.getMaxDamages(assaultRegion);
+        output = I18nSupport.getInternationalisedString("AssaultInfo - Cap") + ": ";
+        double maxDamage = AssaultUtils.getMaxDamages(assaultRegion, player.getWorld());
         output += String.format("%.2f", maxDamage);
         lines.add(output);
-        output = I18nSupport.getInternationalisedString("AssaultInfo - Cost")+": ";
-        double cost = AssaultUtils.getCostToAssault(assaultRegion);
+        output = I18nSupport.getInternationalisedString("AssaultInfo - Cost") + ": ";
+        double cost = AssaultUtils.getCostToAssault(assaultRegion, player.getWorld());
         output += String.format("%.2f", cost);
         lines.add(output);
         for (Assault assault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()) {
-            if (assault.getRegionName().equals(assaultRegion.getId()) && System.currentTimeMillis() - assault.getStartTime() < Config.AssaultCooldownHours * (60 * 60 * 1000)) {
+            if (assault.getRegionName().equals(assaultRegion) && System.currentTimeMillis() - assault.getStartTime() < Config.AssaultCooldownHours * (60 * 60 * 1000)) {
                 canBeAssaulted = false;
                 lines.add("- "+I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable Damaged"));
                 break;

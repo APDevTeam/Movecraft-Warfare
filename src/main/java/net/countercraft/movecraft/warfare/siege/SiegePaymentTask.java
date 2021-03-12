@@ -1,9 +1,9 @@
 package net.countercraft.movecraft.warfare.siege;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -27,33 +27,32 @@ public class SiegePaymentTask extends SiegeTask {
             int hour = rightNow.get(Calendar.HOUR_OF_DAY);
             int minute = rightNow.get(Calendar.MINUTE);
             if ((hour == 1) && (minute == 1)) {
-                for (World tW : Movecraft.getInstance().getServer().getWorlds()) {
-                    ProtectedRegion tRegion = Movecraft.getInstance().getWorldGuardPlugin().getRegionManager(tW).getRegion(siege.getCaptureRegion());
-
-                    if (tRegion != null) {
-                        payRegion(tRegion);
-                        return;
-                    }
-                }
+                payRegion(siege.getCaptureRegion());
             }
         }
     }
 
-    private void payRegion(ProtectedRegion region) {
+    private void payRegion(String regionName) {
         HashSet<OfflinePlayer> owners = new HashSet<>();
 
-        for(String name : region.getOwners().getPlayers()) {
-            owners.add(Movecraft.getInstance().getServer().getOfflinePlayer(name));
+        Set<UUID> ownerSet = null;
+        for(World w : MovecraftWarfare.getInstance().getServer().getWorlds()) {
+            ownerSet = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w);
+            if (ownerSet != null)
+                break;
         }
-        for(UUID uuid : region.getOwners().getUniqueIds()) {
-            owners.add(Movecraft.getInstance().getServer().getOfflinePlayer(uuid));
+        if(ownerSet == null)
+            return;
+
+        for(UUID uuid : ownerSet) {
+            owners.add(MovecraftWarfare.getInstance().getServer().getOfflinePlayer(uuid));
         }
 
         int share = siege.getDailyIncome() / owners.size();
 
         for (OfflinePlayer player : owners) {
             MovecraftRepair.getInstance().getEconomy().depositPlayer(player, share);
-            Movecraft.getInstance().getLogger().log(Level.INFO, String.format(I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"), player.getName(), share, siege.getName()));
+            MovecraftWarfare.getInstance().getLogger().log(Level.INFO, String.format(I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"), player.getName(), share, siege.getName()));
         }
         siege.setLastPayout(System.currentTimeMillis());
     }
