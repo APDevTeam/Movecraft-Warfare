@@ -1,4 +1,5 @@
 # Movecraft-Warfare Addon
+![Warfare](https://github.com/APDevTeam/Movecraft-Warfare/actions/workflows/maven.yml/badge.svg)
 
 Home of the code for the following features:
  - Siege
