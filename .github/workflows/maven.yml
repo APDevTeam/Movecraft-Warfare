@@ -15,9 +15,8 @@ jobs:
     - name: Checkout Movecraft
       uses: actions/checkout@v2
       with:
-        repository: 'TylerS1066/Movecraft'
+        repository: 'APDevTeam/Movecraft'
         path: Movecraft
-        ref: 'wg2'
     - name: Checkout Movecraft-Repair
       uses: actions/checkout@v2
       with:
