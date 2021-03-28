@@ -30,7 +30,7 @@ public class SiegeProgressTask extends SiegeTask {
             return;
         }
         siege.setJustCommenced(false);
-        @NotNull Player siegeLeader = Movecraft.getInstance().getServer().getPlayer(siege.getPlayerUUID());
+        @Nullable Player siegeLeader = Movecraft.getInstance().getServer().getPlayer(siege.getPlayerUUID());
         @Nullable Craft siegeCraft = CraftManager.getInstance().getCraftByPlayer(siegeLeader);
 
         if(timeLeft > 10) {
@@ -47,7 +47,7 @@ public class SiegeProgressTask extends SiegeTask {
             else {
                 Bukkit.getServer().broadcastMessage(String.format(
                         I18nSupport.getInternationalisedString("Siege - Flagship Not In Box"),
-                        siege.getName(), siegeLeader.getDisplayName())
+                        siege.getName(), getSiegeLeaderName(siegeLeader))
                         + formatMinutes(timeLeft));
             }
         }
@@ -61,9 +61,9 @@ public class SiegeProgressTask extends SiegeTask {
         }
     }
 
-    private void endSiege(@Nullable Craft siegeCraft, @NotNull Player siegeLeader) {
-        if (leaderPilotingShip(siegeCraft)) {
-            if(MovecraftWorldGuard.getInstance().getWGUtils().craftFullyInRegion(siege.getAttackRegion(), siegeLeader.getWorld(), siegeCraft)) {
+    private void endSiege(@Nullable Craft siegeCraft, @Nullable Player siegeLeader) {
+        if (leaderPilotingShip(siegeCraft) && siegeLeader != null) {
+            if(MovecraftWorldGuard.getInstance().getWGUtils().craftFullyInRegion(siege.getAttackRegion(), siegeCraft.getW(), siegeCraft)) {
                 Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Success"),
                         siege.getName(), siegeLeader.getDisplayName()));
                 winSiege(siegeLeader);
@@ -81,24 +81,25 @@ public class SiegeProgressTask extends SiegeTask {
     private void winSiege(@NotNull Player siegeLeader) {
         Bukkit.getPluginManager().callEvent(new SiegeWinEvent(siege));
         MovecraftWorldGuard.getInstance().getWGUtils().clearAndSetOwnership(siege.getCaptureRegion(), siegeLeader.getWorld(), siege.getPlayerUUID());
-        processCommands(siegeLeader, true);
+        processCommands(siegeLeader.getName(), true);
     }
 
-    private void failSiege(@NotNull Player siegeLeader) {
+    private void failSiege(@Nullable Player siegeLeader) {
         Bukkit.getPluginManager().callEvent(new SiegeLoseEvent(siege));
+        String name = getSiegeLeaderName(siegeLeader);
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
-                siege.getName(), siegeLeader.getDisplayName()));
+                siege.getName(), name));
 
-        processCommands(siegeLeader, false);
+        processCommands(name, false);
     }
 
-    private void processCommands(@NotNull Player siegeLeader, boolean win) {
+    private void processCommands(@NotNull String siegeLeader, boolean win) {
         List<String> commands = win ? siege.getCommandsOnWin() : siege.getCommandsOnLose();
         for (String command : commands) {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command
                     .replaceAll("%r", siege.getCaptureRegion())
                     .replaceAll("%c", "" + siege.getCost())
-                    .replaceAll("%l", siegeLeader.getName()));
+                    .replaceAll("%l", siegeLeader));
         }
     }
 
@@ -107,5 +108,19 @@ public class SiegeProgressTask extends SiegeTask {
             return false;
         else
             return siege.getCraftsToWin().contains(siegeCraft.getType().getCraftName());
+    }
+
+    private String getSiegeLeaderName(@Nullable Player siegeLeader) {
+        String name;
+        if(siegeLeader == null) {
+            name = Bukkit.getOfflinePlayer(siege.getPlayerUUID()).getName();
+
+            if(name == null)
+                name = "null"; // Note, there's not a better way to deal with this sadly
+        }
+        else
+            name = siegeLeader.getDisplayName();
+
+        return name;
     }
 }
