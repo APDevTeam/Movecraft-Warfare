@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft.movecraft.warfare</groupId>
     <artifactId>Movecraft-Warfare</artifactId>
-    <version>0.5.2</version>
+    <version>0.5.3</version>
     <packaging>jar</packaging>
 
     <name>Movecraft-Warfare</name>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.10.2-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--Movecraft-->

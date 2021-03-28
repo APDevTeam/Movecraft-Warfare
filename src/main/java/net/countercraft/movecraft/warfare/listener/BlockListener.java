@@ -16,51 +16,77 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 public class BlockListener implements Listener {
-    final int[] fragileBlocks = new int[]{26, 34, 50, 55, 63, 64, 65, 68, 69, 70, 71, 72, 75, 76, 77, 93, 94, 96, 131, 132, 143, 147, 148, 149, 150, 151, 171, 323, 324, 330, 331, 356, 404};
+    private final HashSet<Material> fragileBlocks;
     private long lastDamagesUpdate = 0;
+
+    public BlockListener() {
+        fragileBlocks = new HashSet<>();
+        for(Material m : Material.values()) {
+            String name = m.name();
+            if(name.contains("SIGN") ||
+                    name.contains("DOOR") ||
+                    name.contains("PRESSURE_PLATE") ||
+                    name.contains("CARPET") ||
+                    name.contains("BED") ||
+                    name.contains("BUTTON") ||
+                    name.contains("TORCH") ||
+                    name.contains("TRIPWIRE") ||
+                    name.contains("PISTON_HEAD") ||
+                    name.contains("LEVER") ||
+                    name.contains("LADDER") ||
+                    name.contains("REDSTONE") ||
+                    name.contains("REPEATER") ||
+                    name.contains("COMPARATOR") ||
+                    name.contains("DAYLIGHT_DETECTOR")) {
+                fragileBlocks.add(m);
+            }
+        }
+
+        fragileBlocks.remove(Material.REDSTONE_BLOCK);
+    }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void explodeEvent(EntityExplodeEvent e) {
         List<Assault> assaults = MovecraftWarfare.getInstance().getAssaultManager() != null ? MovecraftWarfare.getInstance().getAssaultManager().getAssaults() : null;
-        if (assaults == null || assaults.size() == 0) {
+        if (assaults == null || assaults.size() == 0)
             return;
-        }
 
         for (final Assault assault : assaults) {
+            if(e.getLocation().getWorld() != assault.getWorld())
+                continue;
+
             Iterator<Block> i = e.blockList().iterator();
             while (i.hasNext()) {
                 Block b = i.next();
-                if (b.getWorld() != assault.getWorld())
-                    continue;
-
+                // first see if it is outside the region area
                 Location l = b.getLocation();
                 if (!MovecraftWorldGuard.getInstance().getWGUtils().regionContains(assault.getRegionName(), l))
                     continue;
 
-                // first see if it is outside the destroyable area
                 MovecraftLocation min = assault.getMinPos();
                 MovecraftLocation max = assault.getMaxPos();
 
+                // remove it outside assault area
                 if (l.getBlockX() < min.getX() ||
                         l.getBlockX() > max.getX() ||
                         l.getBlockZ() < min.getZ() ||
-                        l.getBlockZ() > max.getZ() ||
-                        !Config.AssaultDestroyableBlocks.contains(b.getType()) ||
-                        Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.SOUTH).getTypeId()) >= 0 ||
-                        Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.DOWN).getTypeId()) >= 0 ||
-                        Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.UP).getTypeId()) >= 0 ||
-                        Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.EAST).getTypeId()) >= 0 ||
-                        Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.WEST).getTypeId()) >= 0 ||
-                        Arrays.binarySearch(fragileBlocks, b.getRelative(BlockFace.NORTH).getTypeId()) >= 0) {
+                        l.getBlockZ() > max.getZ())
                     i.remove();
-                }
 
+                // remove if not destroyable
+                if(!Config.AssaultDestroyableBlocks.contains(b.getType()))
+                    i.remove();
+
+                // remove if fragile
+                if(isFragile(b))
+                    i.remove();
 
                 // whether or not you actually destroyed the block, add to damages
                 long damages = assault.getDamages() + Config.AssaultDamagesPerBlock;
@@ -87,5 +113,25 @@ public class BlockListener implements Listener {
                 lastDamagesUpdate = System.currentTimeMillis();
             }
         }
+    }
+
+    private boolean isFragile(@NotNull Block base) {
+        for(Block b : getNearbyBlocks(base)) {
+            if(fragileBlocks.contains(b.getType()))
+                return true;
+        }
+        return false;
+    }
+
+    @NotNull
+    private HashSet<Block> getNearbyBlocks(@NotNull Block b) {
+        HashSet<Block> blocks = new HashSet<>();
+        blocks.add(b.getRelative(BlockFace.SOUTH));
+        blocks.add(b.getRelative(BlockFace.DOWN));
+        blocks.add(b.getRelative(BlockFace.UP));
+        blocks.add(b.getRelative(BlockFace.EAST));
+        blocks.add(b.getRelative(BlockFace.WEST));
+        blocks.add(b.getRelative(BlockFace.NORTH));
+        return blocks;
     }
 }
