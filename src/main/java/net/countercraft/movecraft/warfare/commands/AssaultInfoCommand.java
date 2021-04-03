@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import static net.countercraft.movecraft.utils.ChatUtils.MOVECRAFT_COMMAND_PREFI
 
 public class AssaultInfoCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, Command command, @NotNull String s, @NotNull String[] args) {
         if (!command.getName().equalsIgnoreCase("assaultinfo")) {
             return false;
         }
@@ -54,7 +55,8 @@ public class AssaultInfoCommand implements CommandExecutor {
 
         HashSet<String> siegeRegions = new HashSet<>();
         for(Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-            siegeRegions.add(siege.getName());
+            siegeRegions.add(siege.getCaptureRegion().toUpperCase());
+            siegeRegions.add(siege.getAttackRegion().toUpperCase());
         }
         String assaultRegion = MovecraftWorldGuard.getInstance().getWGUtils().getAssaultableRegion(player.getLocation(), siegeRegions);
         if (assaultRegion == null) {

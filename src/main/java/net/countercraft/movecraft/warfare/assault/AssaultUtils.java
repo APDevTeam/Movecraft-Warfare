@@ -1,6 +1,5 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
@@ -10,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.UUID;
@@ -111,7 +109,8 @@ public class AssaultUtils {
             return false;
 
         // regions with no owners can not be assaulted
-        if (MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w).size() == 0)
+        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w);
+        if (owners == null || owners.size() == 0)
             return false;
 
         // TODO: This is 100% broken, instead we need to use a file to store the last assault data.
