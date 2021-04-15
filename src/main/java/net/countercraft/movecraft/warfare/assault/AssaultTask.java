@@ -10,7 +10,7 @@ import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static net.countercraft.movecraft.utils.ChatUtils.ERROR_PREFIX;
+import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
 public class AssaultTask extends BukkitRunnable {
     private final Assault assault;

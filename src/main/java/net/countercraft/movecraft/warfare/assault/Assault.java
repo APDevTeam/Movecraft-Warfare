@@ -138,7 +138,7 @@ public class Assault {
         world.getBlockAt(beaconX + 2, beaconY + 2, beaconZ + 2).setType(Material.BEACON);
         world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 2).setType(Material.BEDROCK);
         // finally the sign on the beacon
-        world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).setType(Material.WALL_SIGN);
+        world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).setType(Material.BIRCH_WALL_SIGN);
         Sign s = (Sign) world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).getState();
         s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());

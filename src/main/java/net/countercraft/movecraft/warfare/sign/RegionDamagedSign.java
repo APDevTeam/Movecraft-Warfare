@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class RegionDamagedSign implements Listener {
     public static final String HEADER = ChatColor.RED + "REGION DAMAGED!";
@@ -27,7 +26,7 @@ public class RegionDamagedSign implements Listener {
     public void onSignRightClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.LEFT_CLICK_BLOCK))
             return;
-        if (event.getClickedBlock().getType() != Material.WALL_SIGN)
+        if (event.getClickedBlock() == null || event.getClickedBlock().getType().name().contains("WALL_SIGN"))
             return;
         Sign sign = (Sign) event.getClickedBlock().getState();
         if (!sign.getLine(0).equals(HEADER))

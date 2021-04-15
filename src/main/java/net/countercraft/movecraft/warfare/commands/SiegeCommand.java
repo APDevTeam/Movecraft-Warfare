@@ -6,7 +6,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.utils.TopicPaginator;
+import net.countercraft.movecraft.util.TopicPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
@@ -27,7 +27,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.logging.Level;
 
-import static net.countercraft.movecraft.utils.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
+import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
 
 public class SiegeCommand implements TabExecutor {
     //TODO: Add tab complete
