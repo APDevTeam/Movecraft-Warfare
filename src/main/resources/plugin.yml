@@ -1,5 +1,5 @@
 name: Movecraft-Warfare
-depend: [Movecraft, Movecraft-Repair, WorldGuard, WorldEdit]
+depend: [Movecraft, Movecraft-Repair, Movecraft-WorldGuard]
 version: ${project.version}
 api-version: 1.13
 description: Movecraft Warfare Addon
