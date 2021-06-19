@@ -1,7 +1,7 @@
 name: Movecraft-Warfare
 depend: [Movecraft, Movecraft-Repair, Movecraft-WorldGuard]
 version: ${project.version}
-api-version: 1.13
+api-version: 1.14
 description: Movecraft Warfare Addon
 authors: [TylerS1066, cccm5, eirik1996, BaccaYarro]
 website: https://github.com/APDevTeam/Movecraft-Warfare

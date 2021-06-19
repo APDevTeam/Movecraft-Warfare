@@ -71,34 +71,15 @@ public class AssaultCommand implements CommandExecutor {
             return true;
         }
 
+        if(!MovecraftWorldGuard.getInstance().getWGUtils().getRegions(player.getLocation()).contains(regionName)) {
+            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Not In Region"));
+            return true;
+        }
 
-//			if(region.getType() instanceof ProtectedCuboidRegion) { // Originally I wasn't going to do non-cubes, but we'll try it and see how it goes. In theory it may repair more than it should but... meh...
         MovecraftLocation min = MovecraftWorldGuard.getInstance().getWGUtils().getMinLocation(regionName, w);
         MovecraftLocation max = MovecraftWorldGuard.getInstance().getWGUtils().getMaxLocation(regionName, w);
 
-        if (max.subtract(min).getX() > 256) {
-            if (min.getX() < player.getLocation().getBlockX() - 128) {
-                min = new MovecraftLocation(player.getLocation().getBlockX() - 128, min.getY(), min.getZ());
-            }
-            if (max.getX() > player.getLocation().getBlockX() + 128) {
-                min = new MovecraftLocation(player.getLocation().getBlockX() + 128, min.getY(), min.getZ());
-            }
-        }
-        if (max.subtract(min).getZ() > 256) {
-            if (min.getZ() < player.getLocation().getBlockZ() - 128) {
-                min = new MovecraftLocation(min.getX(), min.getY(), player.getLocation().getBlockZ() - 128);
-            }
-            if (max.getZ() > player.getLocation().getBlockZ() + 128) {
-                min = new MovecraftLocation(min.getX(), min.getY(), player.getLocation().getBlockZ() + 128);
-            }
-        }
-//			} else {
-//				player.sendMessage( String.format( I18nSupport.getInternationalisedString( "This region is not a cuboid - see an admin" ) ) );
-//				return true;
-//			}
-
-        final Long taskMaxDamages = (long) AssaultUtils.getMaxDamages(regionName, w);
-
+        final long taskMaxDamages = (long) AssaultUtils.getMaxDamages(regionName, w);
         Assault assault = new Assault(regionName, player, w, System.currentTimeMillis()+(Config.AssaultDelay * 1000L), taskMaxDamages, min, max);
 
         AssaultPreStartEvent assaultPreStartEvent = new AssaultPreStartEvent(assault);
