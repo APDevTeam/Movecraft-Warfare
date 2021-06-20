@@ -26,7 +26,7 @@ public class RegionDamagedSign implements Listener {
     public void onSignRightClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.LEFT_CLICK_BLOCK))
             return;
-        if (event.getClickedBlock() == null || event.getClickedBlock().getType().name().contains("WALL_SIGN"))
+        if (event.getClickedBlock() == null || !event.getClickedBlock().getType().name().contains("WALL_SIGN"))
             return;
         Sign sign = (Sign) event.getClickedBlock().getState();
         if (!sign.getLine(0).equals(HEADER))
