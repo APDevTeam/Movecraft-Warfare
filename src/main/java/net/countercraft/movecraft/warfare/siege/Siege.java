@@ -1,12 +1,13 @@
 package net.countercraft.movecraft.warfare.siege;
 
+import net.countercraft.movecraft.warfare.utils.Warfare;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Siege {
+public class Siege extends Warfare {
     @NotNull private final List<Integer> daysOfWeek;
     @NotNull private final List<String> craftsToWin, commandsOnStart, commandsOnLose, commandsOnWin;
     private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost;

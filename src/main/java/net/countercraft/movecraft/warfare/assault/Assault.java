@@ -3,11 +3,11 @@ package net.countercraft.movecraft.warfare.assault;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
+import net.countercraft.movecraft.warfare.utils.Warfare;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Represents an assault
  */
-public class Assault {
+public class Assault extends Warfare {
     public static class SavedState {
         public static final int UNSAVED = 0;
         public static final int SAVED = 1;
