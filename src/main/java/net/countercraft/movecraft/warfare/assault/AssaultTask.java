@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.warfare.assault;
 
+import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
@@ -35,12 +36,21 @@ public class AssaultTask extends BukkitRunnable {
     private void assaultWon() {
         // assault was successful
         assault.getRunning().set(false);
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"), assault.getRegionName()));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"), assault.getRegionName());
+        Bukkit.getServer().broadcastMessage(broadcast);
         Bukkit.getPluginManager().callEvent(new AssaultWinEvent(assault));
         MovecraftWorldGuard.getInstance().getWGUtils().setTNTDeny(assault.getRegionName(), assault.getWorld());
 
-        if(!assault.makeBeacon())
-            Bukkit.getServer().broadcastMessage(ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"), this));
+        AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.WIN);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
+        if(!assault.makeBeacon()) {
+            broadcast = ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"), this);
+            Bukkit.getServer().broadcastMessage(broadcast);
+
+            event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.BEACON_FAIL);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+        }
 
         MovecraftWorldGuard.getInstance().getWGUtils().clearOwners(assault.getRegionName(), assault.getWorld());
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().remove(assault);
@@ -49,13 +59,23 @@ public class AssaultTask extends BukkitRunnable {
     private void assaultLost() {
         // assault has failed to reach damage cap within required time
         assault.getRunning().set(false);
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName()));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName());
+        Bukkit.getServer().broadcastMessage(broadcast);
         Bukkit.getPluginManager().callEvent(new AssaultLoseEvent(assault));
         MovecraftWorldGuard.getInstance().getWGUtils().setTNTDeny(assault.getRegionName(), assault.getWorld());
 
+        AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.LOSE);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
         // repair the damages that have occurred so far
-        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null))
-            Bukkit.getServer().broadcastMessage(ERROR_PREFIX+String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), assault.getRegionName().toUpperCase()));
+        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null)) {
+            broadcast = ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
+                    assault.getRegionName().toUpperCase());
+            Bukkit.getServer().broadcastMessage(broadcast);
+
+            event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.REPAIR_FAIL);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+        }
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().remove(assault);
     }

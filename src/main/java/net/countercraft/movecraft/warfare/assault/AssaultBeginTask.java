@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare.assault;
 
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
+import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -37,8 +38,9 @@ public class AssaultBeginTask extends BukkitRunnable {
             return;
         }
 
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Assault Begun")
-                , assault.getRegionName(), player.getDisplayName()));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Begun")
+                , assault.getRegionName(), player.getDisplayName());
+        Bukkit.getServer().broadcastMessage(broadcast);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
@@ -46,5 +48,8 @@ public class AssaultBeginTask extends BukkitRunnable {
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
         MovecraftWorldGuard.getInstance().getWGUtils().setTNTAllow(assault.getRegionName(), assault.getWorld());
+
+        AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.START);
+        Bukkit.getServer().getPluginManager().callEvent(event);
     }
 }

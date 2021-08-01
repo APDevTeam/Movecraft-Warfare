@@ -4,6 +4,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.assault.AssaultBeginTask;
+import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.assault.Assault;
@@ -94,8 +95,9 @@ public class AssaultCommand implements CommandExecutor {
 
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(regionName, w));
 
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon")
-                , player.getDisplayName(), args[0], Config.AssaultDelay / 60));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon")
+                , player.getDisplayName(), args[0], Config.AssaultDelay / 60);
+        Bukkit.getServer().broadcastMessage(broadcast);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, (float) 0.25);
@@ -103,6 +105,9 @@ public class AssaultCommand implements CommandExecutor {
 
         AssaultBeginTask beginTask = new AssaultBeginTask(player, assault);
         beginTask.runTaskLater(Movecraft.getInstance(), (20L * Config.AssaultDelay));
+
+        AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.PRESTART);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         return true;
     }
 }

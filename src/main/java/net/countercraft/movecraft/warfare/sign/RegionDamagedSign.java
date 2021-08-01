@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.sign;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -55,7 +56,12 @@ public class RegionDamagedSign implements Listener {
         String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
         HashSet<String> ownerSet = new HashSet<>(Arrays.asList(owners));
         if(!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
-            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"), regionName));
+            String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"), regionName);
+            Bukkit.getServer().broadcastMessage(broadcast);
+
+            // Note: there is no assault to pass here...
+            AssaultBroadcastEvent broadcastEvent = new AssaultBroadcastEvent(null, broadcast, AssaultBroadcastEvent.Type.OWNER_FAIL);
+            Bukkit.getServer().getPluginManager().callEvent(broadcastEvent);
         }
 
         //Clear the beacon
