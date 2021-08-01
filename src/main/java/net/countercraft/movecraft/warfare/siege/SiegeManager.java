@@ -8,21 +8,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SiegeManager extends BukkitRunnable {
     private final List<Siege> sieges = new CopyOnWriteArrayList<>();
-    private final Plugin movecraft;
+    private final Plugin mcw;
 
 
-    public SiegeManager(Plugin movecraft) {
-        this.movecraft = movecraft;
+    public SiegeManager(Plugin mcw) {
+        this.mcw = mcw;
     }
 
     @Override
     public void run() {
         for (Siege siege : sieges) {
-            new SiegePaymentTask(siege).runTask(movecraft);
+            new SiegePaymentTask(siege).runTask(mcw);
             if (siege.getStage().get() == SiegeStage.IN_PROGRESS) {
-                new SiegeProgressTask(siege).runTask(movecraft);
+                new SiegeProgressTask(siege).runTask(mcw);
             } else if (siege.getStage().get() == SiegeStage.PREPERATION) {
-                new SiegePreparationTask(siege).runTask(movecraft);
+                new SiegePreparationTask(siege).runTask(mcw);
             }
         }
     }

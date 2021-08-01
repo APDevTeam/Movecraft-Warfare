@@ -4,6 +4,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.warfare.events.SiegeBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.SiegeLoseEvent;
@@ -36,37 +37,48 @@ public class SiegeProgressTask extends SiegeTask {
         if(timeLeft > 10) {
             if(leaderPilotingShip(siegeCraft) && MovecraftWorldGuard.getInstance().getWGUtils().craftFullyInRegion(siege.getAttackRegion(), siegeLeader.getWorld(), siegeCraft)) {
                 MovecraftLocation mid = siegeCraft.getHitBox().getMidPoint();
-                Bukkit.getServer().broadcastMessage(String.format(
+                String broadcast = String.format(
                         I18nSupport.getInternationalisedString("Siege - Flagship In Box"),
                         siege.getName(),
                         siegeCraft.getType().getCraftName(),
                         siegeCraft.getOrigBlockCount(),
                         siegeLeader.getDisplayName(), mid.getX(), mid.getY(), mid.getZ())
-                        + formatMinutes(timeLeft));
+                        + SiegeUtils.formatMinutes(timeLeft);
+                Bukkit.getServer().broadcastMessage(broadcast);
+
+                SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.PROGRESS_IN_BOX);
+                Bukkit.getServer().getPluginManager().callEvent(event);
             }
             else {
-                Bukkit.getServer().broadcastMessage(String.format(
+                String broadcast = String.format(
                         I18nSupport.getInternationalisedString("Siege - Flagship Not In Box"),
                         siege.getName(), getSiegeLeaderName(siegeLeader))
-                        + formatMinutes(timeLeft));
+                        + SiegeUtils.formatMinutes(timeLeft);
+                Bukkit.getServer().broadcastMessage(broadcast);
+
+                SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.PROGRESS_NOT_IN_BOX);
+                Bukkit.getServer().getPluginManager().callEvent(event);
             }
         }
         else {
+            for (Player p : Bukkit.getOnlinePlayers()){
+                p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1,0);
+            }
             endSiege(siegeCraft, siegeLeader);
-        }
-
-
-        for (Player p : Bukkit.getOnlinePlayers()){
-            p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1,0);
         }
     }
 
     private void endSiege(@Nullable Craft siegeCraft, @Nullable Player siegeLeader) {
         if (leaderPilotingShip(siegeCraft) && siegeLeader != null) {
             if(MovecraftWorldGuard.getInstance().getWGUtils().craftFullyInRegion(siege.getAttackRegion(), siegeCraft.getW(), siegeCraft)) {
-                Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Success"),
-                        siege.getName(), siegeLeader.getDisplayName()));
+                String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Success"),
+                        siege.getName(), siegeLeader.getDisplayName());
+                Bukkit.getServer().broadcastMessage(broadcast);
+
                 winSiege(siegeLeader);
+
+                SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.WIN);
+                Bukkit.getServer().getPluginManager().callEvent(event);
             }
             else {
                 failSiege(siegeLeader);
@@ -87,10 +99,14 @@ public class SiegeProgressTask extends SiegeTask {
     private void failSiege(@Nullable Player siegeLeader) {
         Bukkit.getPluginManager().callEvent(new SiegeLoseEvent(siege));
         String name = getSiegeLeaderName(siegeLeader);
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
-                siege.getName(), name));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
+                siege.getName(), name);
+        Bukkit.getServer().broadcastMessage(broadcast);
 
         processCommands(name, false);
+
+        SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.LOSE);
+        Bukkit.getServer().getPluginManager().callEvent(event);
     }
 
     private void processCommands(@NotNull String siegeLeader, boolean win) {
@@ -110,6 +126,7 @@ public class SiegeProgressTask extends SiegeTask {
             return siege.getCraftsToWin().contains(siegeCraft.getType().getCraftName());
     }
 
+    @NotNull
     private String getSiegeLeaderName(@Nullable Player siegeLeader) {
         String name;
         if(siegeLeader == null) {

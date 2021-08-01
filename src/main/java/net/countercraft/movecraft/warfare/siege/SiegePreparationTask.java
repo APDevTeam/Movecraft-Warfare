@@ -1,11 +1,13 @@
 package net.countercraft.movecraft.warfare.siege;
 
+import net.countercraft.movecraft.warfare.events.SiegeBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.SiegeStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
 
@@ -40,15 +42,19 @@ public class SiegePreparationTask extends SiegeTask {
         broadcastSiegePreparation(Bukkit.getPlayer(siege.getPlayerUUID()), siege.getName(), timeLeft);
     }
 
-    private void broadcastSiegePreparation(Player player, String siegeName, int timeLeft){
+    private void broadcastSiegePreparation(@Nullable Player player, String siegeName, int timeLeft) {
         String playerName = "";
         if (player != null){
             playerName = player.getDisplayName();
         }
 
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"), playerName, siegeName) + formatMinutes(timeLeft));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"),
+                playerName, siegeName)+ SiegeUtils.formatMinutes(timeLeft);
+        Bukkit.getServer().broadcastMessage(broadcast);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0);
         }
+        SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.PREPARATION);
+        Bukkit.getServer().getPluginManager().callEvent(event);
     }
 }
