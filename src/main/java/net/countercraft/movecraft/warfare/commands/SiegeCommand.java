@@ -12,6 +12,7 @@ import net.countercraft.movecraft.warfare.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.siege.SiegeStage;
+import net.countercraft.movecraft.warfare.siege.SiegeUtils;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -218,7 +219,7 @@ public class SiegeCommand implements TabExecutor {
             return true;
         }
 
-        SiegePreStartEvent siegePreStartEvent = new SiegePreStartEvent(siege);
+        SiegePreStartEvent siegePreStartEvent = new SiegePreStartEvent(siege, player);
         Bukkit.getPluginManager().callEvent(siegePreStartEvent);
 
         if (siegePreStartEvent.isCancelled()) {
@@ -235,7 +236,7 @@ public class SiegeCommand implements TabExecutor {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), startCommand.replaceAll("%r", siege.getAttackRegion()).replaceAll("%c", "" + siege.getCost()));
         }
         Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin")
-                , player.getDisplayName(), siege.getName()) + String.format(I18nSupport.getInternationalisedString("Siege - Ending In X Minutes"), siege.getDelayBeforeStart() / 60));
+                , player.getDisplayName(), siege.getName()) + SiegeUtils.formatMinutes(siege.getDelayBeforeStart()));
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
         }

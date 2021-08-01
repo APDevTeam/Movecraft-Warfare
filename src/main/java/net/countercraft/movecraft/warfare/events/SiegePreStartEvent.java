@@ -2,20 +2,25 @@ package net.countercraft.movecraft.warfare.events;
 
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.siege.Siege;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 /**
  * Fires after Siege validation, before the Siege Preparation stage.
  */
 public class SiegePreStartEvent extends SiegeEvent implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
+    private final Player siegeLeader;
     private boolean cancelled;
     private String cancelReason;
 
-    public SiegePreStartEvent(@NotNull Siege siege) {
+    public SiegePreStartEvent(@NotNull Siege siege, @NotNull Player siegeLeader) {
         super(siege);
+        this.siegeLeader = siegeLeader;
         cancelled = false;
         cancelReason = I18nSupport.getInternationalisedString("Event - Default Cancel Reason");
     }
@@ -50,5 +55,9 @@ public class SiegePreStartEvent extends SiegeEvent implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
+    }
+
+    public Player getSiegeLeader() {
+        return siegeLeader;
     }
 }
