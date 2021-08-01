@@ -5,6 +5,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.events.SiegeBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.util.TopicPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -107,9 +108,16 @@ public class SiegeCommand implements TabExecutor {
     }
 
     private void cancelSiege(Siege siege) {
-        @NotNull Player siegeLeader = Movecraft.getInstance().getServer().getPlayer(siege.getPlayerUUID());
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
-                siege.getName(), siegeLeader.getDisplayName()));
+        Player siegeLeader = Bukkit.getServer().getPlayer(siege.getPlayerUUID());
+        String playerName;
+        if(siegeLeader != null)
+            playerName = siegeLeader.getDisplayName();
+        else {
+            playerName = Bukkit.getServer().getOfflinePlayer(siege.getPlayerUUID()).getName();
+        }
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
+                siege.getName(), playerName);
+        Bukkit.getServer().broadcastMessage(broadcast);
 
         siege.setStage(SiegeStage.INACTIVE);
 
@@ -120,6 +128,9 @@ public class SiegeCommand implements TabExecutor {
                     .replaceAll("%c", "" + siege.getCost())
                     .replaceAll("%l", siegeLeader.toString()));
         }
+
+        SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.CANCEL);
+        Bukkit.getServer().getPluginManager().callEvent(event);
     }
 
     private boolean infoCommand(CommandSender commandSender, String[] args){
@@ -231,15 +242,21 @@ public class SiegeCommand implements TabExecutor {
         return true;
     }
 
-    private void startSiege(Siege siege, Player player, long cost) {
+    private void startSiege(@NotNull Siege siege, Player player, long cost) {
         for (String startCommand : siege.getCommandsOnStart()) {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), startCommand.replaceAll("%r", siege.getAttackRegion()).replaceAll("%c", "" + siege.getCost()));
         }
-        Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin")
-                , player.getDisplayName(), siege.getName()) + SiegeUtils.formatMinutes(siege.getDelayBeforeStart()));
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin")
+                , player.getDisplayName(), siege.getName()) + SiegeUtils.formatMinutes(siege.getDelayBeforeStart());
+        Bukkit.getServer().broadcastMessage(broadcast);
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
         }
+
+        SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.PRESTART);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
         Movecraft.getInstance().getLogger().log(Level.INFO, String.format(I18nSupport.getInternationalisedString("Siege - Log Siege Start"), siege.getName(), player.getName(), cost));
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, cost);
         siege.setPlayerUUID(player.getUniqueId());
@@ -260,7 +277,7 @@ public class SiegeCommand implements TabExecutor {
     }
 
     @Nullable
-    private Siege getSiege(Player player, SiegeManager siegeManager) {
+    private Siege getSiege(@NotNull Player player, SiegeManager siegeManager) {
         Set<String> regions = MovecraftWorldGuard.getInstance().getWGUtils().getRegions(player.getLocation());
         for(String region : regions) {
             for(Siege siege : siegeManager.getSieges()) {
@@ -271,7 +288,7 @@ public class SiegeCommand implements TabExecutor {
         return null;
     }
 
-    private long calcSiegeCost(Siege siege, SiegeManager siegeManager, Player player) {
+    private long calcSiegeCost(@NotNull Siege siege, @NotNull SiegeManager siegeManager, Player player) {
         long cost = siege.getCost();
         for (Siege tempSiege : siegeManager.getSieges()) {
             Set<UUID> regionOwners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(tempSiege.getCaptureRegion(), player.getWorld());
@@ -284,10 +301,12 @@ public class SiegeCommand implements TabExecutor {
         return cost;
     }
 
+    @NotNull
     private String militaryTimeIntToString(int militaryTime) {
         return String.format("%02d", militaryTime / 100) + ":" + String.format("%02d",militaryTime % 100);
     }
 
+    @NotNull
     private String secondsIntToString(int seconds) {
         return String.format("%02d", seconds / 60) + ":" + String.format("%02d",seconds % 60);
     }

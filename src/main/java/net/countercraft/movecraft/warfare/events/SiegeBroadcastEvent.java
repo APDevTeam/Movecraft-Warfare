@@ -11,7 +11,8 @@ public class SiegeBroadcastEvent extends SiegeEvent {
         PROGRESS_IN_BOX,
         PROGRESS_NOT_IN_BOX,
         WIN,
-        LOSE
+        LOSE,
+        CANCEL
     }
     private static final HandlerList HANDLERS = new HandlerList();
     private final String broadcast;
