@@ -8,11 +8,15 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Siege extends Warfare {
+    public enum Stage {
+        IN_PROGRESS, PREPERATION, INACTIVE
+    }
+
     @NotNull private final List<Integer> daysOfWeek;
     @NotNull private final List<String> craftsToWin, commandsOnStart, commandsOnLose, commandsOnWin;
     private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost;
     @NotNull private final String attackRegion, captureRegion, name;
-    @NotNull private final AtomicReference<SiegeStage> stage;
+    @NotNull private final AtomicReference<Stage> stage;
     private long startTime;
     private int lastUpdate;
     private long lastPayout;
@@ -45,15 +49,15 @@ public class Siege extends Warfare {
         startTime = 0;
         lastUpdate = 0;
         stage = new AtomicReference<>();
-        stage.set(SiegeStage.INACTIVE);
+        stage.set(Stage.INACTIVE);
     }
 
     @NotNull
-    public AtomicReference<SiegeStage> getStage() {
+    public AtomicReference<Stage> getStage() {
         return stage;
     }
 
-    public void setStage(SiegeStage stage) {
+    public void setStage(Stage stage) {
         this.stage.set(stage);
     }
 

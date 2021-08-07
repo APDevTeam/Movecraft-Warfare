@@ -12,7 +12,6 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
-import net.countercraft.movecraft.warfare.siege.SiegeStage;
 import net.countercraft.movecraft.warfare.siege.SiegeUtils;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
@@ -89,7 +88,7 @@ public class SiegeCommand implements TabExecutor {
         String region = sb.toString();
 
         for(Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-            if(siege.getStage().get() == SiegeStage.INACTIVE) {
+            if(siege.getStage().get() == Siege.Stage.INACTIVE) {
                 continue;
             }
             if(!region.equalsIgnoreCase(siege.getName())) {
@@ -119,7 +118,7 @@ public class SiegeCommand implements TabExecutor {
                 siege.getName(), playerName);
         Bukkit.getServer().broadcastMessage(broadcast);
 
-        siege.setStage(SiegeStage.INACTIVE);
+        siege.setStage(Siege.Stage.INACTIVE);
 
         List<String> commands = siege.getCommandsOnLose();
         for (String command : commands) {
@@ -190,7 +189,7 @@ public class SiegeCommand implements TabExecutor {
         Player player = (Player) commandSender;
 
         for (Siege siege : siegeManager.getSieges()) {
-            if (siege.getStage().get() != SiegeStage.INACTIVE) {
+            if (siege.getStage().get() != Siege.Stage.INACTIVE) {
                 player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Siege - Siege Already Underway"));
                 return true;
             }
@@ -261,7 +260,7 @@ public class SiegeCommand implements TabExecutor {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, cost);
         siege.setPlayerUUID(player.getUniqueId());
         siege.setStartTime(System.currentTimeMillis());
-        siege.setStage(SiegeStage.PREPERATION);
+        siege.setStage(Siege.Stage.PREPERATION);
     }
 
     private int getMilitaryTime() {
@@ -396,7 +395,7 @@ public class SiegeCommand implements TabExecutor {
         }
         else if(strings[0].equalsIgnoreCase("cancel")) {
             for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-                if(siege.getStage().get() == SiegeStage.INACTIVE) {
+                if(siege.getStage().get() == Siege.Stage.INACTIVE) {
                     continue;
                 }
                 tabCompletions.add(siege.getName());

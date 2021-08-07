@@ -3,6 +3,7 @@ package net.countercraft.movecraft.warfare.commands;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.AssaultBeginTask;
 import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.events.AssaultPreStartEvent;
@@ -94,6 +95,9 @@ public class AssaultCommand implements CommandExecutor {
         WarfareRepair.getInstance().saveRegionRepairState(player.getWorld(), assault);
 
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(regionName, w));
+
+        MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
+        assault.getStage().set(Assault.Stage.PREPERATION);
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon")
                 , player.getDisplayName(), args[0], Config.AssaultDelay / 60);

@@ -38,6 +38,8 @@ public class AssaultBeginTask extends BukkitRunnable {
             return;
         }
 
+        assault.getStage().set(Assault.Stage.IN_PROGRESS);
+
         String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Begun")
                 , assault.getRegionName(), player.getDisplayName());
         Bukkit.getServer().broadcastMessage(broadcast);
@@ -46,7 +48,6 @@ public class AssaultBeginTask extends BukkitRunnable {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
         }
 
-        MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
         MovecraftWorldGuard.getInstance().getWGUtils().setTNTAllow(assault.getRegionName(), assault.getWorld());
 
         AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.START);

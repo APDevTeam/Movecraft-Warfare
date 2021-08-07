@@ -19,9 +19,9 @@ public class SiegeManager extends BukkitRunnable {
     public void run() {
         for (Siege siege : sieges) {
             new SiegePaymentTask(siege).runTask(mcw);
-            if (siege.getStage().get() == SiegeStage.IN_PROGRESS) {
+            if (siege.getStage().get() == Siege.Stage.IN_PROGRESS) {
                 new SiegeProgressTask(siege).runTask(mcw);
-            } else if (siege.getStage().get() == SiegeStage.PREPERATION) {
+            } else if (siege.getStage().get() == Siege.Stage.PREPERATION) {
                 new SiegePreparationTask(siege).runTask(mcw);
             }
         }

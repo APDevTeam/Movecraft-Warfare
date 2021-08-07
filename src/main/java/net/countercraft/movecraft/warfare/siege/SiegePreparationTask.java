@@ -28,12 +28,12 @@ public class SiegePreparationTask extends SiegeTask {
 
             if (siegeStartEvent.isCancelled()) {
                 Bukkit.getPlayer(siege.getPlayerUUID()).sendMessage(MOVECRAFT_COMMAND_PREFIX + siegeStartEvent.getCancelReason());
-                siege.setStage(SiegeStage.INACTIVE);
+                siege.setStage(Siege.Stage.INACTIVE);
                 return;
             }
 
             siege.setJustCommenced(true);
-            siege.setStage(SiegeStage.IN_PROGRESS);
+            siege.setStage(Siege.Stage.IN_PROGRESS);
         }
         if ((siege.getDelayBeforeStart() - timePassedInSeconds) % Config.SiegeTaskSeconds != 0 || timePassed < 3000){
              return;

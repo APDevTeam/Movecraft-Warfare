@@ -87,7 +87,7 @@ public class SiegeProgressTask extends SiegeTask {
         else {
             failSiege(siegeLeader);
         }
-        siege.setStage(SiegeStage.INACTIVE);
+        siege.setStage(Siege.Stage.INACTIVE);
     }
 
     private void winSiege(@NotNull Player siegeLeader) {

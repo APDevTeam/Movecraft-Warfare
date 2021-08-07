@@ -11,16 +11,17 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Represents an assault
  */
 public class Assault extends Warfare {
-    public static class SavedState {
-        public static final int UNSAVED = 0;
-        public static final int SAVED = 1;
-        public static final int FAILED = -1;
+    public enum Stage {
+        IN_PROGRESS, PREPERATION, INACTIVE
+    }
+    public enum SavedState {
+        UNSAVED, SAVED, FAILED
     }
 
     private final String regionName;
@@ -30,8 +31,8 @@ public class Assault extends Warfare {
     private final long maxDamages;
     private final World world;
     private final MovecraftLocation minPos, maxPos;
-    private final AtomicBoolean running = new AtomicBoolean(true);
-    private final AtomicInteger savedCorrectly = new AtomicInteger(SavedState.UNSAVED);
+    private final AtomicReference<Stage> stage = new AtomicReference<>(Stage.INACTIVE);
+    private final AtomicReference<SavedState> savedCorrectly = new AtomicReference<>(SavedState.UNSAVED);
 
     public Assault(String regionName, Player starter, World world, long startTime, long maxDamages, MovecraftLocation minPos, MovecraftLocation maxPos) {
         this.regionName = regionName;
@@ -80,8 +81,8 @@ public class Assault extends Warfare {
         return regionName;
     }
 
-    public AtomicBoolean getRunning() {
-        return running;
+    public AtomicReference<Stage> getStage() {
+        return stage;
     }
 
 
@@ -148,7 +149,7 @@ public class Assault extends Warfare {
         return true;
     }
 
-    public AtomicInteger getSavedCorrectly() {
+    public AtomicReference<SavedState> getSavedCorrectly() {
         return savedCorrectly;
     }
 }
