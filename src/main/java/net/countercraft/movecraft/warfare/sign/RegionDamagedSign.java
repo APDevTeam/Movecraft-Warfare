@@ -1,6 +1,5 @@
 package net.countercraft.movecraft.warfare.sign;
 
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
@@ -9,7 +8,6 @@ import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -27,9 +25,10 @@ public class RegionDamagedSign implements Listener {
     public void onSignRightClick(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.LEFT_CLICK_BLOCK))
             return;
-        if (event.getClickedBlock() == null || !event.getClickedBlock().getType().name().contains("WALL_SIGN"))
+        Block block = event.getClickedBlock();
+        if (block == null || !(block.getState() instanceof Sign))
             return;
-        Sign sign = (Sign) event.getClickedBlock().getState();
+        Sign sign = (Sign) block.getState();
         if (!sign.getLine(0).equals(HEADER))
             return;
 
