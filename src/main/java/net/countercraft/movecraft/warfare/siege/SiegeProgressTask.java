@@ -4,6 +4,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.warfare.events.SiegeBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
@@ -40,7 +41,7 @@ public class SiegeProgressTask extends SiegeTask {
                 String broadcast = String.format(
                         I18nSupport.getInternationalisedString("Siege - Flagship In Box"),
                         siege.getName(),
-                        siegeCraft.getType().getCraftName(),
+                        siegeCraft.getType().getStringProperty(CraftType.NAME),
                         siegeCraft.getOrigBlockCount(),
                         siegeLeader.getDisplayName(), mid.getX(), mid.getY(), mid.getZ())
                         + SiegeUtils.formatMinutes(timeLeft);
@@ -123,7 +124,7 @@ public class SiegeProgressTask extends SiegeTask {
         if (siegeCraft == null)
             return false;
         else
-            return siege.getCraftsToWin().contains(siegeCraft.getType().getCraftName());
+            return siege.getCraftsToWin().contains(siegeCraft.getType().getStringProperty(CraftType.NAME));
     }
 
     @NotNull

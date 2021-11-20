@@ -3,6 +3,7 @@ package net.countercraft.movecraft.warfare.commands;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.SiegeBroadcastEvent;
@@ -220,7 +221,7 @@ public class SiegeCommand implements TabExecutor {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("You must be piloting a craft!"));
             return true;
         }
-        if(!siege.getCraftsToWin().contains(siegeCraft.getType().getCraftName())) {
+        if(!siege.getCraftsToWin().contains(siegeCraft.getType().getStringProperty(CraftType.NAME))) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("You must be piloting a craft that can siege!"));
             return true;
         }
