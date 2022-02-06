@@ -9,7 +9,6 @@ import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.siege.SiegeCommand;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
-import net.countercraft.movecraft.warfare.listener.TypesReloadedListener;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
@@ -103,8 +102,6 @@ public final class MovecraftWarfare extends JavaPlugin {
             getLogger().info("Enabling siege");
             siegeManager = new SiegeManager(this);
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
-
-            getServer().getPluginManager().registerEvents(new TypesReloadedListener(), this);
         }
 
         getCommand("siege").setExecutor(new SiegeCommand());
