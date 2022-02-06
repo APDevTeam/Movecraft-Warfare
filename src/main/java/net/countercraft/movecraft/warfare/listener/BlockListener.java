@@ -2,14 +2,14 @@ package net.countercraft.movecraft.warfare.listener;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
-import net.countercraft.movecraft.warfare.localisation.I18nSupport;
+import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,34 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BlockListener implements Listener {
-    private final HashSet<Material> fragileBlocks;
     private long lastDamagesUpdate = 0;
-
-    public BlockListener() {
-        fragileBlocks = new HashSet<>();
-        for(Material m : Material.values()) {
-            String name = m.name();
-            if(name.contains("SIGN") ||
-                    name.contains("DOOR") ||
-                    name.contains("PRESSURE_PLATE") ||
-                    name.contains("CARPET") ||
-                    name.contains("BED") ||
-                    name.contains("BUTTON") ||
-                    name.contains("TORCH") ||
-                    name.contains("TRIPWIRE") ||
-                    name.contains("PISTON_HEAD") ||
-                    name.contains("LEVER") ||
-                    name.contains("LADDER") ||
-                    name.contains("REDSTONE") ||
-                    name.contains("REPEATER") ||
-                    name.contains("COMPARATOR") ||
-                    name.contains("DAYLIGHT_DETECTOR")) {
-                fragileBlocks.add(m);
-            }
-        }
-
-        fragileBlocks.remove(Material.REDSTONE_BLOCK);
-    }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(@NotNull BlockBreakEvent e) {
@@ -134,7 +107,7 @@ public class BlockListener implements Listener {
 
     private boolean isFragile(@NotNull Block base) {
         for(Block b : getNearbyBlocks(base)) {
-            if(fragileBlocks.contains(b.getType()))
+            if(Tags.FRAGILE_MATERIALS.contains(b.getType()))
                 return true;
         }
         return false;
