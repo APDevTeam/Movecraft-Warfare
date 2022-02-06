@@ -3,7 +3,7 @@ package net.countercraft.movecraft.warfare.assault;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.siege.Siege;
+import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -136,7 +136,8 @@ public class AssaultUtils {
 
         for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
             // siegable regions can not be assaulted
-            if (regionName.equalsIgnoreCase(siege.getAttackRegion()) || regionName.equalsIgnoreCase(siege.getCaptureRegion()))
+            if (regionName.equalsIgnoreCase(siege.getConfig().getAttackRegion())
+                    || regionName.equalsIgnoreCase(siege.getConfig().getCaptureRegion()))
                 return false;
         }
         return true;

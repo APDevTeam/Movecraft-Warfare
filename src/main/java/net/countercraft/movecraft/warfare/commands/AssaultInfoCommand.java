@@ -6,7 +6,7 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.siege.Siege;
+import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -54,8 +54,8 @@ public class AssaultInfoCommand implements CommandExecutor {
 
         HashSet<String> siegeRegions = new HashSet<>();
         for(Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-            siegeRegions.add(siege.getCaptureRegion().toUpperCase());
-            siegeRegions.add(siege.getAttackRegion().toUpperCase());
+            siegeRegions.add(siege.getConfig().getCaptureRegion().toUpperCase());
+            siegeRegions.add(siege.getConfig().getAttackRegion().toUpperCase());
         }
         String assaultRegion = MovecraftWorldGuard.getInstance().getWGUtils().getAssaultableRegion(player.getLocation(), siegeRegions);
         if (assaultRegion == null) {
