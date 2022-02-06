@@ -1,10 +1,11 @@
-package net.countercraft.movecraft.warfare.events;
+package net.countercraft.movecraft.warfare.features.siege.events;
 
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.features.siege.Siege;
+
 import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.event.HandlerList;
-import net.countercraft.movecraft.warfare.siege.Siege;
 
 /**
  * Fires when a Siege starts.

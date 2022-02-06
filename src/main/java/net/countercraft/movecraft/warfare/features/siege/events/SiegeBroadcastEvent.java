@@ -1,9 +1,13 @@
-package net.countercraft.movecraft.warfare.events;
+package net.countercraft.movecraft.warfare.features.siege.events;
 
-import net.countercraft.movecraft.warfare.siege.Siege;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import net.countercraft.movecraft.warfare.features.siege.Siege;
+
+/**
+ * Fires for every siege broadcast.
+ */
 public class SiegeBroadcastEvent extends SiegeEvent {
     public enum Type {
         PRESTART,

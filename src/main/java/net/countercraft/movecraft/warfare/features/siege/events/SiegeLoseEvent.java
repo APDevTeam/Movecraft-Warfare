@@ -1,13 +1,17 @@
-package net.countercraft.movecraft.warfare.events;
+package net.countercraft.movecraft.warfare.features.siege.events;
 
-import net.countercraft.movecraft.warfare.siege.Siege;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class SiegeWinEvent extends SiegeEvent {
+import net.countercraft.movecraft.warfare.features.siege.Siege;
+
+/**
+ * Fires when somebody loses a siege.
+ */
+public class SiegeLoseEvent extends SiegeEvent {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public SiegeWinEvent(@NotNull Siege siege) {
+    public SiegeLoseEvent(@NotNull Siege siege) {
         super(siege);
     }
 

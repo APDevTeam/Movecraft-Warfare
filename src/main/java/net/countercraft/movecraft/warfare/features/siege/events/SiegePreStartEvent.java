@@ -1,13 +1,12 @@
-package net.countercraft.movecraft.warfare.events;
+package net.countercraft.movecraft.warfare.features.siege.events;
 
 import net.countercraft.movecraft.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.siege.Siege;
+import net.countercraft.movecraft.warfare.features.siege.Siege;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * Fires after Siege validation, before the Siege Preparation stage.
