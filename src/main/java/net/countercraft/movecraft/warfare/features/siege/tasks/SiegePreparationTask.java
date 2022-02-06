@@ -51,10 +51,8 @@ public class SiegePreparationTask extends SiegeTask {
             return; // Only send broadcasts every SiegeTaskSeconds seconds
         }
 
-        Player player = siege.getPlayer().getPlayer();
-        String playerName = player != null ? player.getDisplayName() : "";
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"),
-                playerName, siege.getConfig().getName())
+                SiegeUtils.getSiegeLeaderName(siege.getPlayer()), siege.getConfig().getName())
             + SiegeUtils.formatMinutes(timeLeft);
         Bukkit.getServer().broadcastMessage(broadcast);
         for (Player p : Bukkit.getOnlinePlayers()) {
