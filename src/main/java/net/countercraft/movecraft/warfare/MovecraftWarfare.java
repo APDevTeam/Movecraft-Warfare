@@ -34,7 +34,6 @@ public final class MovecraftWarfare extends JavaPlugin {
 
         saveDefaultConfig();
 
-        // TODO other languages
         String[] languages = { "en" };
         for (String s : languages) {
             if (!new File(getDataFolder() + "/localisation/mcwlang_" + s + ".properties").exists()) {

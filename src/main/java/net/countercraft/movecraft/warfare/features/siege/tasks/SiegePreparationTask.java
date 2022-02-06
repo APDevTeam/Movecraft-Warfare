@@ -52,7 +52,7 @@ public class SiegePreparationTask extends SiegeTask {
         }
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"),
-                SiegeUtils.getSiegeLeaderName(siege.getPlayer()), siege.getConfig().getName())
+                SiegeUtils.getSiegeLeaderName(siege.getPlayer()), siege.getName())
             + SiegeUtils.formatMinutes(timeLeft);
         Bukkit.getServer().broadcastMessage(broadcast);
         for (Player p : Bukkit.getOnlinePlayers()) {

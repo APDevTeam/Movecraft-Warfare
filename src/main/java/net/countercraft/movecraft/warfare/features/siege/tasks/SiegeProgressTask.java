@@ -48,7 +48,7 @@ public class SiegeProgressTask extends SiegeTask {
             throw new IllegalStateException();
         }
         if (siege.getPlayer().getPlayer() == null) {
-            failSiege(); // Player is offline or unavailable
+            failSiege(null); // Player is offline or unavailable
             return;
         }
         Player player = siege.getPlayer().getPlayer();
@@ -81,7 +81,7 @@ public class SiegeProgressTask extends SiegeTask {
             name = SiegeUtils.getSiegeLeaderName(siege.getPlayer());
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
-            siege.getConfig().getName(), name);
+            siege.getName(), name);
         Bukkit.getServer().broadcastMessage(broadcast);
         SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.LOSE);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -102,7 +102,7 @@ public class SiegeProgressTask extends SiegeTask {
         Bukkit.getPluginManager().callEvent(new SiegeWinEvent(siege));
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Success"),
-                        siege.getConfig().getName(), player.getDisplayName());
+                        siege.getName(), player.getDisplayName());
         Bukkit.getServer().broadcastMessage(broadcast);
         SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.WIN);
         Bukkit.getServer().getPluginManager().callEvent(event);

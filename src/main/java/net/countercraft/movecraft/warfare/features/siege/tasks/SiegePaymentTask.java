@@ -56,7 +56,7 @@ public class SiegePaymentTask extends SiegeTask {
                 I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"),
                 player.getName(),
                 share,
-                siege.getConfig().getName()
+                siege.getName()
             ));
         }
 
