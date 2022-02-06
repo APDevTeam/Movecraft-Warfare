@@ -5,8 +5,9 @@ import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 
+import net.countercraft.movecraft.util.Pair;
+
 public class SiegeConfig {
-    @NotNull private final String name;
     @NotNull private final String attackRegion;
     @NotNull private final String captureRegion;
     @NotNull private final List<Integer> daysOfWeek;
@@ -14,10 +15,9 @@ public class SiegeConfig {
     private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost;
     private final boolean doubleCostPerOwnedSiegeRegion;
 
-    public static SiegeConfig load(Map.Entry<String, Map<String, ?>> config) {
+    public static Pair<String, SiegeConfig> load(Map.Entry<String, Map<String, ?>> config) {
         Map<String,Object> siegeMap = (Map<String, Object>) config.getValue();
-        return new SiegeConfig(
-            config.getKey(),
+        return new Pair<>(config.getKey(), new SiegeConfig(
             (String) siegeMap.get("SiegeRegion"),
             (String) siegeMap.get("RegionToControl"),
             (List<Integer>) siegeMap.get("DaysOfWeek"),
@@ -32,17 +32,16 @@ public class SiegeConfig {
             (int) siegeMap.get("DailyIncome"),
             (int) siegeMap.get("Cost"),
             (boolean) siegeMap.get("DoubleCostPerOwnedSiegeRegion")
-        );
+        ));
     }
 
     private SiegeConfig(
-            @NotNull String name, @NotNull String attackRegion, @NotNull String captureRegion,
+            @NotNull String attackRegion, @NotNull String captureRegion,
             @NotNull List<Integer> daysOfWeek,
             @NotNull List<String> craftsToWin, @NotNull List<String> commandsOnStart,
             @NotNull List<String> commandsOnWin, @NotNull List<String> commandsOnLose,
             int scheduleStart, int scheduleEnd, int delayBeforeStart, int duration, int dailyIncome, int cost,
             boolean doubleCostPerOwnedSiegeRegion) {
-        this.name = name;
         this.attackRegion = attackRegion;
         this.captureRegion = captureRegion;
         this.daysOfWeek = daysOfWeek;
@@ -57,10 +56,6 @@ public class SiegeConfig {
         this.dailyIncome = dailyIncome;
         this.cost = cost;
         this.doubleCostPerOwnedSiegeRegion = doubleCostPerOwnedSiegeRegion;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @NotNull

@@ -7,20 +7,27 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Siege {
+import net.countercraft.movecraft.util.Pair;
+import net.countercraft.movecraft.warfare.features.Warfare;
+
+public class Siege extends Warfare {
     public enum Stage {
         IN_PROGRESS, PREPERATION, INACTIVE
     }
 
+    @NotNull private String name;
     @NotNull private final SiegeConfig config;
     @NotNull private final AtomicReference<Stage> stage;
     @Nullable private LocalDateTime startTime;
     @Nullable private OfflinePlayer player;
 
-    public Siege(@NotNull SiegeConfig config) {
-        this.config = config;
+    public Siege(@NotNull Pair<String, SiegeConfig> nameAndConfig) {
+        name = nameAndConfig.getLeft();
+        config = nameAndConfig.getRight();
         stage = new AtomicReference<>();
         stage.set(Stage.INACTIVE);
+        startTime = null;
+        player = null;
     }
 
     @NotNull
@@ -47,7 +54,12 @@ public class Siege {
         return player;
     }
 
+    @NotNull
+    public String getName() {
+        return name;
+    }
+
     public String toString() {
-        return config.getName();
+        return name;
     }
 }
