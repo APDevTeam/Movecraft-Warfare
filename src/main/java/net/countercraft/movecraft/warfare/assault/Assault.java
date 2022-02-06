@@ -1,9 +1,9 @@
 package net.countercraft.movecraft.warfare.assault;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.warfare.features.Warfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
-import net.countercraft.movecraft.warfare.utils.Warfare;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
