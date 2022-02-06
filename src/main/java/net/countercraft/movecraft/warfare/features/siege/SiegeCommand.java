@@ -1,26 +1,5 @@
 package net.countercraft.movecraft.warfare.features.siege;
 
-import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
-
-import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.type.CraftType;
@@ -32,7 +11,25 @@ import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEv
 import net.countercraft.movecraft.warfare.features.siege.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.UUID;
+
+import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
 
 public class SiegeCommand implements TabExecutor {
     private static final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
@@ -102,8 +99,9 @@ public class SiegeCommand implements TabExecutor {
                 continue;
 
             cancelSiege(siege);
+            return true;
         }
-        return true;
+        return false;
     }
 
     private void cancelSiege(Siege siege) {
@@ -115,11 +113,10 @@ public class SiegeCommand implements TabExecutor {
 
         siege.setStage(Siege.Stage.INACTIVE);
 
-        List<String> commands = siege.getConfig().getCommandsOnLose();
         playerName = siege.getPlayer().getName();
         if (playerName == null)
             playerName = "null";
-        for (String command : commands) {
+        for (String command : siege.getConfig().getCommandsOnLose()) {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command
                     .replaceAll("%r", siege.getConfig().getCaptureRegion())
                     .replaceAll("%c", "" + siege.getConfig().getCost())
@@ -160,37 +157,60 @@ public class SiegeCommand implements TabExecutor {
             return true;
         }
 
-        displayInfo(commandSender, siege);
-        return true;
-    }
-
-    private void displayInfo(@NotNull CommandSender sender, @NotNull Siege siege) {
-        sender.sendMessage("" + ChatColor.YELLOW + ChatColor.BOLD + "----- " + ChatColor.RESET + ChatColor.GOLD
+        commandSender.sendMessage("" + ChatColor.YELLOW + ChatColor.BOLD + "----- " + ChatColor.RESET + ChatColor.GOLD
                 + siege.getName() + ChatColor.YELLOW + ChatColor.BOLD + " -----");
         ChatColor cost, start, end;
 
-        if (sender instanceof Player) {
-            cost = MovecraftRepair.getInstance().getEconomy().has((Player) sender, siege.getConfig().getCost()) ? ChatColor.GREEN
-                    : ChatColor.RED;
-        } else {
+        if (commandSender instanceof Player) {
+            cost = MovecraftRepair.getInstance().getEconomy().has((Player) commandSender, siege.getConfig().getCost())
+                    ? ChatColor.GREEN : ChatColor.RED;
+        }
+        else {
             cost = ChatColor.DARK_RED;
         }
 
         start = siege.getConfig().getScheduleStart() < getMilitaryTime() ? ChatColor.GREEN : ChatColor.RED;
         end = siege.getConfig().getScheduleEnd() > getMilitaryTime() ? ChatColor.GREEN : ChatColor.RED;
 
-        sender.sendMessage(I18nSupport.getInternationalisedString("Siege - Siege Cost") + cost
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Siege Cost") + cost
                 + currencyFormat.format(siege.getConfig().getCost()));
-        sender.sendMessage(I18nSupport.getInternationalisedString("Siege - Daily Income") + ChatColor.WHITE
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Daily Income") + ChatColor.WHITE
                 + currencyFormat.format(siege.getConfig().getDailyIncome()));
-        sender.sendMessage(I18nSupport.getInternationalisedString("Siege - Day of Week")
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Day of Week")
                 + daysOfWeekString(siege.getConfig().getDaysOfWeek()));
-        sender.sendMessage(I18nSupport.getInternationalisedString("Siege - Start Time") + start
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Start Time") + start
                 + militaryTimeIntToString(siege.getConfig().getScheduleStart()) + " UTC");
-        sender.sendMessage(I18nSupport.getInternationalisedString("Siege - End Time") + end
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - End Time") + end
                 + militaryTimeIntToString(siege.getConfig().getScheduleEnd()) + " UTC");
-        sender.sendMessage(I18nSupport.getInternationalisedString("Siege - Duration") + ChatColor.WHITE
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Duration") + ChatColor.WHITE
                 + secondsIntToString(siege.getConfig().getDuration()));
+        return true;
+    }
+
+    private String daysOfWeekString(@NotNull List<Integer> days) {
+        String str = new String();
+        for (int i = 0; i < days.size(); i++) {
+            if (days.get(i) == getDayOfWeek())
+                str += ChatColor.GREEN;
+            else
+                str += ChatColor.RED;
+
+            str += dayToString(days.get(i));
+
+            if (i != days.size() - 1)
+                str += ChatColor.WHITE + ", ";
+        }
+        return str;
+    }
+
+    @NotNull
+    private String militaryTimeIntToString(int militaryTime) {
+        return String.format("%02d", militaryTime / 100) + ":" + String.format("%02d", militaryTime % 100);
+    }
+
+    @NotNull
+    private String secondsIntToString(int seconds) {
+        return String.format("%02d", seconds / 60) + ":" + String.format("%02d", seconds % 60);
     }
 
 
@@ -295,19 +315,6 @@ public class SiegeCommand implements TabExecutor {
         return true;
     }
 
-
-    private int getMilitaryTime() {
-        Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        int hour = rightNow.get(Calendar.HOUR_OF_DAY);
-        int minute = rightNow.get(Calendar.MINUTE);
-        return hour * 100 + minute;
-    }
-
-    private int getDayOfWeek() {
-        Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        return rightNow.get(Calendar.DAY_OF_WEEK);
-    }
-
     @Nullable
     private Siege getSiege(@NotNull Player player, SiegeManager siegeManager) {
         Set<String> regions = MovecraftWorldGuard.getInstance().getWGUtils().getRegions(player.getLocation());
@@ -324,7 +331,7 @@ public class SiegeCommand implements TabExecutor {
         long cost = siege.getConfig().getCost();
         for (Siege tempSiege : siegeManager.getSieges()) {
             Set<UUID> regionOwners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(
-                tempSiege.getConfig().getCaptureRegion(), player.getWorld());
+                    tempSiege.getConfig().getCaptureRegion(), player.getWorld());
             if (regionOwners == null)
                 continue;
 
@@ -334,18 +341,22 @@ public class SiegeCommand implements TabExecutor {
         return cost;
     }
 
-    @NotNull
-    private String militaryTimeIntToString(int militaryTime) {
-        return String.format("%02d", militaryTime / 100) + ":" + String.format("%02d", militaryTime % 100);
+
+    private int getMilitaryTime() {
+        Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        int hour = rightNow.get(Calendar.HOUR_OF_DAY);
+        int minute = rightNow.get(Calendar.MINUTE);
+        return hour * 100 + minute;
     }
 
-    @NotNull
-    private String secondsIntToString(int seconds) {
-        return String.format("%02d", seconds / 60) + ":" + String.format("%02d", seconds % 60);
+    private int getDayOfWeek() {
+        Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        return rightNow.get(Calendar.DAY_OF_WEEK);
     }
+
 
     private String dayToString(int day) {
-        String output = "Error";
+        String output;
         switch (day) {
             case 1:
                 output = "Siege - Sunday";
@@ -368,26 +379,12 @@ public class SiegeCommand implements TabExecutor {
             case 7:
                 output = "Siege - Saturday";
                 break;
+            default:
+                output = "Invalid Day";
+                break;
         }
         output = I18nSupport.getInternationalisedString(output);
         return output;
-    }
-
-    private String daysOfWeekString(@NotNull List<Integer> days) {
-        String str = new String();
-        for (int i = 0; i < days.size(); i++) {
-            if (days.get(i) == getDayOfWeek()) {
-                str += ChatColor.GREEN;
-            } else {
-                str += ChatColor.RED;
-            }
-            str += dayToString(days.get(i));
-
-            if (i != days.size() - 1) {
-                str += ChatColor.WHITE + ", ";
-            }
-        }
-        return str;
     }
 
 
@@ -400,26 +397,28 @@ public class SiegeCommand implements TabExecutor {
             tabCompletions.add("list");
             tabCompletions.add("time");
             tabCompletions.add("cancel");
-        } else if (strings[0].equalsIgnoreCase("info")) {
+        }
+        else if (strings[0].equalsIgnoreCase("info")) {
             for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
                 tabCompletions.add(siege.getName());
             }
-        } else if (strings[0].equalsIgnoreCase("cancel")) {
+        }
+        else if (strings[0].equalsIgnoreCase("cancel")) {
             for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-                if (siege.getStage().get() == Siege.Stage.INACTIVE) {
+                if (siege.getStage().get() == Siege.Stage.INACTIVE)
                     continue;
-                }
+
                 tabCompletions.add(siege.getName());
             }
         }
-        if (strings.length == 0) {
+        if (strings.length == 0)
             return tabCompletions;
-        }
+
         final List<String> completions = new ArrayList<>();
         for (String completion : tabCompletions) {
-            if (!completion.startsWith(strings[strings.length - 1])) {
+            if (!completion.startsWith(strings[strings.length - 1]))
                 continue;
-            }
+
             completions.add(completion);
         }
         return completions;
