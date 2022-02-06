@@ -7,13 +7,18 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +55,18 @@ public class BlockListener implements Listener {
         }
 
         fragileBlocks.remove(Material.REDSTONE_BLOCK);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockBreak(@NotNull BlockBreakEvent e) {
+        if(!(e.getBlock().getState() instanceof Sign))
+            return;
+
+        Sign s = (Sign) e.getBlock().getState();
+        if (s.getLine(0).equalsIgnoreCase(
+                ChatColor.RED + I18nSupport.getInternationalisedString("Region Damaged"))) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
