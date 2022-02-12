@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Sign;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.features.Warfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
@@ -85,6 +86,23 @@ public class Assault extends Warfare {
     }
 
     public boolean makeBeacon() {
+        var foundY = findBeaconY();
+        if (!foundY.getLeft())
+            return false; // can't find a position
+        int beaconX = hitBox.getMinX();
+        int beaconY = foundY.getRight();
+        int beaconZ = hitBox.getMinZ();
+
+        // now make the beacon
+        makeBeaconBase(beaconX, beaconY++, beaconZ);
+        makeBeaconCore(beaconX, beaconY++, beaconZ);
+        makeBeaconTop(beaconX, beaconY++, beaconZ);
+        makeBeaconSign(beaconX, beaconY, beaconZ);
+        return true;
+    }
+
+    // Find a position for the repair beacon
+    private Pair<Boolean, Integer> findBeaconY() {
         // first, find a height position for the repair beacon
         int beaconX = hitBox.getMinX();
         int beaconZ = hitBox.getMinZ();
@@ -96,8 +114,8 @@ public class Assault extends Warfare {
             }
         }
         if (beaconY > hitBox.getMaxY() - 5)
-            return false; // no vertical room for beacon
-        
+            return new Pair<>(false, beaconY); // no vertical room for beacon
+
         // next, find a position for the beacon that is empty
         int x, y, z;
         boolean empty = false;
@@ -113,43 +131,46 @@ public class Assault extends Warfare {
                 }
             }
         }
+        return new Pair<>(true, beaconY);
+    }
 
-        // now make the beacon
-
-        // A 3x3 base of bedrock
-        y = beaconY;
-        for (x = beaconX + 1; x < beaconX + 4; x++)
-            for (z = beaconZ + 1; z < beaconZ + 4; z++)
+    // A 3x3 base of bedrock
+    private void makeBeaconBase(int beaconX, int y, int beaconZ) {
+        for (int x = beaconX + 1; x < beaconX + 4; x++)
+            for (int z = beaconZ + 1; z < beaconZ + 4; z++)
                 world.getBlockAt(x, y, z).setType(Material.BEDROCK);
+    }
 
-        // A 5x5 layer with walls of bedrock and core of iron
-        y++;
-        for (x = beaconX; x < beaconX + 5; x++)
-            for (z = beaconZ; z < beaconZ + 5; z++)
+    // A 5x5 layer with walls of bedrock and core of iron
+    private void makeBeaconCore(int beaconX, int y, int beaconZ) {
+        for (int x = beaconX; x < beaconX + 5; x++)
+            for (int z = beaconZ; z < beaconZ + 5; z++)
                 if (x == beaconX || z == beaconZ || x == beaconX + 4 || z == beaconZ + 4)
                     world.getBlockAt(x, y, z).setType(Material.BEDROCK);
                 else
                     world.getBlockAt(x, y, z).setType(Material.IRON_BLOCK);
+    }
 
-        // A 3x3 layer with walls of bedrock and a core of beacon
-        y++;
-        for (x = beaconX + 1; x < beaconX + 4; x++)
-            for (z = beaconZ + 1; z < beaconZ + 4; z++)
-                world.getBlockAt(x, y, z).setType(Material.BEDROCK);
-        world.getBlockAt(beaconX + 2, y, beaconZ + 2).setType(Material.BEACON);
+    // A 3x3 layer with walls of bedrock and a core of beacon, with a cap of bedrock
+    private void makeBeaconTop(int beaconX, int y, int beaconZ) {
+        for (int x = beaconX + 1; x < beaconX + 4; x++)
+            for (int z = beaconZ + 1; z < beaconZ + 4; z++)
+                if(x == beaconX + 2 && z == beaconZ + 2)
+                    world.getBlockAt(x, y, z).setType(Material.BEACON);
+                else
+                    world.getBlockAt(x, y, z).setType(Material.BEDROCK);
+        world.getBlockAt(beaconX + 2, ++y, beaconZ + 2).setType(Material.BEDROCK);
+    }
 
-        // A 1x1 layer of bedrock
-        y++;
-        world.getBlockAt(beaconX + 2, y, beaconZ + 2).setType(Material.BEDROCK);
-
-        // Finally, the sign
-        world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).setType(Material.OAK_WALL_SIGN);
-        Sign s = (Sign) world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).getState();
+    // Make the beacon sign
+    private void makeBeaconSign(int beaconX, int beaconY, int beaconZ) {
+        world.getBlockAt(beaconX + 2, beaconY, beaconZ + 1).setType(Material.OAK_WALL_SIGN);
+        Sign s = (Sign) world.getBlockAt(beaconX + 2, beaconY, beaconZ + 1).getState();
         s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());
         s.setLine(2, I18nSupport.getInternationalisedString("Damages") + ":" + getMaxDamages());
-        s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":" + MovecraftWorldGuard.getInstance().getWGUtils().getRegionOwnerList(regionName, world));
+        s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":"
+                + MovecraftWorldGuard.getInstance().getWGUtils().getRegionOwnerList(regionName, world));
         s.update();
-        return true;
     }
 }
