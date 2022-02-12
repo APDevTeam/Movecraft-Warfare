@@ -1,17 +1,18 @@
-package net.countercraft.movecraft.warfare.assault;
+package net.countercraft.movecraft.warfare.features.assault;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Sign;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.features.Warfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import org.bukkit.*;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Represents an assault
@@ -25,38 +26,33 @@ public class Assault extends Warfare {
     }
 
     private final String regionName;
-    private final UUID starterUUID;
-    private final long startTime;
+    private final UUID starter;
+    private final LocalDateTime startTime;
     private long damages;
     private final long maxDamages;
     private final World world;
-    private final MovecraftLocation minPos, maxPos;
+    private final SolidHitBox hitBox;
     private final AtomicReference<Stage> stage = new AtomicReference<>(Stage.INACTIVE);
     private final AtomicReference<SavedState> savedCorrectly = new AtomicReference<>(SavedState.UNSAVED);
 
-    public Assault(String regionName, Player starter, World world, long startTime, long maxDamages, MovecraftLocation minPos, MovecraftLocation maxPos) {
+    public Assault(String regionName, UUID starter, World world, long maxDamages, SolidHitBox hitBox) {
         this.regionName = regionName;
-        starterUUID = starter.getUniqueId();
+        this.starter = starter;
         this.world = world;
-        this.startTime = startTime;
+        this.startTime = LocalDateTime.now();
         this.maxDamages = maxDamages;
-        this.minPos = minPos;
-        this.maxPos = maxPos;
+        this.hitBox = hitBox;
     }
 
-    public MovecraftLocation getMaxPos() {
-        return maxPos;
-    }
-
-    public MovecraftLocation getMinPos() {
-        return minPos;
+    public SolidHitBox getHitBox() {
+        return hitBox;
     }
 
     public World getWorld() {
         return world;
     }
 
-    public long getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
@@ -73,9 +69,8 @@ public class Assault extends Warfare {
     }
 
     public UUID getStarterUUID() {
-        return starterUUID;
+        return starter;
     }
-
 
     public String getRegionName() {
         return regionName;
@@ -85,26 +80,26 @@ public class Assault extends Warfare {
         return stage;
     }
 
+    public AtomicReference<SavedState> getSavedCorrectly() {
+        return savedCorrectly;
+    }
 
     public boolean makeBeacon() {
-        //first, find a position for the repair beacon
-        int beaconX = minPos.getX();
-        int beaconZ = minPos.getZ();
+        // first, find a height position for the repair beacon
+        int beaconX = hitBox.getMinX();
+        int beaconZ = hitBox.getMinZ();
         int beaconY;
-        for(beaconY = 255; beaconY > 0; beaconY--) {
-            if(world.getBlockAt(beaconX, beaconY, beaconZ).getType().isOccluding()) {
+        for (beaconY = hitBox.getMaxY(); beaconY > hitBox.getMinY(); beaconY--) {
+            if (world.getBlockAt(beaconX, beaconY, beaconZ).getType().isSolid()) {
                 beaconY++;
                 break;
             }
         }
-        if(beaconY > 250)
-            return false;
-
+        if (beaconY > hitBox.getMaxY() - 5)
+            return false; // no vertical room for beacon
+        
+        // next, find a position for the beacon that is empty
         int x, y, z;
-        for (x = beaconX; x < beaconX + 5; x++)
-            for (z = beaconZ; z < beaconZ + 5; z++)
-                if (!world.isChunkLoaded(x >> 4, z >> z))
-                    world.loadChunk(x >> 4, z >> 4);
         boolean empty = false;
         while (!empty && beaconY < 250) {
             empty = true;
@@ -119,27 +114,36 @@ public class Assault extends Warfare {
             }
         }
 
-        //now make the beacon
+        // now make the beacon
+
+        // A 3x3 base of bedrock
         y = beaconY;
         for (x = beaconX + 1; x < beaconX + 4; x++)
             for (z = beaconZ + 1; z < beaconZ + 4; z++)
                 world.getBlockAt(x, y, z).setType(Material.BEDROCK);
-        y = beaconY + 1;
+
+        // A 5x5 layer with walls of bedrock and core of iron
+        y++;
         for (x = beaconX; x < beaconX + 5; x++)
             for (z = beaconZ; z < beaconZ + 5; z++)
                 if (x == beaconX || z == beaconZ || x == beaconX + 4 || z == beaconZ + 4)
                     world.getBlockAt(x, y, z).setType(Material.BEDROCK);
                 else
                     world.getBlockAt(x, y, z).setType(Material.IRON_BLOCK);
-        y = beaconY + 2;
+
+        // A 3x3 layer with walls of bedrock and a core of beacon
+        y++;
         for (x = beaconX + 1; x < beaconX + 4; x++)
             for (z = beaconZ + 1; z < beaconZ + 4; z++)
                 world.getBlockAt(x, y, z).setType(Material.BEDROCK);
+        world.getBlockAt(beaconX + 2, y, beaconZ + 2).setType(Material.BEACON);
 
-        world.getBlockAt(beaconX + 2, beaconY + 2, beaconZ + 2).setType(Material.BEACON);
-        world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 2).setType(Material.BEDROCK);
-        // finally the sign on the beacon
-        world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).setType(Material.BIRCH_WALL_SIGN);
+        // A 1x1 layer of bedrock
+        y++;
+        world.getBlockAt(beaconX + 2, y, beaconZ + 2).setType(Material.BEDROCK);
+
+        // Finally, the sign
+        world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).setType(Material.OAK_WALL_SIGN);
         Sign s = (Sign) world.getBlockAt(beaconX + 2, beaconY + 3, beaconZ + 1).getState();
         s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());
@@ -147,9 +151,5 @@ public class Assault extends Warfare {
         s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":" + MovecraftWorldGuard.getInstance().getWGUtils().getRegionOwnerList(regionName, world));
         s.update();
         return true;
-    }
-
-    public AtomicReference<SavedState> getSavedCorrectly() {
-        return savedCorrectly;
     }
 }
