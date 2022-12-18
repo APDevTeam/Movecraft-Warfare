@@ -1,7 +1,7 @@
 package net.countercraft.movecraft.warfare;
 
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.repair.util.WarfareUtils;
 import net.countercraft.movecraft.warfare.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.listener.BlockListener;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
@@ -9,14 +9,12 @@ import net.countercraft.movecraft.warfare.commands.AssaultCommand;
 import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.listener.TypesReloadedListener;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.siege.Siege;
 import net.countercraft.movecraft.warfare.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
@@ -26,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -35,6 +33,7 @@ public final class MovecraftWarfare extends JavaPlugin {
     private static MovecraftWarfare instance;
     private AssaultManager assaultManager;
     private SiegeManager siegeManager;
+    private WarfareUtils warfareUtils;
 
     public static synchronized MovecraftWarfare getInstance() {
         return instance;
@@ -47,28 +46,27 @@ public final class MovecraftWarfare extends JavaPlugin {
         saveDefaultConfig();
 
         // TODO other languages
-        String[] languages = {"en"};
+        String[] languages = { "en" };
         for (String s : languages) {
-            if (!new File(getDataFolder()  + "/localisation/mcwlang_"+ s +".properties").exists()) {
-                this.saveResource("localisation/mcwlang_"+ s +".properties", false);
+            if (!new File(getDataFolder() + "/localisation/mcwlang_" + s + ".properties").exists()) {
+                saveResource("localisation/mcwlang_" + s + ".properties", false);
             }
         }
         Config.Locale = getConfig().getString("Locale", "en");
         I18nSupport.init();
 
-
         Config.AssaultEnable = getConfig().getBoolean("AssaultEnable", false);
         Config.SiegeEnable = getConfig().getBoolean("SiegeEnable", false);
 
-        if(MovecraftWorldGuard.getInstance() == null || MovecraftRepair.getInstance().getEconomy() == null) {
+        if (MovecraftWorldGuard.getInstance() == null || MovecraftRepair.getInstance().getEconomy() == null) {
             Config.AssaultEnable = false;
             Config.SiegeEnable = false;
         }
-        if(MovecraftRepair.getInstance() == null) {
+        if (MovecraftRepair.getInstance() == null) {
             Config.AssaultEnable = false;
         }
 
-        if(Config.AssaultEnable) {
+        if (Config.AssaultEnable) {
             assaultManager = new AssaultManager(this);
             assaultManager.runTaskTimerAsynchronously(this, 0, 20);
 
@@ -87,13 +85,12 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultChunkSavePeriod = getConfig().getInt("AssaultChunkSavePeriod", 1);
             Config.AssaultChunkRepairPerTick = getConfig().getInt("AssaultChunkRepairPerTick", 1);
             Config.AssaultChunkRepairPeriod = getConfig().getInt("AssaultChunkSavePeriod", 1);
-            Config.AssaultDestroyableBlocks = new HashSet<>();
-            for(String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
+            Config.AssaultDestroyableBlocks = EnumSet.noneOf(Material.class);
+            for (String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
                 Material m = Material.getMaterial(s.toUpperCase());
-                if(m == null) {
+                if (m == null) {
                     getLogger().info("Failed to load AssaultDestroyableBlock: '" + s + "'");
-                }
-                else {
+                } else {
                     Config.AssaultDestroyableBlocks.add(m);
                 }
             }
@@ -105,11 +102,11 @@ public final class MovecraftWarfare extends JavaPlugin {
             new WarfareRepair(this);
         }
 
-        if(Config.SiegeEnable) {
+        if (Config.SiegeEnable) {
             Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);
             siegeManager = new SiegeManager(this);
             getLogger().info("Enabling siege");
-            //load the sieges.yml file
+            // load the sieges.yml file
             File siegesFile = new File(MovecraftWarfare.getInstance().getDataFolder().getAbsolutePath() + "/sieges.yml");
             InputStream input;
             try {
@@ -118,11 +115,11 @@ public final class MovecraftWarfare extends JavaPlugin {
                 input = null;
             }
             if (input != null) {
-                Map data = new Yaml().loadAs(input, Map.class);
+                Map<?, ?> data = new Yaml().loadAs(input, Map.class);
                 Map<String, Map<String, ?>> siegesMap = (Map<String, Map<String, ?>>) data.get("sieges");
                 List<Siege> sieges = siegeManager.getSieges();
                 for (Map.Entry<String, Map<String, ?>> entry : siegesMap.entrySet()) {
-                    Map<String,Object> siegeMap = (Map<String, Object>) entry.getValue();
+                    Map<String, Object> siegeMap = (Map<String, Object>) entry.getValue();
                     sieges.add(new Siege(
                             entry.getKey(),
                             (String) siegeMap.get("RegionToControl"),
@@ -143,20 +140,16 @@ public final class MovecraftWarfare extends JavaPlugin {
                 getLogger().log(Level.INFO, "Siege configuration loaded.");
             }
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
-
-            getServer().getPluginManager().registerEvents(new TypesReloadedListener(), this);
         }
 
-        this.getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
-        this.getCommand("assault").setExecutor(new AssaultCommand());
-        this.getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
+        warfareUtils = new WarfareUtils();
+        warfareUtils.runTaskTimer(this, 0, 1);
 
-        this.getCommand("siege").setExecutor(new SiegeCommand());
-    }
+        getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
+        getCommand("assault").setExecutor(new AssaultCommand());
+        getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
+        getCommand("siege").setExecutor(new SiegeCommand());
     }
 
     public AssaultManager getAssaultManager() {
@@ -167,7 +160,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         return siegeManager;
     }
 
-    public void reloadTypes() {
-        // Currently nothing is needed here, since craft types are referred to as strings.
+    public WarfareUtils getWarfareUtils() {
+        return warfareUtils;
     }
 }

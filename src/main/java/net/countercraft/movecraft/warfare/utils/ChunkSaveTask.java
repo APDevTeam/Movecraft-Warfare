@@ -1,6 +1,6 @@
 package net.countercraft.movecraft.warfare.utils;
 
-import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
 import net.countercraft.movecraft.warfare.config.Config;
 import org.bukkit.Chunk;
@@ -22,23 +22,22 @@ public class ChunkSaveTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if(a.getSavedCorrectly().get() != Assault.SavedState.UNSAVED)
+        if (a.getSavedCorrectly().get() != Assault.SavedState.UNSAVED)
             return;
 
-        for(int i = 0; i < Config.AssaultChunkSavePerTick; i++) {
+        for (int i = 0; i < Config.AssaultChunkSavePerTick; i++) {
             Chunk c = chunks.poll();
-            if(c == null) {
-                if(chunks.size() == 0) {
+            if (c == null) {
+                if (chunks.size() == 0) {
                     a.getSavedCorrectly().set(Assault.SavedState.SAVED);
                     this.cancel();
-                }
-                else {
+                } else {
                     a.getSavedCorrectly().set(Assault.SavedState.FAILED);
                 }
                 return;
             }
 
-            if(!MovecraftRepair.getInstance().getWEUtils().saveChunk(c, saveDirectory, Config.AssaultDestroyableBlocks)) {
+            if (!MovecraftWarfare.getInstance().getWarfareUtils().saveChunk(c, saveDirectory, Config.AssaultDestroyableBlocks)) {
                 a.getSavedCorrectly().set(Assault.SavedState.FAILED);
                 return;
             }

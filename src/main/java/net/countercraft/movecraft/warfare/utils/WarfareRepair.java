@@ -52,7 +52,7 @@ public class WarfareRepair {
         if(regionTester == null)
             return false;
 
-        ChunkRepairTask repairTask = new ChunkRepairTask(regionName, world, chunks, saveDirectory, regionTester, player);
+        ChunkRepairTask repairTask = new ChunkRepairTask(regionName, chunks, saveDirectory, regionTester, player);
         repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkRepairPeriod);
         return true;
     }
