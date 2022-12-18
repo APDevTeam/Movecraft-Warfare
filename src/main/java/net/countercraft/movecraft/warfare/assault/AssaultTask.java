@@ -15,6 +15,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class AssaultTask extends BukkitRunnable {
     private final Assault assault;
 
@@ -22,23 +25,27 @@ public class AssaultTask extends BukkitRunnable {
         this.assault = assault;
     }
 
-
     @Override
     public void run() {
-        if (assault.getStage().get() != Assault.Stage.IN_PROGRESS)
-            //in-case the server is lagging and a new assault task is started at the exact time on ends
+        if (assault.getStage().get() != Assault.Stage.IN_PROGRESS) {
+            // in-case the server is lagging and a new assault task is started at the exact
+            // time one ends
             return;
+        }
 
-        if (assault.getDamages() >= assault.getMaxDamages())
+        if (assault.getDamages() >= assault.getMaxDamages()) {
             assaultWon();
-        else if (System.currentTimeMillis() - assault.getStartTime() > Config.AssaultDuration * 1000L)
+        } else if (Duration.between(assault.getStartTime(), LocalDateTime.now()).toMillis() > Config.AssaultDuration
+                * 1000L) {
             assaultLost();
+        }
     }
 
     private void assaultWon() {
         // assault was successful
         assault.getStage().set(Assault.Stage.INACTIVE);
-        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"), assault.getRegionName());
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Successful"),
+                assault.getRegionName());
         Bukkit.getServer().broadcastMessage(broadcast);
         Bukkit.getPluginManager().callEvent(new AssaultWinEvent(assault));
         MovecraftWorldGuard.getInstance().getWGUtils().setTNTDeny(assault.getRegionName(), assault.getWorld());
@@ -46,8 +53,9 @@ public class AssaultTask extends BukkitRunnable {
         AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.WIN);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
-        if(!assault.makeBeacon()) {
-            broadcast = ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"), this);
+        if (!assault.makeBeacon()) {
+            broadcast = ERROR_PREFIX
+                    + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"), this);
             Bukkit.getServer().broadcastMessage(broadcast);
 
             event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.BEACON_FAIL);
@@ -61,7 +69,8 @@ public class AssaultTask extends BukkitRunnable {
     private void assaultLost() {
         // assault has failed to reach damage cap within required time
         assault.getStage().set(Assault.Stage.INACTIVE);
-        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"), assault.getRegionName());
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Failed"),
+                assault.getRegionName());
         Bukkit.getServer().broadcastMessage(broadcast);
         Bukkit.getPluginManager().callEvent(new AssaultLoseEvent(assault));
         MovecraftWorldGuard.getInstance().getWGUtils().setTNTDeny(assault.getRegionName(), assault.getWorld());
