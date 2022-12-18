@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 
-import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.features.Warfare;

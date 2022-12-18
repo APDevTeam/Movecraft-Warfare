@@ -16,7 +16,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
+import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -51,7 +53,8 @@ public class RegionDamagedSign implements Listener {
 
         // Queue up the region repair
         if (!WarfareRepair.getInstance().repairRegionRepairState(e.getClickedBlock().getWorld(), regionName, player)) {
-            player.sendMessage(String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
+            player.sendMessage(
+                    String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
             return;
         }
         player.sendMessage(I18nSupport.getInternationalisedString("Assault - Repairing Region"));
@@ -60,8 +63,9 @@ public class RegionDamagedSign implements Listener {
         // Re-add the owners
         String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
         Set<String> ownerSet = new HashSet<>(Arrays.asList(owners));
-        if(!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
-            String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"), regionName);
+        if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
+            String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"),
+                    regionName);
             Bukkit.getServer().broadcastMessage(broadcast);
 
             // Note: there is no assault to pass here...
@@ -76,13 +80,12 @@ public class RegionDamagedSign implements Listener {
         int maxX = sign.getX() + 2;
         int maxY = sign.getY();
         int maxZ = sign.getZ() + 3;
-        for (int x = minX ; x <= maxX ; x++) {
-            for (int y = minY ; y <= maxY ; y++) {
-                for (int z = minZ; z <= maxZ ; z++) {
-                    Block b = sign.getWorld().getBlockAt(x,y,z);
-                    if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON
-                            || b.getType() == Material.IRON_BLOCK) {
-                        b.setType(Material.AIR);
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    Block b = sign.getWorld().getBlockAt(x, y, z);
+                    if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON || b.getType() == Material.IRON_BLOCK) {
+                        Movecraft.getInstance().getWorldHandler().setBlockFast(b.getLocation(), Material.AIR.createBlockData());
                     }
                 }
             }

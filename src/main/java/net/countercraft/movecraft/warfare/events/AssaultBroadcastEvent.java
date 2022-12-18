@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.events;
 
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.countercraft.movecraft.warfare.features.assault.Assault;
 
@@ -20,7 +21,7 @@ public class AssaultBroadcastEvent extends AssaultEvent {
     private final String broadcast;
     private final Type type;
 
-    public AssaultBroadcastEvent(@NotNull Assault assault, @NotNull String broadcast, @NotNull Type type) {
+    public AssaultBroadcastEvent(@Nullable Assault assault, @NotNull String broadcast, @NotNull Type type) {
         super(assault);
         this.broadcast = broadcast;
         this.type = type;

@@ -10,7 +10,7 @@ import org.bukkit.event.Event;
 public abstract class AssaultEvent extends Event {
     @NotNull protected final Assault assault;
 
-    public AssaultEvent(@NotNull Assault assault) {
+    protected AssaultEvent(@NotNull Assault assault) {
         this.assault = assault;
     }
 
