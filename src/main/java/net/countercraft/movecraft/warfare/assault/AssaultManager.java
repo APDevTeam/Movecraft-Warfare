@@ -1,6 +1,8 @@
 package net.countercraft.movecraft.warfare.assault;
 
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
+import net.countercraft.movecraft.warfare.features.assault.Assault;
+
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,16 +14,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class AssaultManager extends BukkitRunnable {
     private final List<Assault> assaults = new CopyOnWriteArrayList<>();
-    private final MovecraftWarfare mcw;
+    private final MovecraftWarfare warfare;
 
-    public AssaultManager(MovecraftWarfare mcw) {
-        this.mcw = mcw;
+    public AssaultManager(MovecraftWarfare warfare) {
+        this.warfare = warfare;
     }
 
     @Override
     public void run() {
         for (Assault assault : assaults) {
-            new AssaultTask(assault).runTask(mcw);
+            new AssaultTask(assault).runTask(warfare);
         }
     }
 

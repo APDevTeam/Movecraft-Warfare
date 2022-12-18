@@ -1,8 +1,10 @@
 package net.countercraft.movecraft.warfare.events;
 
 import org.jetbrains.annotations.NotNull;
+
+import net.countercraft.movecraft.warfare.features.assault.Assault;
+
 import org.bukkit.event.Event;
-import net.countercraft.movecraft.warfare.assault.Assault;
 
 
 public abstract class AssaultEvent extends Event {

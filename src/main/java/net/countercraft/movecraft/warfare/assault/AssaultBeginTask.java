@@ -1,8 +1,8 @@
 package net.countercraft.movecraft.warfare.assault;
 
-import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
+import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;

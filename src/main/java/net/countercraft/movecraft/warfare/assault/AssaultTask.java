@@ -6,9 +6,11 @@ import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
+import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import org.bukkit.*;
+
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
