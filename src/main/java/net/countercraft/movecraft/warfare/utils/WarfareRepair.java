@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare.utils;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.repair.util.WarfareUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
@@ -18,9 +19,11 @@ import java.util.function.Predicate;
 public class WarfareRepair {
     private static WarfareRepair instance;
     private final Plugin plugin;
+    private final WarfareUtils warfareUtils;
 
     public WarfareRepair(Plugin plugin) {
         this.plugin = plugin;
+        warfareUtils = new WarfareUtils();
         instance = this;
     }
 
@@ -54,8 +57,7 @@ public class WarfareRepair {
         if (regionTester == null)
             return false;
 
-        ChunkRepairTask repairTask = new ChunkRepairTask(regionName, world, chunks, saveDirectory, regionTester,
-                player);
+        ChunkRepairTask repairTask = new ChunkRepairTask(regionName, chunks, saveDirectory, regionTester, player);
         repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkRepairPeriod);
         return true;
     }
@@ -63,5 +65,9 @@ public class WarfareRepair {
     @Nullable
     private Queue<Chunk> getChunksInRegion(String regionName, World w) {
         return MovecraftWorldGuard.getInstance().getWGUtils().getChunksInRegion(regionName, w);
+    }
+
+    public WarfareUtils getWarfareUtils() {
+        return warfareUtils;
     }
 }

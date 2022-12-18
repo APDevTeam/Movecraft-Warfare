@@ -1,6 +1,5 @@
 package net.countercraft.movecraft.warfare.utils;
 
-import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
 
@@ -29,16 +28,16 @@ public class ChunkSaveTask extends BukkitRunnable {
         for (int i = 0; i < Config.AssaultChunkSavePerTick; i++) {
             Chunk c = chunks.poll();
             if (c == null) {
-                if (chunks.size() == 0) {
+                if (!chunks.isEmpty()) {
                     a.getSavedCorrectly().set(Assault.SavedState.SAVED);
-                    this.cancel();
+                    cancel();
                 } else {
                     a.getSavedCorrectly().set(Assault.SavedState.FAILED);
                 }
                 return;
             }
 
-            if (!MovecraftRepair.getInstance().getWEUtils().saveChunk(c, saveDirectory,
+            if (!WarfareRepair.getInstance().getWarfareUtils().saveChunk(c, saveDirectory,
                     Config.AssaultDestroyableBlocks)) {
                 a.getSavedCorrectly().set(Assault.SavedState.FAILED);
                 return;

@@ -37,7 +37,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         String[] languages = { "en" };
         for (String s : languages) {
             if (!new File(getDataFolder() + "/localisation/mcwlang_" + s + ".properties").exists()) {
-                this.saveResource("localisation/mcwlang_" + s + ".properties", false);
+                saveResource("localisation/mcwlang_" + s + ".properties", false);
             }
         }
         Config.Locale = getConfig().getString("Locale", "en");
@@ -79,8 +79,7 @@ public final class MovecraftWarfare extends JavaPlugin {
                 Material m = Material.getMaterial(s.toUpperCase());
                 if (m == null) {
                     getLogger().info("Failed to load AssaultDestroyableBlock: '" + s + "'");
-                }
-                else {
+                } else {
                     Config.AssaultDestroyableBlocks.add(m);
                 }
             }
@@ -94,7 +93,6 @@ public final class MovecraftWarfare extends JavaPlugin {
         getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
         getCommand("assault").setExecutor(new AssaultCommand());
         getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
-
 
         if (Config.SiegeEnable) {
             Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);

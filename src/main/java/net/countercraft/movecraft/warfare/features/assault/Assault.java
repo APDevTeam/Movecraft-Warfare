@@ -21,6 +21,7 @@ public class Assault extends Warfare {
     public enum Stage {
         IN_PROGRESS, PREPERATION, INACTIVE
     }
+
     public enum SavedState {
         UNSAVED, SAVED, FAILED
     }
@@ -39,9 +40,9 @@ public class Assault extends Warfare {
         this.regionName = regionName;
         this.starter = starter;
         this.world = world;
-        this.startTime = LocalDateTime.now();
         this.maxDamages = maxDamages;
         this.hitBox = hitBox;
+        startTime = LocalDateTime.now();
     }
 
     public SolidHitBox getHitBox() {
@@ -154,7 +155,7 @@ public class Assault extends Warfare {
     private void makeBeaconTop(int beaconX, int y, int beaconZ) {
         for (int x = beaconX + 1; x < beaconX + 4; x++)
             for (int z = beaconZ + 1; z < beaconZ + 4; z++)
-                if(x == beaconX + 2 && z == beaconZ + 2)
+                if (x == beaconX + 2 && z == beaconZ + 2)
                     world.getBlockAt(x, y, z).setType(Material.BEACON);
                 else
                     world.getBlockAt(x, y, z).setType(Material.BEDROCK);
