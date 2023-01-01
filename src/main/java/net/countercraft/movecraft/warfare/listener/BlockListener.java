@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.listener;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.assault.Assault;
@@ -21,45 +22,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class BlockListener implements Listener {
-    private final HashSet<Material> fragileBlocks;
     private long lastDamagesUpdate = 0;
-
-    public BlockListener() {
-        fragileBlocks = new HashSet<>();
-        for(Material m : Material.values()) {
-            String name = m.name();
-            if(name.contains("SIGN") ||
-                    name.contains("DOOR") ||
-                    name.contains("PRESSURE_PLATE") ||
-                    name.contains("CARPET") ||
-                    name.contains("BED") ||
-                    name.contains("BUTTON") ||
-                    name.contains("TORCH") ||
-                    name.contains("TRIPWIRE") ||
-                    name.contains("PISTON_HEAD") ||
-                    name.contains("LEVER") ||
-                    name.contains("LADDER") ||
-                    name.contains("REDSTONE") ||
-                    name.contains("REPEATER") ||
-                    name.contains("COMPARATOR") ||
-                    name.contains("DAYLIGHT_DETECTOR")) {
-                fragileBlocks.add(m);
-            }
-        }
-
-        fragileBlocks.remove(Material.REDSTONE_BLOCK);
-    }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void explodeEvent(EntityExplodeEvent e) {
-        List<Assault> assaults = MovecraftWarfare.getInstance().getAssaultManager() != null ? MovecraftWarfare.getInstance().getAssaultManager().getAssaults() : null;
-        if (assaults == null || assaults.size() == 0)
+        List<Assault> assaults = MovecraftWarfare.getInstance().getAssaultManager() != null
+                ? MovecraftWarfare.getInstance().getAssaultManager().getAssaults()
+                : null;
+        if (assaults == null || assaults.isEmpty())
             return;
 
         for (final Assault assault : assaults) {
-            if(e.getLocation().getWorld() != assault.getWorld())
+            if (e.getLocation().getWorld() != assault.getWorld())
                 continue;
 
             Iterator<Block> i = e.blockList().iterator();
@@ -81,18 +58,19 @@ public class BlockListener implements Listener {
                     i.remove();
 
                 // remove if not destroyable
-                if(!Config.AssaultDestroyableBlocks.contains(b.getType()))
+                if (!Config.AssaultDestroyableBlocks.contains(b.getType()))
                     i.remove();
 
                 // remove if fragile
-                if(isFragile(b))
+                if (isFragile(b))
                     i.remove();
 
                 // whether or not you actually destroyed the block, add to damages
                 long damages = assault.getDamages() + Config.AssaultDamagesPerBlock;
                 assault.setDamages(Math.min(damages, assault.getMaxDamages()));
 
-                // notify nearby players of the damages, do this 1 second later so all damages from this volley will be included
+                // notify nearby players of the damages, do this 1 second later so all damages
+                // from this volley will be included
                 if (System.currentTimeMillis() < lastDamagesUpdate + 4000) {
                     continue;
                 }
@@ -103,8 +81,10 @@ public class BlockListener implements Listener {
                     public void run() {
                         long fdamages = assault.getDamages();
                         for (Player p : fworld.getPlayers()) {
-                            if (Math.round(p.getLocation().getBlockX() / 1000.0) == Math.round(floc.getBlockX() / 1000.0) &&
-                                    Math.round(p.getLocation().getBlockZ() / 1000.0) == Math.round(floc.getBlockZ() / 1000.0)) {
+                            if (Math.round(p.getLocation().getBlockX() / 1000.0) == Math
+                                    .round(floc.getBlockX() / 1000.0) &&
+                                    Math.round(p.getLocation().getBlockZ() / 1000.0) == Math
+                                            .round(floc.getBlockZ() / 1000.0)) {
                                 p.sendMessage(I18nSupport.getInternationalisedString("Damage") + ": " + fdamages);
                             }
                         }
@@ -116,16 +96,16 @@ public class BlockListener implements Listener {
     }
 
     private boolean isFragile(@NotNull Block base) {
-        for(Block b : getNearbyBlocks(base)) {
-            if(fragileBlocks.contains(b.getType()))
+        for (Block b : getNearbyBlocks(base)) {
+            if (Tags.FRAGILE_MATERIALS.contains(b.getType()))
                 return true;
         }
         return false;
     }
 
     @NotNull
-    private HashSet<Block> getNearbyBlocks(@NotNull Block b) {
-        HashSet<Block> blocks = new HashSet<>();
+    private Set<Block> getNearbyBlocks(@NotNull Block b) {
+        Set<Block> blocks = new HashSet<>();
         blocks.add(b.getRelative(BlockFace.SOUTH));
         blocks.add(b.getRelative(BlockFace.DOWN));
         blocks.add(b.getRelative(BlockFace.UP));
