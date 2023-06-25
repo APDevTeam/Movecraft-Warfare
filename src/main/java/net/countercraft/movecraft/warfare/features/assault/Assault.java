@@ -1,17 +1,28 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.features.Warfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 
 /**
  * Represents an assault
@@ -97,8 +108,7 @@ public class Assault extends Warfare {
         makeBeaconCore(beaconX, beaconY++, beaconZ);
         makeBeaconTop(beaconX, beaconY++, beaconZ);
         makeBeaconSign(beaconX, beaconY, beaconZ);
-        // TODO: Create a JSON file for the owners and other required details for repairing
-        return true;
+        return makeBeaconFile();
     }
 
     // Find a position for the repair beacon
@@ -174,5 +184,27 @@ public class Assault extends Warfare {
         s.setLine(2, I18nSupport.getInternationalisedString("Damages") + ":" + getMaxDamages());
         s.setLine(3, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(startTime));
         s.update();
+    }
+
+    // Make the info file
+    private boolean makeBeaconFile() {
+        // Create file path, get owners, save to data, convert to pretty JSON, and save to file
+        File saveDirectory = new File(MovecraftWarfare.getInstance().getDataFolder(),
+                "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
+        if (!saveDirectory.exists())
+            saveDirectory.mkdirs();
+        File file = new File(saveDirectory, "info.json");
+
+        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, world);
+        AssaultData data = new AssaultData(owners, startTime);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+        try {
+			gson.toJson(data, new FileWriter(file));
+		} catch (JsonIOException | IOException e) {
+			e.printStackTrace();
+            return false;
+		}
+        return true;
     }
 }
