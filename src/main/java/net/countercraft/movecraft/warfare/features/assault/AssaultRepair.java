@@ -17,11 +17,11 @@ import java.io.File;
 import java.util.Queue;
 import java.util.function.Predicate;
 
-public class WarfareRepair {
+public class AssaultRepair {
     private final Plugin plugin;
     private final WarfareUtils warfareUtils;
 
-    public WarfareRepair(Plugin plugin) {
+    public AssaultRepair(Plugin plugin) {
         this.plugin = plugin;
         warfareUtils = new WarfareUtils();
     }

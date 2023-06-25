@@ -11,8 +11,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,5 +96,15 @@ public class RegionDamagedSign implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockBreak(@NotNull BlockBreakEvent e) {
+        if (!(e.getBlock().getState() instanceof Sign))
+            return;
+
+        Sign s = (Sign) e.getBlock().getState();
+        if (s.getLine(0).equals(HEADER))
+            e.setCancelled(true);
     }
 }

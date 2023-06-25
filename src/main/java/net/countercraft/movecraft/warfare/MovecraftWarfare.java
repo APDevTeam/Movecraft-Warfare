@@ -4,11 +4,11 @@ import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.AssaultManager;
-import net.countercraft.movecraft.warfare.features.assault.BlockListener;
 import net.countercraft.movecraft.warfare.features.assault.RegionDamagedSign;
 import net.countercraft.movecraft.warfare.features.assault.commands.AssaultCommand;
 import net.countercraft.movecraft.warfare.features.assault.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.features.assault.commands.AssaultRepairCommand;
+import net.countercraft.movecraft.warfare.features.assault.listener.AssaultExplosionListener;
 import net.countercraft.movecraft.warfare.features.siege.SiegeCommand;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
@@ -84,7 +84,7 @@ public final class MovecraftWarfare extends JavaPlugin {
                 }
             }
 
-            getServer().getPluginManager().registerEvents(new BlockListener(), this);
+            getServer().getPluginManager().registerEvents(new AssaultExplosionListener(), this);
             getServer().getPluginManager().registerEvents(new RegionDamagedSign(), this);
         }
 

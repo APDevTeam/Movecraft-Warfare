@@ -15,11 +15,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class AssaultManager extends BukkitRunnable {
     private final List<Assault> assaults = new CopyOnWriteArrayList<>();
     private final MovecraftWarfare warfare;
-    private final WarfareRepair warfareRepair;
+    private final AssaultRepair repair;
 
     public AssaultManager(MovecraftWarfare warfare) {
         this.warfare = warfare;
-        warfareRepair = new WarfareRepair(warfare);
+        repair = new AssaultRepair(warfare);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class AssaultManager extends BukkitRunnable {
         return null;
     }
 
-    public WarfareRepair getRepairUtils() {
-        return warfareRepair;
+    public AssaultRepair getRepairUtils() {
+        return repair;
     }
 }

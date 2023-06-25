@@ -3,7 +3,7 @@ package net.countercraft.movecraft.warfare.features.assault.tasks;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
-import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
+import net.countercraft.movecraft.warfare.features.assault.AssaultRepair;
 
 import org.bukkit.Chunk;
 import org.bukkit.scheduler.BukkitRunnable;

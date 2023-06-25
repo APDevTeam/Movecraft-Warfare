@@ -1,10 +1,11 @@
-package net.countercraft.movecraft.warfare.features.assault;
+package net.countercraft.movecraft.warfare.features.assault.listener;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.ChatColor;
@@ -27,20 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class BlockListener implements Listener {
+public class AssaultExplosionListener implements Listener {
     private long lastDamagesUpdate = 0;
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBlockBreak(@NotNull BlockBreakEvent e) {
-        if (!(e.getBlock().getState() instanceof Sign))
-            return;
-
-        Sign s = (Sign) e.getBlock().getState();
-        if (s.getLine(0).equalsIgnoreCase(
-                ChatColor.RED + I18nSupport.getInternationalisedString("Region Damaged"))) {
-            e.setCancelled(true);
-        }
-    }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void explodeEvent(EntityExplodeEvent e) {

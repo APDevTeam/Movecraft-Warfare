@@ -7,7 +7,7 @@ import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
-import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
+import net.countercraft.movecraft.warfare.features.assault.AssaultRepair;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.features.assault.tasks.AssaultBeginTask;
