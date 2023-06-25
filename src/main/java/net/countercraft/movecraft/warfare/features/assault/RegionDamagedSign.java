@@ -1,6 +1,5 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,8 +63,8 @@ public class RegionDamagedSign implements Listener {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, damages);
 
         // Re-add the owners
-        String[] owners = sign.getLine(3).substring(sign.getLine(3).indexOf(":") + 1).split(",");
-        Set<String> ownerSet = new HashSet<>(Arrays.asList(owners));
+        // TODO: Get this data from the JSON
+        Set<String> ownerSet = new HashSet<>();
         if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
             String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"),
                     regionName);

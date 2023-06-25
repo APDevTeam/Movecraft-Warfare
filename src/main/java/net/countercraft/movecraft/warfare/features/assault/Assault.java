@@ -1,18 +1,17 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
-
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.features.Warfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 
 /**
  * Represents an assault
@@ -98,6 +97,7 @@ public class Assault extends Warfare {
         makeBeaconCore(beaconX, beaconY++, beaconZ);
         makeBeaconTop(beaconX, beaconY++, beaconZ);
         makeBeaconSign(beaconX, beaconY, beaconZ);
+        // TODO: Create a JSON file for the owners and other required details for repairing
         return true;
     }
 
@@ -164,13 +164,15 @@ public class Assault extends Warfare {
 
     // Make the beacon sign
     private void makeBeaconSign(int beaconX, int beaconY, int beaconZ) {
+        // Create sign
         world.getBlockAt(beaconX + 2, beaconY, beaconZ + 1).setType(Material.OAK_WALL_SIGN);
         Sign s = (Sign) world.getBlockAt(beaconX + 2, beaconY, beaconZ + 1).getState();
+
+        // Put header, region name, damages and local date time on sign
         s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());
         s.setLine(2, I18nSupport.getInternationalisedString("Damages") + ":" + getMaxDamages());
-        s.setLine(3, I18nSupport.getInternationalisedString("Region Owner") + ":"
-                + MovecraftWorldGuard.getInstance().getWGUtils().getRegionOwnerList(regionName, world));
+        s.setLine(3, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(startTime));
         s.update();
     }
 }

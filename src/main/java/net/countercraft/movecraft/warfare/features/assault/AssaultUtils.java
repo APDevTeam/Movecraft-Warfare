@@ -116,7 +116,7 @@ public class AssaultUtils {
         if (owners == null || owners.size() == 0)
             return false;
 
-        // TODO: We need to use a file to store the last assault
+        // TODO: Get the time data from the JSON, check if assaulted recently
 
         if (!Config.SiegeEnable)
             return true;
