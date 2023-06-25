@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.warfare.features.siege;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class SiegeConfig {
         return new Pair<>(config.getKey(), new SiegeConfig(
             (String) siegeMap.get("SiegeRegion"),
             (String) siegeMap.get("RegionToControl"),
-            (List<Integer>) siegeMap.get("DaysOfWeek"),
+            (List<Integer>) siegeMap.get("DaysOfTheWeek"),
             (List<String>) siegeMap.get("CraftsToWin"),
             (List<String>) siegeMap.get("CommandsOnStart"),
             (List<String>) siegeMap.get("CommandsOnWin"),
@@ -28,9 +29,9 @@ public class SiegeConfig {
             (int) siegeMap.get("ScheduleStart"),
             (int) siegeMap.get("ScheduleEnd"),
             (int) siegeMap.get("DelayBeforeStart"),
-            (int) siegeMap.get("Duration"),
+            (int) siegeMap.get("SiegeDuration"),
             (int) siegeMap.get("DailyIncome"),
-            (int) siegeMap.get("Cost"),
+            (int) siegeMap.get("CostToSiege"),
             (boolean) siegeMap.get("DoubleCostPerOwnedSiegeRegion")
         ));
     }
@@ -46,9 +47,9 @@ public class SiegeConfig {
         this.captureRegion = captureRegion;
         this.daysOfWeek = daysOfWeek;
         this.craftsToWin = craftsToWin;
-        this.commandsOnStart = commandsOnStart;
-        this.commandsOnWin = commandsOnWin;
-        this.commandsOnLose = commandsOnLose;
+        this.commandsOnStart = commandsOnStart == null ? new ArrayList<>() : commandsOnStart;
+        this.commandsOnWin = commandsOnWin == null ? new ArrayList<>() : commandsOnWin;
+        this.commandsOnLose = commandsOnLose == null ? new ArrayList<>() : commandsOnLose;
         this.scheduleStart = scheduleStart;
         this.scheduleEnd = scheduleEnd;
         this.delayBeforeStart = delayBeforeStart;
