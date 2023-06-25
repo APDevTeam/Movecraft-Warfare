@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.listener.BlockListener;
 import net.countercraft.movecraft.warfare.assault.AssaultManager;
@@ -17,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.EnumSet;
 import java.util.HashSet;
 
 public final class MovecraftWarfare extends JavaPlugin {
@@ -74,13 +76,13 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultChunkSavePeriod = getConfig().getInt("AssaultChunkSavePeriod", 1);
             Config.AssaultChunkRepairPerTick = getConfig().getInt("AssaultChunkRepairPerTick", 1);
             Config.AssaultChunkRepairPeriod = getConfig().getInt("AssaultChunkSavePeriod", 1);
-            Config.AssaultDestroyableBlocks = new HashSet<>();
+            Config.AssaultDestroyableBlocks = EnumSet.noneOf(Material.class);
             for (String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
-                Material m = Material.getMaterial(s.toUpperCase());
-                if (m == null) {
+                EnumSet<Material> materials = Tags.parseMaterials(s);
+                if (materials.isEmpty()) {
                     getLogger().info("Failed to load AssaultDestroyableBlock: '" + s + "'");
                 } else {
-                    Config.AssaultDestroyableBlocks.add(m);
+                    Config.AssaultDestroyableBlocks.addAll(materials);
                 }
             }
 
