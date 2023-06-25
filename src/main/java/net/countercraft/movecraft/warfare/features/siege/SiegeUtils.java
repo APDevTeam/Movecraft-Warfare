@@ -29,6 +29,6 @@ public class SiegeUtils {
         name = player.getName(); // Player is offline, try their cached name
         if(name == null)
             return "null"; // Player has no cached name, use a null
-        return name; // Player hs a cached name, use it
+        return name; // Player has a cached name, use it
     }
 }

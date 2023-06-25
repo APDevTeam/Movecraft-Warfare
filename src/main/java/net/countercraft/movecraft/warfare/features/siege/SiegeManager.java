@@ -40,7 +40,7 @@ public class SiegeManager extends BukkitRunnable {
         }
         else {
             try {
-                Map data = new Yaml().loadAs(input, Map.class);
+                Map<?, ?> data = new Yaml().loadAs(input, Map.class);
                 Map<String, Map<String, ?>> siegesMap = (Map<String, Map<String, ?>>) data.get("sieges");
                 for (Map.Entry<String, Map<String, ?>> entry : siegesMap.entrySet()) {
                     sieges.add(new Siege(SiegeConfig.load(entry)));
@@ -66,7 +66,7 @@ public class SiegeManager extends BukkitRunnable {
             if (siege.getStage().get() == Siege.Stage.IN_PROGRESS) {
                 new SiegeProgressTask(siege).runTask(warfare);
             }
-            else if (siege.getStage().get() == Siege.Stage.PREPERATION) {
+            else if (siege.getStage().get() == Siege.Stage.PREPARATION) {
                 new SiegePreparationTask(siege).runTask(warfare);
             }
             else {

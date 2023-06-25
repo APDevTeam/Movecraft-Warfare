@@ -19,7 +19,7 @@ import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
  */
 public class Assault extends Warfare {
     public enum Stage {
-        IN_PROGRESS, PREPERATION, INACTIVE
+        IN_PROGRESS, PREPARATION, INACTIVE
     }
 
     public enum SavedState {

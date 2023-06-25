@@ -24,7 +24,7 @@ public class SiegePreparationTask extends SiegeTask {
     @Override
     public void run() {
         // Check if the preparation is over
-        if(siege.getStartTime() == null)
+        if (siege.getStartTime() == null)
             throw new IllegalStateException();
         Duration timePassed = Duration.between(siege.getStartTime(), LocalDateTime.now());
         long timeLeft = siege.getConfig().getDelayBeforeStart() - timePassed.getSeconds();
@@ -36,7 +36,7 @@ public class SiegePreparationTask extends SiegeTask {
             if (siegeStartEvent.isCancelled()) {
                 // If the event is cancelled, notify the player if they are online
                 Player player = siege.getPlayer().getPlayer();
-                if(player != null) {
+                if (player != null) {
                     player.sendMessage(MOVECRAFT_COMMAND_PREFIX + siegeStartEvent.getCancelReason());
                 }
                 // Set the siege to inactive
@@ -46,14 +46,13 @@ public class SiegePreparationTask extends SiegeTask {
 
             // Else set the siege to in progress
             siege.setStage(Siege.Stage.IN_PROGRESS);
-        }
-        else if (timeLeft % Config.SiegeTaskSeconds != 0) {
+        } else if (timeLeft % Config.SiegeTaskSeconds != 0) {
             return; // Only send broadcasts every SiegeTaskSeconds seconds
         }
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"),
                 SiegeUtils.getSiegeLeaderName(siege.getPlayer()), siege.getName())
-            + SiegeUtils.formatMinutes(timeLeft);
+                + SiegeUtils.formatMinutes(timeLeft);
         Bukkit.getServer().broadcastMessage(broadcast);
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0);

@@ -109,7 +109,7 @@ public class AssaultCommand implements CommandExecutor {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(regionName, w));
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
-        assault.getStage().set(Assault.Stage.PREPERATION);
+        assault.getStage().set(Assault.Stage.PREPARATION);
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon"),
                 player.getDisplayName(), args[0], Config.AssaultDelay / 60);

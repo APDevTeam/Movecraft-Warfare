@@ -19,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.EnumSet;
-import java.util.HashSet;
 
 public final class MovecraftWarfare extends JavaPlugin {
     private static MovecraftWarfare instance;

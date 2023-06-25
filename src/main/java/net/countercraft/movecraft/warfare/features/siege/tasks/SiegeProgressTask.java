@@ -36,8 +36,7 @@ public class SiegeProgressTask extends SiegeTask {
         if (timeLeft < 0) {
             // Siege is done!
             endSiege();
-        }
-        else {
+        } else {
             // Siege is still in progress
         }
     }
@@ -81,7 +80,7 @@ public class SiegeProgressTask extends SiegeTask {
             name = SiegeUtils.getSiegeLeaderName(siege.getPlayer());
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
-            siege.getName(), name);
+                siege.getName(), name);
         Bukkit.getServer().broadcastMessage(broadcast);
         SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.LOSE);
         Bukkit.getServer().getPluginManager().callEvent(event);
@@ -92,7 +91,7 @@ public class SiegeProgressTask extends SiegeTask {
             name = siege.getPlayer().getName();
             if (name == null) {
                 throw new IllegalArgumentException("Failed to run siege loss commands for "
-                    + siege.getPlayer().getUniqueId());
+                        + siege.getPlayer().getUniqueId());
             }
             processCommands(name, siege.getConfig().getCommandsOnLose());
         }
@@ -102,15 +101,15 @@ public class SiegeProgressTask extends SiegeTask {
         Bukkit.getPluginManager().callEvent(new SiegeWinEvent(siege));
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Success"),
-                        siege.getName(), player.getDisplayName());
+                siege.getName(), player.getDisplayName());
         Bukkit.getServer().broadcastMessage(broadcast);
         SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.WIN);
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         MovecraftWorldGuard.getInstance().getWGUtils().clearAndSetOwnership(
-            siege.getConfig().getCaptureRegion(),
-            player.getWorld(),
-            player.getUniqueId());
+                siege.getConfig().getCaptureRegion(),
+                player.getWorld(),
+                player.getUniqueId());
 
         processCommands(player.getName(), siege.getConfig().getCommandsOnWin());
     }

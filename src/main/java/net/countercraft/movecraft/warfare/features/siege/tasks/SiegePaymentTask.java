@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.features.siege.tasks;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -16,7 +17,7 @@ import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 
 public class SiegePaymentTask extends SiegeTask {
-    private static final WeakHashMap<Siege, LocalDateTime> lastUpdates = new WeakHashMap<>();
+    private static final Map<Siege, LocalDateTime> lastUpdates = new WeakHashMap<>();
 
     public SiegePaymentTask(Siege siege) {
         super(siege);
@@ -24,7 +25,8 @@ public class SiegePaymentTask extends SiegeTask {
 
     @Override
     public void run() {
-        // If we have a last update record, check that it's from more than a day ago, else return
+        // If we have a last update record, check that it's from more than a day ago,
+        // else return
         if (lastUpdates.containsKey(siege)) {
             LocalDateTime lastUpdate = lastUpdates.get(siege);
             if (!LocalDateTime.now().minusDays(1).isAfter(lastUpdate))
@@ -33,18 +35,18 @@ public class SiegePaymentTask extends SiegeTask {
 
         // Build up a UUID set of owners of the capture region
         Set<UUID> ownerSet = null;
-        for(World w : MovecraftWarfare.getInstance().getServer().getWorlds()) {
-            ownerSet = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(
-                siege.getConfig().getCaptureRegion(), w);
+        for (World w : MovecraftWarfare.getInstance().getServer().getWorlds()) {
+            ownerSet = MovecraftWorldGuard.getInstance().getWGUtils()
+                    .getUUIDOwners(siege.getConfig().getCaptureRegion(), w);
             if (ownerSet != null)
                 break;
         }
-        if(ownerSet == null)
+        if (ownerSet == null)
             return;
 
         // Build up a set of offline players from the UUID set
         Set<OfflinePlayer> owners = new HashSet<>();
-        for(UUID uuid : ownerSet) {
+        for (UUID uuid : ownerSet) {
             owners.add(MovecraftWarfare.getInstance().getServer().getOfflinePlayer(uuid));
         }
 
@@ -53,11 +55,10 @@ public class SiegePaymentTask extends SiegeTask {
         for (OfflinePlayer player : owners) {
             MovecraftRepair.getInstance().getEconomy().depositPlayer(player, share);
             MovecraftWarfare.getInstance().getLogger().info(String.format(
-                I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"),
-                player.getName(),
-                share,
-                siege.getName()
-            ));
+                    I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"),
+                    player.getName(),
+                    share,
+                    siege.getName()));
         }
 
         // Record the last update time

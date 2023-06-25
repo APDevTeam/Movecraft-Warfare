@@ -70,7 +70,6 @@ public class SiegeCommand implements TabExecutor {
         return true;
     }
 
-
     private boolean cancelCommand(CommandSender commandSender, String[] args) {
         if (!commandSender.hasPermission("movecraft.siege.cancel")) {
             commandSender.sendMessage(
@@ -127,14 +126,12 @@ public class SiegeCommand implements TabExecutor {
         Bukkit.getServer().getPluginManager().callEvent(event);
     }
 
-
     private boolean timeCommand(CommandSender commandSender) {
         int militaryTime = getMilitaryTime();
         commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + dayToString(getDayOfWeek()) + " - "
                 + String.format("%02d", militaryTime / 100) + ":" + String.format("%02d", militaryTime % 100));
         return true;
     }
-
 
     private boolean infoCommand(CommandSender commandSender, String[] args) {
         if (args.length <= 1) {
@@ -163,9 +160,9 @@ public class SiegeCommand implements TabExecutor {
 
         if (commandSender instanceof Player) {
             cost = MovecraftRepair.getInstance().getEconomy().has((Player) commandSender, siege.getConfig().getCost())
-                    ? ChatColor.GREEN : ChatColor.RED;
-        }
-        else {
+                    ? ChatColor.GREEN
+                    : ChatColor.RED;
+        } else {
             cost = ChatColor.DARK_RED;
         }
 
@@ -213,7 +210,6 @@ public class SiegeCommand implements TabExecutor {
         return String.format("%02d", seconds / 60) + ":" + String.format("%02d", seconds % 60);
     }
 
-
     private boolean listCommand(CommandSender commandSender, String[] args) {
         SiegeManager siegeManager = MovecraftWarfare.getInstance().getSiegeManager();
         int page;
@@ -222,8 +218,7 @@ public class SiegeCommand implements TabExecutor {
                 page = 1;
             else
                 page = Integer.parseInt(args[1]);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX
                     + I18nSupport.getInternationalisedString("Paginator - Invalid Page") + " \"" + args[1] + "\"");
             return true;
@@ -242,7 +237,6 @@ public class SiegeCommand implements TabExecutor {
             commandSender.sendMessage(line);
         return true;
     }
-
 
     private boolean beginCommand(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
@@ -341,7 +335,6 @@ public class SiegeCommand implements TabExecutor {
         return cost;
     }
 
-
     private int getMilitaryTime() {
         Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         int hour = rightNow.get(Calendar.HOUR_OF_DAY);
@@ -353,7 +346,6 @@ public class SiegeCommand implements TabExecutor {
         Calendar rightNow = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         return rightNow.get(Calendar.DAY_OF_WEEK);
     }
-
 
     private String dayToString(int day) {
         String output;
@@ -387,7 +379,6 @@ public class SiegeCommand implements TabExecutor {
         return output;
     }
 
-
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         final List<String> tabCompletions = new ArrayList<>();
@@ -397,13 +388,11 @@ public class SiegeCommand implements TabExecutor {
             tabCompletions.add("list");
             tabCompletions.add("time");
             tabCompletions.add("cancel");
-        }
-        else if (strings[0].equalsIgnoreCase("info")) {
+        } else if (strings[0].equalsIgnoreCase("info")) {
             for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
                 tabCompletions.add(siege.getName());
             }
-        }
-        else if (strings[0].equalsIgnoreCase("cancel")) {
+        } else if (strings[0].equalsIgnoreCase("cancel")) {
             for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
                 if (siege.getStage().get() == Siege.Stage.INACTIVE)
                     continue;

@@ -19,7 +19,7 @@ import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEv
 
 public class Siege extends Warfare {
     public enum Stage {
-        IN_PROGRESS, PREPERATION, INACTIVE
+        IN_PROGRESS, PREPARATION, INACTIVE
     }
 
     @NotNull private String name;
@@ -88,7 +88,7 @@ public class Siege extends Warfare {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, cost);
         startTime = LocalDateTime.now();
         this.player = player;
-        setStage(Stage.PREPERATION);
+        setStage(Stage.PREPARATION);
     }
 
     public String toString() {
