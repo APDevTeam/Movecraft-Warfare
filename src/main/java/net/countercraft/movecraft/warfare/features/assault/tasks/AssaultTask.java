@@ -53,8 +53,9 @@ public class AssaultTask extends BukkitRunnable {
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         if (!assault.makeBeacon()) {
-            broadcast = ERROR_PREFIX
-                    + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"), this);
+            broadcast = ERROR_PREFIX + " "
+                    + String.format(I18nSupport.getInternationalisedString("Assault - Beacon Placement Failed"),
+                            assault.getRegionName());
             Bukkit.getServer().broadcastMessage(broadcast);
 
             event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.BEACON_FAIL);
@@ -78,9 +79,11 @@ public class AssaultTask extends BukkitRunnable {
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         // repair the damages that have occurred so far
-        if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null)) {
-            broadcast = ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
-                    assault.getRegionName().toUpperCase());
+        if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils()
+                .repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null)) {
+            broadcast = ERROR_PREFIX + " "
+                    + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
+                            assault.getRegionName().toUpperCase());
             Bukkit.getServer().broadcastMessage(broadcast);
 
             event = new AssaultBroadcastEvent(assault, broadcast, AssaultBroadcastEvent.Type.REPAIR_FAIL);

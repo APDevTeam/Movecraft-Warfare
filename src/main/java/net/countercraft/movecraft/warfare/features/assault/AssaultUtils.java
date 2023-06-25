@@ -130,19 +130,21 @@ public class AssaultUtils {
             return false;
 
         AssaultData data = AssaultUtils.retrieveInfoFile(regionName);
-        LocalDateTime lastStartTime = data.getStartTime();
-        if (lastStartTime != null) {
-            // We have had a previous assault, check the time
-            Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
-            if (delta.toHours() < Config.AssaultCooldownHours)
-                return false;
+        if (data != null) {
+            LocalDateTime lastStartTime = data.getStartTime();
+            if (lastStartTime != null) {
+                // We have had a previous assault, check the time
+                Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
+                if (delta.toHours() < Config.AssaultCooldownHours)
+                    return false;
+            }
         }
 
         if (!Config.SiegeEnable)
             return true;
 
         for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {
-            // siegable regions can not be assaulted
+            // siege-able regions can not be assaulted
             if (regionName.equalsIgnoreCase(siege.getConfig().getAttackRegion())
                     || regionName.equalsIgnoreCase(siege.getConfig().getCaptureRegion()))
                 return false;
@@ -159,18 +161,19 @@ public class AssaultUtils {
     }
 
     public static boolean saveInfoFile(Assault assault) {
-        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(), assault.getWorld());
+        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(),
+                assault.getWorld());
         AssaultData data = new AssaultData(owners, assault.getStartTime());
 
         File file = getInfoFile(assault.getRegionName());
 
         Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         try {
-			gson.toJson(data, new FileWriter(file));
-		} catch (JsonIOException | IOException e) {
-			e.printStackTrace();
+            gson.toJson(data, new FileWriter(file));
+        } catch (JsonIOException | IOException e) {
+            e.printStackTrace();
             return false;
-		}
+        }
         return true;
     }
 
@@ -182,7 +185,8 @@ public class AssaultUtils {
         AssaultData data = null;
         try {
             data = gson.fromJson(new FileReader(file), AssaultData.class);
-        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
+        } catch (FileNotFoundException ignored) {
+        } catch (JsonSyntaxException | JsonIOException e) {
             e.printStackTrace();
         }
         return data;

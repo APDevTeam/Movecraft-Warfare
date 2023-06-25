@@ -86,6 +86,9 @@ public class Assault extends Warfare {
     }
 
     public boolean makeBeacon() {
+        if (!AssaultUtils.saveInfoFile(this))
+            return false;
+    
         var foundY = findBeaconY();
         if (!foundY.getLeft())
             return false; // can't find a position
@@ -98,7 +101,7 @@ public class Assault extends Warfare {
         makeBeaconCore(beaconX, beaconY++, beaconZ);
         makeBeaconTop(beaconX, beaconY++, beaconZ);
         makeBeaconSign(beaconX, beaconY, beaconZ);
-        return AssaultUtils.saveInfoFile(this);
+        return true;
     }
 
     // Find a position for the repair beacon
