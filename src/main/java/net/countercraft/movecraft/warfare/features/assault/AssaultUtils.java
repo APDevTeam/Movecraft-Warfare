@@ -13,7 +13,13 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.File;
@@ -21,8 +27,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.UUID;
 
@@ -160,6 +168,14 @@ public class AssaultUtils {
         return new File(saveDirectory, "info.json");
     }
 
+    private static Gson buildGson() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting();
+        builder.serializeNulls();
+        builder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer());
+        return builder.create();
+    }
+
     public static boolean saveInfoFile(Assault assault) {
         Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(),
                 assault.getWorld());
@@ -167,7 +183,7 @@ public class AssaultUtils {
 
         File file = getInfoFile(assault.getRegionName());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+        Gson gson = buildGson();
         try {
             gson.toJson(data, new FileWriter(file));
         } catch (JsonIOException | IOException e) {
@@ -181,7 +197,7 @@ public class AssaultUtils {
     public static AssaultData retrieveInfoFile(String regionName) {
         File file = getInfoFile(regionName);
 
-        Gson gson = new Gson();
+        Gson gson = buildGson();
         AssaultData data = null;
         try {
             data = gson.fromJson(new FileReader(file), AssaultData.class);
@@ -190,5 +206,19 @@ public class AssaultUtils {
             e.printStackTrace();
         }
         return data;
+    }
+
+    private static class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+        private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        @Override
+        public JsonElement serialize(LocalDateTime source, Type type, JsonSerializationContext context) {
+            return new JsonPrimitive(format.format(source));
+        }
+
+        @Override
+        public LocalDateTime deserialize(JsonElement json, Type type, JsonDeserializationContext context) {
+            return LocalDateTime.parse(json.getAsString(), format);
+        }
     }
 }
