@@ -1,7 +1,7 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,17 +63,19 @@ public class RegionDamagedSign implements Listener {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, damages);
 
         // Re-add the owners
-        // TODO: Get this data from the JSON
-        Set<String> ownerSet = new HashSet<>();
-        if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
-            String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"),
-                    regionName);
-            Bukkit.getServer().broadcastMessage(broadcast);
+        AssaultData data = AssaultUtils.retrieveInfoFile(regionName);
+        Set<UUID> ownerSet = data.getOwners();
+        if (ownerSet != null && !ownerSet.isEmpty()) {
+            if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
+                String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"),
+                        regionName);
+                Bukkit.getServer().broadcastMessage(broadcast);
 
-            // Note: there is no assault to pass here...
-            AssaultBroadcastEvent broadcastEvent = new AssaultBroadcastEvent(null, broadcast,
-                    AssaultBroadcastEvent.Type.OWNER_FAIL);
-            Bukkit.getServer().getPluginManager().callEvent(broadcastEvent);
+                // Note: there is no assault to pass here...
+                AssaultBroadcastEvent broadcastEvent = new AssaultBroadcastEvent(null, broadcast,
+                        AssaultBroadcastEvent.Type.OWNER_FAIL);
+                Bukkit.getServer().getPluginManager().callEvent(broadcastEvent);
+            }
         }
 
         // Clear the beacon

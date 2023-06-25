@@ -20,4 +20,12 @@ public class AssaultData {
         this.owners = owners;
         this.startTime = starTime;
     }
+
+    public Set<UUID> getOwners() {
+        return owners;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
 }

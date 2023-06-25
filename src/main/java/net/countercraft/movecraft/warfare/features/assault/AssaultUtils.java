@@ -9,14 +9,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -123,7 +129,14 @@ public class AssaultUtils {
         if (owners == null || owners.size() == 0)
             return false;
 
-        // TODO: Get the time data from the JSON, check if assaulted recently
+        AssaultData data = AssaultUtils.retrieveInfoFile(regionName);
+        LocalDateTime lastStartTime = data.getStartTime();
+        if (lastStartTime != null) {
+            // We have had a previous assault, check the time
+            Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
+            if (delta.toHours() < Config.AssaultCooldownHours)
+                return false;
+        }
 
         if (!Config.SiegeEnable)
             return true;
@@ -137,9 +150,9 @@ public class AssaultUtils {
         return true;
     }
 
-    private static File getInfoFile(Assault assault) {
+    private static File getInfoFile(String regionName) {
         File saveDirectory = new File(MovecraftWarfare.getInstance().getDataFolder(),
-                "AssaultSnapshots/" + assault.getRegionName().replaceAll("´\\s+", "_"));
+                "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
         if (!saveDirectory.exists())
             saveDirectory.mkdirs();
         return new File(saveDirectory, "info.json");
@@ -149,7 +162,7 @@ public class AssaultUtils {
         Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(), assault.getWorld());
         AssaultData data = new AssaultData(owners, assault.getStartTime());
 
-        File file = getInfoFile(assault);
+        File file = getInfoFile(assault.getRegionName());
 
         Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
         try {
@@ -159,5 +172,19 @@ public class AssaultUtils {
             return false;
 		}
         return true;
+    }
+
+    @Nullable
+    public static AssaultData retrieveInfoFile(String regionName) {
+        File file = getInfoFile(regionName);
+
+        Gson gson = new Gson();
+        AssaultData data = null;
+        try {
+            data = gson.fromJson(new FileReader(file), AssaultData.class);
+        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 }
