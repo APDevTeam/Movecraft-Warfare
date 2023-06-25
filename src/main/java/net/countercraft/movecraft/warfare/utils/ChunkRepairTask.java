@@ -21,7 +21,8 @@ public class ChunkRepairTask extends BukkitRunnable {
     private final Predicate<MovecraftLocation> regionTester;
     private final Player player;
 
-    public ChunkRepairTask(String regionName, Queue<Chunk> chunks, File saveDirectory, Predicate<MovecraftLocation> regionTester, @Nullable Player player) {
+    public ChunkRepairTask(String regionName, Queue<Chunk> chunks, File saveDirectory,
+            Predicate<MovecraftLocation> regionTester, @Nullable Player player) {
         this.regionName = regionName;
         this.chunks = chunks;
         this.saveDirectory = saveDirectory;

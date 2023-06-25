@@ -2,10 +2,9 @@ package net.countercraft.movecraft.warfare.config;
 
 import org.bukkit.Material;
 
-import java.util.HashSet;
+import java.util.Set;
 
 public class Config {
-
     // Localisation
     public static String Locale = "en";
 
@@ -21,7 +20,7 @@ public class Config {
     public static double AssaultMaxBalance;
     public static double AssaultOwnerWeightPercent;
     public static double AssaultMemberWeightPercent;
-    public static HashSet<Material> AssaultDestroyableBlocks;
+    public static Set<Material> AssaultDestroyableBlocks;
     public static int AssaultDamagesPerBlock;
     public static int AssaultChunkSavePerTick;
     public static int AssaultChunkRepairPerTick;

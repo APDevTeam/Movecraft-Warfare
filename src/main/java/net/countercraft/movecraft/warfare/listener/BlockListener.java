@@ -1,7 +1,6 @@
 package net.countercraft.movecraft.warfare.listener;
 
 import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class BlockListener implements Listener {
     private long lastDamagesUpdate = 0;
@@ -114,8 +114,8 @@ public class BlockListener implements Listener {
     }
 
     @NotNull
-    private HashSet<Block> getNearbyBlocks(@NotNull Block b) {
-        HashSet<Block> blocks = new HashSet<>();
+    private Set<Block> getNearbyBlocks(@NotNull Block b) {
+        Set<Block> blocks = new HashSet<>();
         blocks.add(b.getRelative(BlockFace.SOUTH));
         blocks.add(b.getRelative(BlockFace.DOWN));
         blocks.add(b.getRelative(BlockFace.UP));
