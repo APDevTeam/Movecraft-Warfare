@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;

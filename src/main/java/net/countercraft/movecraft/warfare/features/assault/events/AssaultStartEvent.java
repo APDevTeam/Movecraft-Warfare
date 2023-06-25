@@ -1,6 +1,6 @@
 package net.countercraft.movecraft.warfare.features.assault.events;
 
-import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
 
 import org.bukkit.event.Cancellable;

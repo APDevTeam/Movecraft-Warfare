@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.warfare.features.siege.SiegeUtils;

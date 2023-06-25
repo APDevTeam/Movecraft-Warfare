@@ -1,6 +1,6 @@
 package net.countercraft.movecraft.warfare.features.siege.events;
 
-import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
 
 import org.bukkit.event.Cancellable;
