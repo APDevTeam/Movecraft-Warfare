@@ -10,6 +10,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -127,6 +134,30 @@ public class AssaultUtils {
                     || regionName.equalsIgnoreCase(siege.getConfig().getCaptureRegion()))
                 return false;
         }
+        return true;
+    }
+
+    private static File getInfoFile(Assault assault) {
+        File saveDirectory = new File(MovecraftWarfare.getInstance().getDataFolder(),
+                "AssaultSnapshots/" + assault.getRegionName().replaceAll("´\\s+", "_"));
+        if (!saveDirectory.exists())
+            saveDirectory.mkdirs();
+        return new File(saveDirectory, "info.json");
+    }
+
+    public static boolean saveInfoFile(Assault assault) {
+        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(), assault.getWorld());
+        AssaultData data = new AssaultData(owners, assault.getStartTime());
+
+        File file = getInfoFile(assault);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+        try {
+			gson.toJson(data, new FileWriter(file));
+		} catch (JsonIOException | IOException e) {
+			e.printStackTrace();
+            return false;
+		}
         return true;
     }
 }
