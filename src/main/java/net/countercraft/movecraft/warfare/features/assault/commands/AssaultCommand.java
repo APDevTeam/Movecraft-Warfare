@@ -7,12 +7,12 @@ import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
+import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.features.assault.tasks.AssaultBeginTask;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -104,7 +104,7 @@ public class AssaultCommand implements CommandExecutor {
             return true;
         }
 
-        WarfareRepair.getInstance().saveRegionRepairState(player.getWorld(), assault);
+        MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().saveRegionRepairState(player.getWorld(), assault);
 
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(regionName, w));
 

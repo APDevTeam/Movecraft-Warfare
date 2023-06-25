@@ -1,11 +1,10 @@
-package net.countercraft.movecraft.warfare.listener;
+package net.countercraft.movecraft.warfare.features.assault;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.ChatColor;

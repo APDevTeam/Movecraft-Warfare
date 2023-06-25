@@ -1,10 +1,11 @@
 package net.countercraft.movecraft.warfare.features.assault.tasks;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -65,7 +66,8 @@ public class ChunkRepairTask extends BukkitRunnable {
                 return;
             }
 
-            if (!WarfareRepair.getInstance().getWarfareUtils().repairChunk(c, saveDirectory, regionTester)) {
+            if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().getWarfareUtils().repairChunk(c,
+                    saveDirectory, regionTester)) {
                 cancel();
                 return;
             }

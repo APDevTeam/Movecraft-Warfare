@@ -4,10 +4,10 @@ import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultWinEvent;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 
 import org.bukkit.Bukkit;
@@ -79,7 +79,7 @@ public class AssaultTask extends BukkitRunnable {
         Bukkit.getServer().getPluginManager().callEvent(event);
 
         // repair the damages that have occurred so far
-        if (!WarfareRepair.getInstance().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null)) {
+        if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().repairRegionRepairState(assault.getWorld(), assault.getRegionName(), null)) {
             broadcast = ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
                     assault.getRegionName().toUpperCase());
             Bukkit.getServer().broadcastMessage(broadcast);

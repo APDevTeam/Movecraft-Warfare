@@ -1,8 +1,9 @@
 package net.countercraft.movecraft.warfare.features.assault.tasks;
 
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
+import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
 
 import org.bukkit.Chunk;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -38,7 +39,8 @@ public class ChunkSaveTask extends BukkitRunnable {
                 return;
             }
 
-            if (!WarfareRepair.getInstance().getWarfareUtils().saveChunk(c, saveDirectory,
+            if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().getWarfareUtils().saveChunk(c,
+                    saveDirectory,
                     Config.AssaultDestroyableBlocks)) {
                 a.getSavedCorrectly().set(Assault.SavedState.FAILED);
                 return;

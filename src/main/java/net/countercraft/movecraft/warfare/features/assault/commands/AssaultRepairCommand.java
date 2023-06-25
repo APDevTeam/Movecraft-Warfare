@@ -1,9 +1,10 @@
 package net.countercraft.movecraft.warfare.features.assault.commands;
 
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.features.assault.WarfareRepair;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -49,7 +50,8 @@ public class AssaultRepairCommand implements CommandExecutor {
             return true;
         }
 
-        if (!WarfareRepair.getInstance().repairRegionRepairState(player.getWorld(), args[0], player)) {
+        if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils()
+                .repairRegionRepairState(player.getWorld(), args[0], player)) {
             String broadcast = ERROR_PREFIX
                     + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
                             args[0].toUpperCase());

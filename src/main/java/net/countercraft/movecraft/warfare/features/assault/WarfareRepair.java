@@ -1,10 +1,9 @@
-package net.countercraft.movecraft.warfare.utils;
+package net.countercraft.movecraft.warfare.features.assault;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.util.WarfareUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkRepairTask;
 import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkSaveTask;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -15,22 +14,16 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.Queue;
 import java.util.function.Predicate;
 
 public class WarfareRepair {
-    private static WarfareRepair instance;
     private final Plugin plugin;
     private final WarfareUtils warfareUtils;
 
     public WarfareRepair(Plugin plugin) {
         this.plugin = plugin;
         warfareUtils = new WarfareUtils();
-        instance = this;
-    }
-
-    public static WarfareRepair getInstance() {
-        return instance;
     }
 
     public void saveRegionRepairState(World world, Assault assault) {

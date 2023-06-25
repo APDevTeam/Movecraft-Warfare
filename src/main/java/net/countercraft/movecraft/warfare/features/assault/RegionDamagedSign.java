@@ -18,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 
 public class RegionDamagedSign implements Listener {
@@ -52,7 +52,8 @@ public class RegionDamagedSign implements Listener {
         }
 
         // Queue up the region repair
-        if (!WarfareRepair.getInstance().repairRegionRepairState(e.getClickedBlock().getWorld(), regionName, player)) {
+        if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils()
+                .repairRegionRepairState(e.getClickedBlock().getWorld(), regionName, player)) {
             player.sendMessage(
                     String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
             return;
