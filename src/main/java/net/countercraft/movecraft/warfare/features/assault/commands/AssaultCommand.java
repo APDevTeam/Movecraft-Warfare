@@ -1,16 +1,16 @@
-package net.countercraft.movecraft.warfare.commands;
+package net.countercraft.movecraft.warfare.features.assault.commands;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import net.countercraft.movecraft.warfare.assault.AssaultBeginTask;
-import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
-import net.countercraft.movecraft.warfare.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultPreStartEvent;
+import net.countercraft.movecraft.warfare.features.assault.tasks.AssaultBeginTask;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;

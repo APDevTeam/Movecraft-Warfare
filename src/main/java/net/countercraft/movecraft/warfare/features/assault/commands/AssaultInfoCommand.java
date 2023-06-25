@@ -1,11 +1,10 @@
-package net.countercraft.movecraft.warfare.commands;
+package net.countercraft.movecraft.warfare.features.assault.commands;
 
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import net.countercraft.movecraft.warfare.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.command.Command;

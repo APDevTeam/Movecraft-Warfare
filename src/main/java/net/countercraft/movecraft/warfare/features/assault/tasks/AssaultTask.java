@@ -1,12 +1,12 @@
-package net.countercraft.movecraft.warfare.assault;
+package net.countercraft.movecraft.warfare.features.assault.tasks;
 
-import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.events.AssaultLoseEvent;
-import net.countercraft.movecraft.warfare.events.AssaultWinEvent;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultLoseEvent;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultWinEvent;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 

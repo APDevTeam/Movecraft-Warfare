@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.warfare.events;
+package net.countercraft.movecraft.warfare.features.assault.events;
 
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +17,7 @@ public class AssaultBroadcastEvent extends AssaultEvent {
         REPAIR_FAIL,
         REPAIR_FINISHED
     }
+
     private static final HandlerList HANDLERS = new HandlerList();
     private final String broadcast;
     private final Type type;

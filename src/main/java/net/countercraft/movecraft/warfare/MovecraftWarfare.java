@@ -2,13 +2,13 @@ package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.Tags;
-import net.countercraft.movecraft.warfare.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.listener.BlockListener;
-import net.countercraft.movecraft.warfare.assault.AssaultManager;
-import net.countercraft.movecraft.warfare.commands.AssaultCommand;
-import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.features.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.features.assault.RegionDamagedSign;
+import net.countercraft.movecraft.warfare.features.assault.commands.AssaultCommand;
+import net.countercraft.movecraft.warfare.features.assault.commands.AssaultInfoCommand;
+import net.countercraft.movecraft.warfare.features.assault.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.features.siege.SiegeCommand;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;

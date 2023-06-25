@@ -1,8 +1,8 @@
-package net.countercraft.movecraft.warfare.assault;
+package net.countercraft.movecraft.warfare.features.assault.tasks;
 
-import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
-import net.countercraft.movecraft.warfare.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
@@ -23,8 +23,9 @@ public class AssaultBeginTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if(assault.getSavedCorrectly().get() != Assault.SavedState.SAVED) {
-            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Repair - Could not save file"));
+        if (assault.getSavedCorrectly().get() != Assault.SavedState.SAVED) {
+            player.sendMessage(
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Repair - Could not save file"));
             return;
         }
 
@@ -32,7 +33,7 @@ public class AssaultBeginTask extends BukkitRunnable {
         Bukkit.getPluginManager().callEvent(assaultStartEvent);
 
         if (assaultStartEvent.isCancelled()) {
-            if(player.isOnline())
+            if (player.isOnline())
                 player.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultStartEvent.getCancelReason());
 
             return;
@@ -40,8 +41,8 @@ public class AssaultBeginTask extends BukkitRunnable {
 
         assault.getStage().set(Assault.Stage.IN_PROGRESS);
 
-        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Begun")
-                , assault.getRegionName(), player.getDisplayName());
+        String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Assault Begun"),
+                assault.getRegionName(), player.getDisplayName());
         Bukkit.getServer().broadcastMessage(broadcast);
 
         for (Player p : Bukkit.getOnlinePlayers()) {

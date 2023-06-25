@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -69,7 +69,8 @@ public class RegionDamagedSign implements Listener {
             Bukkit.getServer().broadcastMessage(broadcast);
 
             // Note: there is no assault to pass here...
-            AssaultBroadcastEvent broadcastEvent = new AssaultBroadcastEvent(null, broadcast, AssaultBroadcastEvent.Type.OWNER_FAIL);
+            AssaultBroadcastEvent broadcastEvent = new AssaultBroadcastEvent(null, broadcast,
+                    AssaultBroadcastEvent.Type.OWNER_FAIL);
             Bukkit.getServer().getPluginManager().callEvent(broadcastEvent);
         }
 
@@ -84,8 +85,10 @@ public class RegionDamagedSign implements Listener {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     Block b = sign.getWorld().getBlockAt(x, y, z);
-                    if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON || b.getType() == Material.IRON_BLOCK) {
-                        Movecraft.getInstance().getWorldHandler().setBlockFast(b.getLocation(), Material.AIR.createBlockData());
+                    if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON
+                            || b.getType() == Material.IRON_BLOCK) {
+                        Movecraft.getInstance().getWorldHandler().setBlockFast(b.getLocation(),
+                                Material.AIR.createBlockData());
                     }
                 }
             }

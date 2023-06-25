@@ -1,7 +1,7 @@
-package net.countercraft.movecraft.warfare.commands;
+package net.countercraft.movecraft.warfare.features.assault.commands;
 
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.events.AssaultBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -21,36 +21,43 @@ public class AssaultRepairCommand implements CommandExecutor {
             return false;
 
         if (!Config.AssaultEnable) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Disabled"));
+            commandSender.sendMessage(
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Disabled"));
             return true;
         }
         if (args.length == 0) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Region Specified"));
+            commandSender.sendMessage(
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Region Specified"));
             return true;
         }
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("AssaultInfo - Must Be Player"));
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("AssaultInfo - Must Be Player"));
             return true;
         }
 
         Player player = (Player) commandSender;
         if (!player.hasPermission("movecraft.assault.adminrepair")) {
-            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
+            player.sendMessage(
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
             return true;
         }
 
-        if(MovecraftWorldGuard.getInstance().getWGUtils().regionExists(args[0], player.getWorld())) {
-            player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Region Not Found"));
+        if (MovecraftWorldGuard.getInstance().getWGUtils().regionExists(args[0], player.getWorld())) {
+            player.sendMessage(
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Region Not Found"));
             return true;
         }
 
         if (!WarfareRepair.getInstance().repairRegionRepairState(player.getWorld(), args[0], player)) {
-            String broadcast = ERROR_PREFIX + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
-                    args[0].toUpperCase());
+            String broadcast = ERROR_PREFIX
+                    + String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
+                            args[0].toUpperCase());
             Bukkit.getServer().broadcastMessage(broadcast);
 
             // Note: there is no assault to pass here...
-            AssaultBroadcastEvent event = new AssaultBroadcastEvent(null, broadcast, AssaultBroadcastEvent.Type.REPAIR_FAIL);
+            AssaultBroadcastEvent event = new AssaultBroadcastEvent(null, broadcast,
+                    AssaultBroadcastEvent.Type.REPAIR_FAIL);
             Bukkit.getServer().getPluginManager().callEvent(event);
         }
 

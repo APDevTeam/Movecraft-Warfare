@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.warfare.assault;
+package net.countercraft.movecraft.warfare.features.assault;
 
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -18,7 +18,7 @@ public class AssaultUtils {
         int numOnline = 0;
 
         numOnline += ownersOnline(regionName, w);
-        if(Config.AssaultRequiredOwnersOnline > 0 && numOnline < Config.AssaultRequiredOwnersOnline) {
+        if (Config.AssaultRequiredOwnersOnline > 0 && numOnline < Config.AssaultRequiredOwnersOnline) {
             return false;
         }
 
@@ -29,10 +29,10 @@ public class AssaultUtils {
     private static int ownersOnline(String regionName, World w) {
         int numOnline = 0;
         Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w);
-        if(owners == null)
+        if (owners == null)
             return 0;
 
-        for(UUID playerID : owners) {
+        for (UUID playerID : owners) {
             if (Bukkit.getPlayer(playerID) != null)
                 numOnline++;
         }
@@ -42,10 +42,10 @@ public class AssaultUtils {
     private static int membersOnline(String regionName, World w) {
         int numOnline = 0;
         Set<UUID> members = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDMembers(regionName, w);
-        if(members == null)
+        if (members == null)
             return 0;
 
-        for(UUID playerID : members) {
+        for (UUID playerID : members) {
             if (Bukkit.getPlayer(playerID) != null)
                 numOnline++;
         }
@@ -66,28 +66,30 @@ public class AssaultUtils {
 
     private static double getOwnerBalance(String regionName, World w) {
         Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(regionName, w);
-        if(owners == null)
+        if (owners == null)
             return 0.0;
 
         double total = 0.0;
         for (UUID playerID : owners) {
             OfflinePlayer offP = Bukkit.getOfflinePlayer(playerID);
             if (offP.getName() != null)
-                total += Math.min(MovecraftRepair.getInstance().getEconomy().getBalance(offP), Config.AssaultMaxBalance);
+                total += Math.min(MovecraftRepair.getInstance().getEconomy().getBalance(offP),
+                        Config.AssaultMaxBalance);
         }
         return total * (Config.AssaultOwnerWeightPercent / 100.0);
     }
 
     private static double getMemberBalance(String regionName, World w) {
         Set<UUID> members = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDMembers(regionName, w);
-        if(members == null)
+        if (members == null)
             return 0.0;
 
         double total = 0.0;
         for (UUID playerID : members) {
             OfflinePlayer offP = Bukkit.getOfflinePlayer(playerID);
             if (offP.getName() != null)
-                total += Math.min(MovecraftRepair.getInstance().getEconomy().getBalance(offP), Config.AssaultMaxBalance);
+                total += Math.min(MovecraftRepair.getInstance().getEconomy().getBalance(offP),
+                        Config.AssaultMaxBalance);
         }
         return total * (Config.AssaultMemberWeightPercent / 100.0);
     }
@@ -101,11 +103,12 @@ public class AssaultUtils {
     }
 
     public static boolean canAssault(String regionName, World w) {
-        if(!MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, w))
+        if (!MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, w))
             return false;
 
-        // a region can only be assaulted if it disables TNT, this is to prevent child regions or sub regions from being assaulted
-        if(!MovecraftWorldGuard.getInstance().getWGUtils().isTNTDenied(regionName, w))
+        // a region can only be assaulted if it disables TNT, this is to prevent child
+        // regions or sub regions from being assaulted
+        if (!MovecraftWorldGuard.getInstance().getWGUtils().isTNTDenied(regionName, w))
             return false;
 
         // regions with no owners can not be assaulted
@@ -113,25 +116,9 @@ public class AssaultUtils {
         if (owners == null || owners.size() == 0)
             return false;
 
-        // TODO: This is 100% broken, instead we need to use a file to store the last assault data.
-        /*{
-            Assault assault = null;
-            for (Assault tempAssault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()) {
-                if (tempAssault.getRegion().equals(region)) {
-                    assault = tempAssault;
-                    break;
-                }
-            }
-            if (assault != null) {
-                long startTime = assault.getStartTime();
-                long curtime = System.currentTimeMillis();
-                if (curtime - startTime < Config.AssaultCooldownHours * (60 * 60 * 1000)) {
-                    return false;
-                }
-            }
-        }*/
+        // TODO: We need to use a file to store the last assault
 
-        if(!Config.SiegeEnable)
+        if (!Config.SiegeEnable)
             return true;
 
         for (Siege siege : MovecraftWarfare.getInstance().getSiegeManager().getSieges()) {

@@ -1,7 +1,7 @@
-package net.countercraft.movecraft.warfare.assault;
+package net.countercraft.movecraft.warfare.features.assault;
 
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.tasks.AssaultTask;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
@@ -33,8 +33,8 @@ public class AssaultManager extends BukkitRunnable {
 
     @Nullable
     public Assault getAssault(String regionName) {
-        for(Assault assault : assaults) {
-            if(assault.getRegionName().equalsIgnoreCase(regionName))
+        for (Assault assault : assaults) {
+            if (assault.getRegionName().equalsIgnoreCase(regionName))
                 return assault;
         }
         return null;

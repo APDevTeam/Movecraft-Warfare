@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.warfare.events;
+package net.countercraft.movecraft.warfare.features.assault.events;
 
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

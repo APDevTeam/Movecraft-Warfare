@@ -5,6 +5,8 @@ import net.countercraft.movecraft.repair.util.WarfareUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkRepairTask;
+import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkSaveTask;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Chunk;
 import org.bukkit.World;

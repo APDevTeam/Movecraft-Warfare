@@ -1,7 +1,8 @@
-package net.countercraft.movecraft.warfare.utils;
+package net.countercraft.movecraft.warfare.features.assault.tasks;
 
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 
 import org.bukkit.Chunk;
 import org.bukkit.scheduler.BukkitRunnable;
