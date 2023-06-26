@@ -9,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 
-import net.countercraft.movecraft.util.Pair;
+import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.warfare.features.Warfare;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
@@ -89,12 +89,12 @@ public class Assault extends Warfare {
         if (!AssaultUtils.saveInfoFile(this))
             return false;
     
-        var foundY = findBeaconY();
-        if (!foundY.getLeft())
+        MovecraftLocation found = findBeacon();
+        if (found == null)
             return false; // can't find a position
-        int beaconX = hitBox.getMinX();
-        int beaconY = foundY.getRight();
-        int beaconZ = hitBox.getMinZ();
+        int beaconX = found.getX();
+        int beaconY = found.getY();
+        int beaconZ = found.getZ();
 
         // now make the beacon
         makeBeaconBase(beaconX, beaconY++, beaconZ);
@@ -104,37 +104,41 @@ public class Assault extends Warfare {
         return true;
     }
 
-    // Find a position for the repair beacon
-    private Pair<Boolean, Integer> findBeaconY() {
-        // first, find a height position for the repair beacon
-        int beaconX = hitBox.getMinX();
-        int beaconZ = hitBox.getMinZ();
-        int beaconY;
-        for (beaconY = hitBox.getMaxY(); beaconY > hitBox.getMinY(); beaconY--) {
-            if (world.getBlockAt(beaconX, beaconY, beaconZ).getType().isSolid()) {
-                beaconY++;
-                break;
-            }
-        }
-        if (beaconY > hitBox.getMaxY() - 5)
-            return new Pair<>(false, beaconY); // no vertical room for beacon
-
-        // next, find a position for the beacon that is empty
-        int x, y, z;
-        boolean empty = false;
-        while (!empty && beaconY < 250) {
-            empty = true;
-            beaconY++;
-            for (x = beaconX; x < beaconX + 5; x++) {
-                for (y = beaconY; y < beaconY + 4; y++) {
-                    for (z = beaconZ; z < beaconZ + 5; z++) {
-                        if (!world.getBlockAt(x, y, z).isEmpty())
-                            empty = false;
+    private boolean isValidBeaconPlacement(int beaconX, int beaconY, int beaconZ) {
+        for (int x = beaconX; x < beaconX + 5; x++) {
+            for (int y = beaconY; y < beaconY + 4; y++) {
+                for (int z = beaconZ; z < beaconZ + 5; z++) {
+                    if (!world.getBlockAt(x, y, z).isEmpty()) {
+                        return false;
                     }
                 }
             }
         }
-        return new Pair<>(true, beaconY);
+        return true;
+    }
+
+    // Find a position for the repair beacon
+    private MovecraftLocation findBeaconY(int beaconX, int beaconZ) {
+        for (int beaconY = hitBox.getMinY(); beaconY < hitBox.getMaxY() - 3; beaconY++) {
+            if (isValidBeaconPlacement(beaconX, beaconY, beaconZ))
+                return new MovecraftLocation(beaconX, beaconY, beaconZ);
+        }
+        return null; // Unable to find a clear location
+    }
+
+    private MovecraftLocation findBeacon() {
+        for (int radius = 0; radius < hitBox.getXLength() + hitBox.getZLength(); radius++) {
+            for (int deltaX = 0; deltaX < radius + 1 && deltaX < hitBox.getXLength(); deltaX++) {
+                int deltaZ = radius - deltaX;
+                if (deltaZ >= hitBox.getZLength())
+                    continue;
+
+                MovecraftLocation loc = findBeaconY(hitBox.getMinX() + deltaX, hitBox.getMinZ() + deltaZ);
+                if (loc != null)
+                    return loc;
+            }
+        }
+        return null;
     }
 
     // A 3x3 base of bedrock
