@@ -90,7 +90,7 @@ public class RegionDamagedSign implements Listener {
                 for (int z = minZ; z <= maxZ; z++) {
                     Block b = sign.getWorld().getBlockAt(x, y, z);
                     if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON
-                            || b.getType() == Material.IRON_BLOCK) {
+                            || b.getType() == Material.IRON_BLOCK || b.getType() == Material.OAK_SIGN) {
                         Movecraft.getInstance().getWorldHandler().setBlockFast(b.getLocation(),
                                 Material.AIR.createBlockData());
                     }
