@@ -218,17 +218,17 @@ public class AssaultUtils {
         return data;
     }
 
-    private static class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
-        private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    public static class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+        public static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 
         @Override
         public JsonElement serialize(LocalDateTime source, Type type, JsonSerializationContext context) {
-            return new JsonPrimitive(format.format(source));
+            return new JsonPrimitive(FORMAT.format(source));
         }
 
         @Override
         public LocalDateTime deserialize(JsonElement json, Type type, JsonDeserializationContext context) {
-            return LocalDateTime.parse(json.getAsString(), format);
+            return LocalDateTime.parse(json.getAsString(), FORMAT);
         }
     }
 }

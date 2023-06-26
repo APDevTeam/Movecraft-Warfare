@@ -43,16 +43,17 @@ public class AssaultRepairCommand implements CommandExecutor {
             return true;
         }
 
-        if (MovecraftWorldGuard.getInstance().getWGUtils().regionExists(args[0], player.getWorld())) {
+        String regionName = args[0];
+        if (MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, player.getWorld())) {
             player.sendMessage(
                     MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Region Not Found"));
             return true;
         }
 
         if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils()
-                .repairRegionRepairState(player.getWorld(), args[0], player)) {
+                .repairRegionRepairState(player.getWorld(), regionName, player)) {
             String broadcast = ERROR_PREFIX + " " + String
-                    .format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), args[0].toUpperCase());
+                    .format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName.toUpperCase());
             Bukkit.getServer().broadcastMessage(broadcast);
 
             // Note: there is no assault to pass here...
@@ -60,6 +61,8 @@ public class AssaultRepairCommand implements CommandExecutor {
                     AssaultBroadcastEvent.Type.REPAIR_FAIL);
             Bukkit.getServer().getPluginManager().callEvent(event);
         }
+
+        // TODO: Re-add owners
 
         return true;
     }

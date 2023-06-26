@@ -88,7 +88,7 @@ public class Assault extends Warfare {
     public boolean makeBeacon() {
         if (!AssaultUtils.saveInfoFile(this))
             return false;
-    
+
         MovecraftLocation found = findBeacon();
         if (found == null)
             return false; // can't find a position
@@ -117,17 +117,27 @@ public class Assault extends Warfare {
         return true;
     }
 
-    // Find a position for the repair beacon
     private MovecraftLocation findBeaconY(int beaconX, int beaconZ) {
-        for (int beaconY = hitBox.getMinY(); beaconY < hitBox.getMaxY() - 3; beaconY++) {
+        for (int beaconY = findBeaconHeight(beaconX, beaconZ); beaconY < hitBox.getMaxY() - 3; beaconY++) {
             if (isValidBeaconPlacement(beaconX, beaconY, beaconZ))
                 return new MovecraftLocation(beaconX, beaconY, beaconZ);
         }
         return null; // Unable to find a clear location
     }
 
+    // Find the highest block above
+    private int findBeaconHeight(int beaconX, int beaconZ) {
+        for (int y = hitBox.getMaxY(); y > hitBox.getMinY(); y--) {
+            if (!world.getBlockAt(beaconX, y, beaconZ).isEmpty())
+                return ++y;
+        }
+        return hitBox.getMinY();
+    }
+
+    // Finds a location for the assault beacon
     private MovecraftLocation findBeacon() {
-        for (int radius = 0; radius < hitBox.getXLength() + hitBox.getZLength(); radius++) {
+        // Only search a radius of 32 blocks from the min points, if unable to place require an admin to repair
+        for (int radius = 0; radius < 32; radius++) {
             for (int deltaX = 0; deltaX < radius + 1 && deltaX < hitBox.getXLength(); deltaX++) {
                 int deltaZ = radius - deltaX;
                 if (deltaZ >= hitBox.getZLength())
@@ -179,7 +189,7 @@ public class Assault extends Warfare {
         s.setLine(0, RegionDamagedSign.HEADER);
         s.setLine(1, I18nSupport.getInternationalisedString("Region Name") + ":" + getRegionName());
         s.setLine(2, I18nSupport.getInternationalisedString("Damages") + ":" + getMaxDamages());
-        s.setLine(3, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(startTime));
+        s.setLine(3, AssaultUtils.LocalDateTimeSerializer.FORMAT.format(startTime));
         s.update();
     }
 }
