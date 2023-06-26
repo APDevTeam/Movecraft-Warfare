@@ -37,7 +37,7 @@ public class ChunkRepairTask extends BukkitRunnable {
         for (int i = 0; i < Config.AssaultChunkRepairPerTick; i++) {
             Chunk c = chunks.poll();
             if (c == null) {
-                if (!chunks.isEmpty()) {
+                if (chunks.isEmpty()) {
                     if (player == null) {
                         String broadcast = String.format(
                                 I18nSupport.getInternationalisedString("Assault - Repair Finished"), regionName);
