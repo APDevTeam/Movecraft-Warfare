@@ -22,6 +22,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -181,12 +182,21 @@ public class AssaultUtils {
                 assault.getWorld());
         AssaultData data = new AssaultData(owners, assault.getStartTime());
 
-        File file = getInfoFile(assault.getRegionName());
-
         Gson gson = buildGson();
+        String str = null;
         try {
-            gson.toJson(data, new FileWriter(file));
-        } catch (JsonIOException | IOException e) {
+            str = gson.toJson(data);
+        } catch (JsonIOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        MovecraftWarfare.getInstance().getLogger().info(str);
+
+        File file = getInfoFile(assault.getRegionName());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(str);
+            writer.close();
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
