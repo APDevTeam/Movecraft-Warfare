@@ -4,6 +4,7 @@ import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.AssaultData;
 import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -88,13 +89,17 @@ public class AssaultInfoCommand implements CommandExecutor {
         double cost = AssaultUtils.getCostToAssault(assaultRegion, player.getWorld());
         output += String.format("%.2f", cost);
         lines.add(output);
-        for (Assault assault : MovecraftWarfare.getInstance().getAssaultManager().getAssaults()) {
-            if (assault.getRegionName().equals(assaultRegion)
-                    && Duration.between(assault.getStartTime(), LocalDateTime.now())
-                            .toMillis() < Config.AssaultCooldownHours * (60 * 60 * 1000)) {
-                canBeAssaulted = false;
-                lines.add("- " + I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable Damaged"));
-                break;
+
+        AssaultData data = AssaultUtils.retrieveInfoFile(assaultRegion);
+        if (data != null) {
+            LocalDateTime lastStartTime = data.getStartTime();
+            if (lastStartTime != null) {
+                // We have had a previous assault, check the time
+                Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
+                if (delta.toHours() < Config.AssaultCooldownHours) {
+                    canBeAssaulted = false;
+                    lines.add("- " + I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable Damaged"));
+                }
             }
         }
         if (!AssaultUtils.areDefendersOnline(assaultRegion, player.getWorld())) {
