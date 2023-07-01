@@ -190,7 +190,6 @@ public class AssaultUtils {
             e.printStackTrace();
             return false;
         }
-        MovecraftWarfare.getInstance().getLogger().info(str);
 
         File file = getInfoFile(assault.getRegionName(), assault.getWorld().getName());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
