@@ -63,7 +63,7 @@ public class RegionDamagedSign implements Listener {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, damages);
 
         // Re-add the owners
-        AssaultData data = AssaultUtils.retrieveInfoFile(regionName);
+        AssaultData data = AssaultUtils.retrieveInfoFile(regionName, sign.getWorld().getName());
         Set<UUID> ownerSet = data.getOwners();
         if (ownerSet != null && !ownerSet.isEmpty()) {
             if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {

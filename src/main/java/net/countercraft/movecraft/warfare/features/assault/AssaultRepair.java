@@ -28,7 +28,7 @@ public class AssaultRepair {
 
     public void saveRegionRepairState(World world, Assault assault) {
         File saveDirectory = new File(plugin.getDataFolder(),
-                "AssaultSnapshots/" + assault.getRegionName().replaceAll("´\\s+", "_"));
+                "AssaultSnapshots/" + world.getName() + "/" + assault.getRegionName().replaceAll("´\\s+", "_"));
 
         Queue<Chunk> chunks = getChunksInRegion(assault.getRegionName(), world);
 
@@ -44,7 +44,7 @@ public class AssaultRepair {
             return false;
 
         File saveDirectory = new File(plugin.getDataFolder(),
-                "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
+                "AssaultSnapshots/" + world.getName() + "/" + regionName.replaceAll("´\\s+", "_"));
 
         Queue<Chunk> chunks = getChunksInRegion(regionName, world);
         Predicate<MovecraftLocation> regionTester = MovecraftWorldGuard.getInstance().getWGUtils()

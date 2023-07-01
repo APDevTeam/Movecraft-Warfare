@@ -90,7 +90,7 @@ public class AssaultInfoCommand implements CommandExecutor {
         output += String.format("%.2f", cost);
         lines.add(output);
 
-        AssaultData data = AssaultUtils.retrieveInfoFile(assaultRegion);
+        AssaultData data = AssaultUtils.retrieveInfoFile(assaultRegion, player.getWorld().getName());
         if (data != null) {
             LocalDateTime lastStartTime = data.getStartTime();
             if (lastStartTime != null) {

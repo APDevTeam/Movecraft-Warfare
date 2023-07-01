@@ -138,7 +138,7 @@ public class AssaultUtils {
         if (owners == null || owners.size() == 0)
             return false;
 
-        AssaultData data = AssaultUtils.retrieveInfoFile(regionName);
+        AssaultData data = AssaultUtils.retrieveInfoFile(regionName, w.getName());
         if (data != null) {
             LocalDateTime lastStartTime = data.getStartTime();
             if (lastStartTime != null) {
@@ -161,9 +161,9 @@ public class AssaultUtils {
         return true;
     }
 
-    private static File getInfoFile(String regionName) {
+    private static File getInfoFile(String regionName, String worldName) {
         File saveDirectory = new File(MovecraftWarfare.getInstance().getDataFolder(),
-                "AssaultSnapshots/" + regionName.replaceAll("´\\s+", "_"));
+                "AssaultSnapshots/" + worldName + "/" + regionName.replaceAll("´\\s+", "_"));
         if (!saveDirectory.exists())
             saveDirectory.mkdirs();
         return new File(saveDirectory, "info.json");
@@ -192,7 +192,7 @@ public class AssaultUtils {
         }
         MovecraftWarfare.getInstance().getLogger().info(str);
 
-        File file = getInfoFile(assault.getRegionName());
+        File file = getInfoFile(assault.getRegionName(), assault.getWorld().getName());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(str);
             writer.close();
@@ -204,8 +204,8 @@ public class AssaultUtils {
     }
 
     @Nullable
-    public static AssaultData retrieveInfoFile(String regionName) {
-        File file = getInfoFile(regionName);
+    public static AssaultData retrieveInfoFile(String regionName, String worldName) {
+        File file = getInfoFile(regionName, worldName);
 
         Gson gson = buildGson();
         AssaultData data = null;
