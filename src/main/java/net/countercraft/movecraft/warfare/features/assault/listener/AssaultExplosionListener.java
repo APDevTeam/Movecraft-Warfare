@@ -1,6 +1,6 @@
 package net.countercraft.movecraft.warfare.features.assault.listener;
 
-import net.countercraft.movecraft.Movecraft;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -41,6 +41,7 @@ public class AssaultExplosionListener implements Listener {
                 continue;
 
             Iterator<Block> i = e.blockList().iterator();
+            Set<Block> toRemove = new HashSet<>();
             while (i.hasNext()) {
                 Block b = i.next();
                 // first see if it is outside the region area
@@ -49,16 +50,22 @@ public class AssaultExplosionListener implements Listener {
                     continue;
 
                 // remove it outside assault area
-                if (!assault.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(l)))
-                    i.remove();
+                if (!assault.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(l))) {
+                    toRemove.add(b);
+                    continue;
+                }
 
                 // remove if not destroyable
-                if (!Config.AssaultDestroyableBlocks.contains(b.getType()))
-                    i.remove();
+                if (!Config.AssaultDestroyableBlocks.contains(b.getType())) {
+                    toRemove.add(b);
+                    continue;
+                }
 
                 // remove if fragile
-                if (isFragile(b))
-                    i.remove();
+                if (isFragile(b)) {
+                    toRemove.add(b);
+                    continue;
+                }
 
                 // whether or not you actually destroyed the block, add to damages
                 long damages = assault.getDamages() + Config.AssaultDamagesPerBlock;
@@ -76,17 +83,16 @@ public class AssaultExplosionListener implements Listener {
                     public void run() {
                         long fdamages = assault.getDamages();
                         for (Player p : fworld.getPlayers()) {
-                            if (Math.round(p.getLocation().getBlockX() / 1000.0) == Math
-                                    .round(floc.getBlockX() / 1000.0) &&
-                                    Math.round(p.getLocation().getBlockZ() / 1000.0) == Math
-                                            .round(floc.getBlockZ() / 1000.0)) {
-                                p.sendMessage(I18nSupport.getInternationalisedString("Damage") + ": " + fdamages);
-                            }
+                            if (p.getLocation().distanceSquared(floc) > 1000 * 1000)
+                                continue;
+
+                            p.sendMessage(I18nSupport.getInternationalisedString("Damage") + ": " + fdamages);
                         }
                     }
-                }.runTaskLater(Movecraft.getInstance(), 20);
+                }.runTaskLater(MovecraftRepair.getInstance(), 1);
                 lastDamagesUpdate = System.currentTimeMillis();
             }
+            e.blockList().removeAll(toRemove);
         }
     }
 
