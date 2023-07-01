@@ -75,7 +75,7 @@ public class AssaultInfoCommand implements CommandExecutor {
 
         boolean canBeAssaulted = true;
         List<String> lines = new ArrayList<>();
-        String output = I18nSupport.getInternationalisedString("AssaultInfo - Name") + ": ";
+        String output = I18nSupport.getInternationalisedString("Region Name") + ": ";
         output += assaultRegion;
         lines.add(output);
         output = I18nSupport.getInternationalisedString("AssaultInfo - Owner") + ": ";
@@ -98,7 +98,7 @@ public class AssaultInfoCommand implements CommandExecutor {
                 Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
                 if (delta.toHours() < Config.AssaultCooldownHours) {
                     canBeAssaulted = false;
-                    lines.add("- " + I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable Damaged"));
+                    lines.add("- " + I18nSupport.getInternationalisedString("AssaultInfo - Not Assaultable - Recently Assaulted"));
                 }
             }
         }

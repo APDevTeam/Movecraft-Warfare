@@ -65,7 +65,7 @@ public class AssaultCommand implements CommandExecutor {
         }
         if (!AssaultUtils.ownsRegions(player)) {
             player.sendMessage(
-                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Region Owned"));
+                    MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - No Regions Owned"));
             return true;
         }
         if (!AssaultUtils.canAssault(regionName, w) || !AssaultUtils.areDefendersOnline(regionName, w)
