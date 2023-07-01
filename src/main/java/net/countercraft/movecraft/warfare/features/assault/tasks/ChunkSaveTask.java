@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.warfare.features.assault.tasks;
 
+import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
@@ -12,10 +13,10 @@ import java.util.Queue;
 
 public class ChunkSaveTask extends BukkitRunnable {
     private final Assault a;
-    private final Queue<Chunk> chunks;
+    private final Queue<Pair<Integer, Integer>> chunks;
     private final File saveDirectory;
 
-    public ChunkSaveTask(Assault a, Queue<Chunk> chunks, File saveDirectory) {
+    public ChunkSaveTask(Assault a, Queue<Pair<Integer, Integer>> chunks, File saveDirectory) {
         this.a = a;
         this.chunks = chunks;
         this.saveDirectory = saveDirectory;
@@ -27,8 +28,8 @@ public class ChunkSaveTask extends BukkitRunnable {
             return;
 
         for (int i = 0; i < Config.AssaultChunkSavePerTick; i++) {
-            Chunk c = chunks.poll();
-            if (c == null) {
+            Pair<Integer, Integer> coord = chunks.poll();
+            if (coord == null) {
                 if (chunks.isEmpty()) {
                     a.getSavedCorrectly().set(Assault.SavedState.SAVED);
                     cancel();
@@ -38,6 +39,7 @@ public class ChunkSaveTask extends BukkitRunnable {
                 return;
             }
 
+            Chunk c = a.getWorld().getChunkAt(coord.getLeft(), coord.getRight());
             if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().getWarfareUtils().saveChunk(c,
                     saveDirectory,
                     Config.AssaultDestroyableBlocks)) {

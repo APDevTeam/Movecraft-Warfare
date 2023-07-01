@@ -2,6 +2,7 @@ package net.countercraft.movecraft.warfare.features.assault;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.repair.util.WarfareUtils;
+import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkRepairTask;
@@ -27,18 +28,13 @@ public class AssaultRepair {
     }
 
     public void saveRegionRepairState(World world, Assault assault) {
-        MovecraftWarfare.getInstance().getLogger().info("a");
         File saveDirectory = new File(plugin.getDataFolder(),
                 "AssaultSnapshots/" + world.getName() + "/" + assault.getRegionName().replaceAll("´\\s+", "_"));
 
-        MovecraftWarfare.getInstance().getLogger().info("b");
-        Queue<Chunk> chunks = getChunksInRegion(assault.getRegionName(), world);
+        Queue<Pair<Integer, Integer>> chunks = getChunksInRegion(assault.getRegionName(), world);
 
-        MovecraftWarfare.getInstance().getLogger().info("c");
         ChunkSaveTask saveTask = new ChunkSaveTask(assault, chunks, saveDirectory);
-        MovecraftWarfare.getInstance().getLogger().info("d");
         saveTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkSavePeriod);
-        MovecraftWarfare.getInstance().getLogger().info("e");
     }
 
     public boolean repairRegionRepairState(World world, String regionName, @Nullable Player player) {
@@ -51,19 +47,19 @@ public class AssaultRepair {
         File saveDirectory = new File(plugin.getDataFolder(),
                 "AssaultSnapshots/" + world.getName() + "/" + regionName.replaceAll("´\\s+", "_"));
 
-        Queue<Chunk> chunks = getChunksInRegion(regionName, world);
+        Queue<Pair<Integer, Integer>> chunks = getChunksInRegion(regionName, world);
         Predicate<MovecraftLocation> regionTester = MovecraftWorldGuard.getInstance().getWGUtils()
                 .getIsInRegion(regionName, world);
         if (regionTester == null)
             return false;
 
-        ChunkRepairTask repairTask = new ChunkRepairTask(regionName, chunks, saveDirectory, regionTester, player);
+        ChunkRepairTask repairTask = new ChunkRepairTask(world, regionName, chunks, saveDirectory, regionTester, player);
         repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkRepairPeriod);
         return true;
     }
 
     @Nullable
-    private Queue<Chunk> getChunksInRegion(String regionName, World w) {
+    private Queue<Pair<Integer, Integer>> getChunksInRegion(String regionName, World w) {
         return MovecraftWorldGuard.getInstance().getWGUtils().getChunksInRegion(regionName, w);
     }
 
