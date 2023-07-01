@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -77,18 +78,12 @@ public class RegionDamagedSign implements Listener {
         }
 
         // Clear the beacon
-        int minX = sign.getX() - 2;
-        int minY = sign.getY() - 3;
-        int minZ = sign.getZ() - 1;
-        int maxX = sign.getX() + 2;
-        int maxY = sign.getY();
-        int maxZ = sign.getZ() + 3;
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
+        for (int x = sign.getX() - 2; x <= sign.getX() + 2; x++) {
+            for (int y = sign.getY() - 3; y <= sign.getY(); y++) {
+                for (int z = sign.getZ() - 1; z <= sign.getZ() + 3; z++) {
                     Block b = sign.getWorld().getBlockAt(x, y, z);
                     if (b.getType() == Material.BEDROCK || b.getType() == Material.BEACON
-                            || b.getType() == Material.IRON_BLOCK || b.getType() == Material.OAK_SIGN) {
+                            || b.getType() == Material.IRON_BLOCK || Tag.SIGNS.isTagged(b.getType())) {
                         Movecraft.getInstance().getWorldHandler().setBlockFast(b.getLocation(),
                                 Material.AIR.createBlockData());
                     }
