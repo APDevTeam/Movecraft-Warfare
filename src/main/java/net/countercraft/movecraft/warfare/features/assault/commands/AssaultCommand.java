@@ -89,41 +89,53 @@ public class AssaultCommand implements CommandExecutor {
             return true;
         }
 
+        MovecraftWarfare.getInstance().getLogger().info("a");
         MovecraftLocation min = MovecraftWorldGuard.getInstance().getWGUtils().getMinLocation(regionName, w);
         MovecraftLocation max = MovecraftWorldGuard.getInstance().getWGUtils().getMaxLocation(regionName, w);
 
+        MovecraftWarfare.getInstance().getLogger().info("b");
         final long taskMaxDamages = (long) AssaultUtils.getMaxDamages(regionName, w);
         Assault assault = new Assault(regionName, player.getUniqueId(), w, taskMaxDamages, new SolidHitBox(min, max));
 
+        MovecraftWarfare.getInstance().getLogger().info("c");
         AssaultPreStartEvent assaultPreStartEvent = new AssaultPreStartEvent(assault);
         Bukkit.getPluginManager().callEvent(assaultPreStartEvent);
 
+        MovecraftWarfare.getInstance().getLogger().info("d");
         if (assaultPreStartEvent.isCancelled()) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + assaultPreStartEvent.getCancelReason());
             return true;
         }
 
+        MovecraftWarfare.getInstance().getLogger().info("e");
         MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils().saveRegionRepairState(player.getWorld(), assault);
 
+        MovecraftWarfare.getInstance().getLogger().info("f");
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(offP, AssaultUtils.getCostToAssault(regionName, w));
 
+        MovecraftWarfare.getInstance().getLogger().info("g");
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().add(assault);
         assault.getStage().set(Assault.Stage.PREPARATION);
 
+        MovecraftWarfare.getInstance().getLogger().info("h");
         String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Starting Soon"),
                 player.getDisplayName(), args[0], Config.AssaultDelay / 60);
         Bukkit.getServer().broadcastMessage(broadcast);
 
+        MovecraftWarfare.getInstance().getLogger().info("i");
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, (float) 0.25);
         }
 
+        MovecraftWarfare.getInstance().getLogger().info("j");
         AssaultBeginTask beginTask = new AssaultBeginTask(player, assault);
         beginTask.runTaskLater(Movecraft.getInstance(), (20L * Config.AssaultDelay));
 
+        MovecraftWarfare.getInstance().getLogger().info("k");
         AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast,
                 AssaultBroadcastEvent.Type.PRESTART);
         Bukkit.getServer().getPluginManager().callEvent(event);
+        MovecraftWarfare.getInstance().getLogger().info("l");
         return true;
     }
 }
