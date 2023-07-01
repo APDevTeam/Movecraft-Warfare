@@ -27,13 +27,18 @@ public class AssaultRepair {
     }
 
     public void saveRegionRepairState(World world, Assault assault) {
+        MovecraftWarfare.getInstance().getLogger().info("a");
         File saveDirectory = new File(plugin.getDataFolder(),
                 "AssaultSnapshots/" + world.getName() + "/" + assault.getRegionName().replaceAll("´\\s+", "_"));
 
+        MovecraftWarfare.getInstance().getLogger().info("b");
         Queue<Chunk> chunks = getChunksInRegion(assault.getRegionName(), world);
 
+        MovecraftWarfare.getInstance().getLogger().info("c");
         ChunkSaveTask saveTask = new ChunkSaveTask(assault, chunks, saveDirectory);
+        MovecraftWarfare.getInstance().getLogger().info("d");
         saveTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkSavePeriod);
+        MovecraftWarfare.getInstance().getLogger().info("e");
     }
 
     public boolean repairRegionRepairState(World world, String regionName, @Nullable Player player) {
