@@ -29,11 +29,7 @@ public class RegionDamagedSign implements Listener {
 
     @EventHandler
     public void onSignClick(@NotNull PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            e.setCancelled(true);
-            return;
-        }
-        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !e.getAction().equals(Action.LEFT_CLICK_BLOCK))
             return;
 
         Block block = e.getClickedBlock();
@@ -43,6 +39,8 @@ public class RegionDamagedSign implements Listener {
         if (!sign.getLine(0).equals(HEADER))
             return;
         e.setCancelled(true);
+        if (e.getAction().equals(Action.LEFT_CLICK_BLOCK))
+            return;
 
         String regionName = sign.getLine(1).substring(sign.getLine(1).indexOf(":") + 1);
         long damages = Long.parseLong(sign.getLine(2).substring(sign.getLine(2).indexOf(":") + 1));
