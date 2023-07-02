@@ -8,7 +8,6 @@ import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkRepairTask;
 import net.countercraft.movecraft.warfare.features.assault.tasks.ChunkSaveTask;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -25,6 +24,7 @@ public class AssaultRepair {
     public AssaultRepair(Plugin plugin) {
         this.plugin = plugin;
         warfareUtils = new WarfareUtils();
+        warfareUtils.runTaskTimerAsynchronously(plugin, 0, 1);
     }
 
     public void saveRegionRepairState(World world, Assault assault) {

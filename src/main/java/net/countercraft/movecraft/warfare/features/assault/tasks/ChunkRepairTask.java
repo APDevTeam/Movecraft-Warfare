@@ -51,10 +51,10 @@ public class ChunkRepairTask extends BukkitRunnable {
                         AssaultBroadcastEvent event = new AssaultBroadcastEvent(null, broadcast,
                                 AssaultBroadcastEvent.Type.REPAIR_FINISHED);
                         Bukkit.getServer().getPluginManager().callEvent(event);
-                    } else
+                    } else {
                         player.sendMessage(String.format(
                                 I18nSupport.getInternationalisedString("Assault - Repair Finished"), regionName));
-                    cancel();
+                    }
                 } else {
                     String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"),
                             regionName);
@@ -64,8 +64,8 @@ public class ChunkRepairTask extends BukkitRunnable {
                     AssaultBroadcastEvent event = new AssaultBroadcastEvent(null, broadcast,
                             AssaultBroadcastEvent.Type.REPAIR_FAIL);
                     Bukkit.getServer().getPluginManager().callEvent(event);
-                    cancel();
                 }
+                cancel();
                 return;
             }
 
