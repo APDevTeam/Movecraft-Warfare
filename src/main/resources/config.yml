@@ -18,19 +18,16 @@ AssaultChunkRepairPerTick: 1 # Chunks repaired per run.  Reduce this if the serv
 AssaultChunkRepairPeriod: 1 # Period between chunk repairs (per assault).  Increase this if the server lags when an assault is started.
 AssaultDestroyableBlocks: # these blocks will be removed if destroyed in assault. Other blocks will not be removed, but still count for damages. Don't include craft flyblocks, or blocks with metadata, or you can have issues.
   - STONE
-  - GRASS_BLOCK
-  - DIRT
+  - "#dirt"
   - COBBLESTONE
   - SAND
   - GRAVEL
   - IRON_ORE
   - COAL_ORE
-  - OAK_LEAVES
-  - SPONGE
+  - "#leaves"
   - SANDSTONE
   - DEAD_BUSH
-  - DANDELION
-  - POPPY
+  - "#flowers"
   - BROWN_MUSHROOM
   - RED_MUSHROOM
   - TNT
@@ -39,24 +36,20 @@ AssaultDestroyableBlocks: # these blocks will be removed if destroyed in assault
   - COBBLESTONE_STAIRS
   - REDSTONE_ORE
   - SNOW
-  - ICE
+  - "#ice"
   - SNOW_BLOCK
   - CACTUS
   - STONE_BRICKS
   - BRICK_STAIRS
   - SANDSTONE_STAIRS
   - EMERALD_ORE
-  - ACACIA_LEAVES
-  - ACACIA_LOG
+  - "#logs"
   - ACACIA_STAIRS
   - PRISMARINE
   - SEA_LANTERN
-  - PACKED_ICE
-  - SUNFLOWER
   - RED_SANDSTONE
   - RED_SANDSTONE_STAIRS
   - RED_SANDSTONE_SLAB
-  - FROSTED_ICE
 
 SiegeEnable: true
 SiegeTaskSeconds: 600 # Seconds per siege message, defaults to 600 (10 minutes)

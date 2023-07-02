@@ -1,39 +1,28 @@
 package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.repair.util.WarfareUtils;
-import net.countercraft.movecraft.warfare.commands.AssaultRepairCommand;
-import net.countercraft.movecraft.warfare.listener.BlockListener;
-import net.countercraft.movecraft.warfare.assault.AssaultManager;
-import net.countercraft.movecraft.warfare.commands.AssaultCommand;
-import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
-import net.countercraft.movecraft.warfare.commands.SiegeCommand;
+import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.features.assault.AssaultManager;
+import net.countercraft.movecraft.warfare.features.assault.RegionDamagedSign;
+import net.countercraft.movecraft.warfare.features.assault.commands.AssaultCommand;
+import net.countercraft.movecraft.warfare.features.assault.commands.AssaultInfoCommand;
+import net.countercraft.movecraft.warfare.features.assault.commands.AssaultRepairCommand;
+import net.countercraft.movecraft.warfare.features.assault.listener.AssaultExplosionListener;
+import net.countercraft.movecraft.warfare.features.siege.SiegeCommand;
+import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.warfare.siege.Siege;
-import net.countercraft.movecraft.warfare.siege.SiegeManager;
-import net.countercraft.movecraft.warfare.sign.RegionDamagedSign;
-import net.countercraft.movecraft.warfare.utils.WarfareRepair;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
 public final class MovecraftWarfare extends JavaPlugin {
     private static MovecraftWarfare instance;
     private AssaultManager assaultManager;
     private SiegeManager siegeManager;
-    private WarfareUtils warfareUtils;
 
     public static synchronized MovecraftWarfare getInstance() {
         return instance;
@@ -45,7 +34,6 @@ public final class MovecraftWarfare extends JavaPlugin {
 
         saveDefaultConfig();
 
-        // TODO other languages
         String[] languages = { "en" };
         for (String s : languages) {
             if (!new File(getDataFolder() + "/localisation/mcwlang_" + s + ".properties").exists()) {
@@ -64,6 +52,7 @@ public final class MovecraftWarfare extends JavaPlugin {
         }
         if (MovecraftRepair.getInstance() == null) {
             Config.AssaultEnable = false;
+            Config.SiegeEnable = false;
         }
 
         if (Config.AssaultEnable) {
@@ -87,67 +76,28 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.AssaultChunkRepairPeriod = getConfig().getInt("AssaultChunkSavePeriod", 1);
             Config.AssaultDestroyableBlocks = EnumSet.noneOf(Material.class);
             for (String s : getConfig().getStringList("AssaultDestroyableBlocks")) {
-                Material m = Material.getMaterial(s.toUpperCase());
-                if (m == null) {
+                EnumSet<Material> materials = Tags.parseMaterials(s);
+                if (materials.isEmpty()) {
                     getLogger().info("Failed to load AssaultDestroyableBlock: '" + s + "'");
                 } else {
-                    Config.AssaultDestroyableBlocks.add(m);
+                    Config.AssaultDestroyableBlocks.addAll(materials);
                 }
             }
 
-            getServer().getPluginManager().registerEvents(new BlockListener(), this);
-
+            getServer().getPluginManager().registerEvents(new AssaultExplosionListener(), this);
             getServer().getPluginManager().registerEvents(new RegionDamagedSign(), this);
-
-            new WarfareRepair(this);
         }
-
-        if (Config.SiegeEnable) {
-            Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);
-            siegeManager = new SiegeManager(this);
-            getLogger().info("Enabling siege");
-            // load the sieges.yml file
-            File siegesFile = new File(MovecraftWarfare.getInstance().getDataFolder().getAbsolutePath() + "/sieges.yml");
-            InputStream input;
-            try {
-                input = new FileInputStream(siegesFile);
-            } catch (FileNotFoundException e) {
-                input = null;
-            }
-            if (input != null) {
-                Map<?, ?> data = new Yaml().loadAs(input, Map.class);
-                Map<String, Map<String, ?>> siegesMap = (Map<String, Map<String, ?>>) data.get("sieges");
-                List<Siege> sieges = siegeManager.getSieges();
-                for (Map.Entry<String, Map<String, ?>> entry : siegesMap.entrySet()) {
-                    Map<String, Object> siegeMap = (Map<String, Object>) entry.getValue();
-                    sieges.add(new Siege(
-                            entry.getKey(),
-                            (String) siegeMap.get("RegionToControl"),
-                            (String) siegeMap.get("SiegeRegion"),
-                            (Integer) siegeMap.get("ScheduleStart"),
-                            (Integer) siegeMap.get("ScheduleEnd"),
-                            (Integer) siegeMap.getOrDefault("DelayBeforeStart", 0),
-                            (Integer) siegeMap.get("SiegeDuration"),
-                            (Integer) siegeMap.getOrDefault("DailyIncome", 0),
-                            (Integer) siegeMap.getOrDefault("CostToSiege", 0),
-                            (Boolean) siegeMap.getOrDefault("DoubleCostPerOwnedSiegeRegion", true),
-                            (List<Integer>) siegeMap.get("DaysOfTheWeek"),
-                            (List<String>) siegeMap.getOrDefault("CraftsToWin", Collections.emptyList()),
-                            (List<String>) siegeMap.getOrDefault("SiegeCommandsOnStart", Collections.emptyList()),
-                            (List<String>) siegeMap.getOrDefault("SiegeCommandsOnWin", Collections.emptyList()),
-                            (List<String>) siegeMap.getOrDefault("SiegeCommandsOnLose", Collections.emptyList())));
-                }
-                getLogger().log(Level.INFO, "Siege configuration loaded.");
-            }
-            siegeManager.runTaskTimerAsynchronously(this, 0, 20);
-        }
-
-        warfareUtils = new WarfareUtils();
-        warfareUtils.runTaskTimer(this, 0, 1);
 
         getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
         getCommand("assault").setExecutor(new AssaultCommand());
         getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
+
+        if (Config.SiegeEnable) {
+            Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);
+            getLogger().info("Enabling siege");
+            siegeManager = new SiegeManager(this);
+            siegeManager.runTaskTimerAsynchronously(this, 0, 20);
+        }
 
         getCommand("siege").setExecutor(new SiegeCommand());
     }
@@ -158,9 +108,5 @@ public final class MovecraftWarfare extends JavaPlugin {
 
     public SiegeManager getSiegeManager() {
         return siegeManager;
-    }
-
-    public WarfareUtils getWarfareUtils() {
-        return warfareUtils;
     }
 }

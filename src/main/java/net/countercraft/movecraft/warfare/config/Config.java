@@ -2,7 +2,7 @@ package net.countercraft.movecraft.warfare.config;
 
 import org.bukkit.Material;
 
-import java.util.Set;
+import java.util.EnumSet;
 
 public class Config {
     // Localisation
@@ -20,7 +20,7 @@ public class Config {
     public static double AssaultMaxBalance;
     public static double AssaultOwnerWeightPercent;
     public static double AssaultMemberWeightPercent;
-    public static Set<Material> AssaultDestroyableBlocks;
+    public static EnumSet<Material> AssaultDestroyableBlocks;
     public static int AssaultDamagesPerBlock;
     public static int AssaultChunkSavePerTick;
     public static int AssaultChunkRepairPerTick;
