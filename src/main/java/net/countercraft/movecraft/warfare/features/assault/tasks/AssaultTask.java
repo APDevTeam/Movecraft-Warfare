@@ -34,8 +34,9 @@ public class AssaultTask extends BukkitRunnable {
 
         if (assault.getDamages() >= assault.getMaxDamages()) {
             assaultWon();
-        } else if (Duration.between(assault.getStartTime(), LocalDateTime.now()).toMillis() > Config.AssaultDuration
-                * 1000L) {
+        } else if (Duration.between(assault.getStartTime(), LocalDateTime.now())
+                .toMillis() > (Config.AssaultDuration + Config.AssaultDelay)
+                        * 1000L) {
             assaultLost();
         }
     }
