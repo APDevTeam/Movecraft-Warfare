@@ -41,7 +41,8 @@ public class AssaultExplosionListener implements Listener {
                 continue;
 
             Iterator<Block> i = e.blockList().iterator();
-            Set<Block> toRemove = new HashSet<>();
+            Set<Block> ignored = new HashSet<>();
+            int exploded = 0;
             while (i.hasNext()) {
                 Block b = i.next();
                 // first see if it is outside the region area
@@ -49,50 +50,55 @@ public class AssaultExplosionListener implements Listener {
                 if (!MovecraftWorldGuard.getInstance().getWGUtils().regionContains(assault.getRegionName(), l))
                     continue;
 
-                // remove it outside assault area
+                // remove if outside assault area
                 if (!assault.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(l))) {
-                    toRemove.add(b);
+                    ignored.add(b);
                     continue;
                 }
 
                 // remove if not destroyable
                 if (!Config.AssaultDestroyableBlocks.contains(b.getType())) {
-                    toRemove.add(b);
+                    ignored.add(b);
                     continue;
                 }
 
                 // remove if fragile
                 if (isFragile(b)) {
-                    toRemove.add(b);
+                    ignored.add(b);
                     continue;
                 }
 
-                // whether or not you actually destroyed the block, add to damages
-                long damages = assault.getDamages() + Config.AssaultDamagesPerBlock;
-                assault.setDamages(Math.min(damages, assault.getMaxDamages()));
-
-                // notify nearby players of the damages, do this 1 second later so all damages
-                // from this volley will be included
-                if (System.currentTimeMillis() < lastDamagesUpdate + 4000) {
-                    continue;
-                }
-                final Location floc = l;
-                final World fworld = b.getWorld();
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        long fdamages = assault.getDamages();
-                        for (Player p : fworld.getPlayers()) {
-                            if (p.getLocation().distanceSquared(floc) > 1000 * 1000)
-                                continue;
-
-                            p.sendMessage(I18nSupport.getInternationalisedString("Damage") + ": " + fdamages);
-                        }
-                    }
-                }.runTaskLater(MovecraftRepair.getInstance(), 1);
-                lastDamagesUpdate = System.currentTimeMillis();
+                exploded++;
             }
-            e.blockList().removeAll(toRemove);
+
+            // whether or not you actually destroyed the block, add to damages
+            long damages = exploded + ignored.size();
+            damages *= Config.AssaultDamagesPerBlock;
+            damages += assault.getDamages();
+            assault.setDamages(Math.min(damages, assault.getMaxDamages()));
+
+            // Remove ignored blocks
+            e.blockList().removeAll(ignored);
+
+            // notify nearby players of the damages, do this 1 second later so all damages
+            // from this volley will be included
+            if (System.currentTimeMillis() < lastDamagesUpdate + 4000)
+                return;
+
+            final Location location = e.getLocation();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    long damages = assault.getDamages();
+                    for (Player p : location.getWorld().getPlayers()) {
+                        if (p.getLocation().distanceSquared(location) > (1000 * 1000))
+                            continue;
+
+                        p.sendMessage(I18nSupport.getInternationalisedString("Damage") + ": " + damages);
+                    }
+                }
+            }.runTaskLater(MovecraftRepair.getInstance(), 1);
+            lastDamagesUpdate = System.currentTimeMillis();
         }
     }
 
