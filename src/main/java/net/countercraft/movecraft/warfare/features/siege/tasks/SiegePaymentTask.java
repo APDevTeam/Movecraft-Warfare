@@ -54,7 +54,7 @@ public class SiegePaymentTask extends SiegeTask {
         for (OfflinePlayer player : owners) {
             MovecraftRepair.getInstance().getEconomy().depositPlayer(player, share);
             MovecraftWarfare.getInstance().getLogger().info(String.format(
-                    "Player %s paid %f for their ownership in %s",
+                    "Player %s paid %.2f for their ownership in %s",
                     player.getName(),
                     share,
                     siege.getName()));
