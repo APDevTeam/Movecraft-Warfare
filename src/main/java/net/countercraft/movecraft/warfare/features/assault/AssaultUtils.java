@@ -184,6 +184,9 @@ public class AssaultUtils {
         Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(),
                 assault.getWorld());
         List<AssaultData> data = retrieveInfoFile(assault.getRegionName(), assault.getWorld().getName());
+        if (data == null) {
+            data = new LinkedList<>();
+        }
         data.add(0, new AssaultData(owners, assault.getStartTime()));
 
         Gson gson = buildGson();
