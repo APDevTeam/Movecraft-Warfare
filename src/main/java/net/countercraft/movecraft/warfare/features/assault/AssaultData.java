@@ -6,26 +6,50 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
+
 public class AssaultData {
     @Nullable
-    private Set<UUID> owners = null;
+    private UUID starter = null;
+    @Nullable
+    private Long maxDamages = null;
+    @Nullable
+    private Long damages = null;
     @Nullable
     private LocalDateTime startTime = null;
+    @Nullable
+    private Set<UUID> owners = null;
 
     public AssaultData() {
 
     }
 
-    public AssaultData(Set<UUID> owners, LocalDateTime starTime) {
-        this.owners = owners;
-        this.startTime = starTime;
+    public AssaultData(Assault assault) {
+        starter = assault.getStarterUUID();
+        maxDamages = assault.getMaxDamages();
+        damages = assault.getDamages();
+        startTime = assault.getStartTime();
+        owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(),
+                assault.getWorld());
     }
 
-    public Set<UUID> getOwners() {
-        return owners;
+    public UUID getStarter() {
+        return starter;
+    }
+
+    public Long getMaxDamages() {
+        return maxDamages;
+    }
+
+    public Long getDamages() {
+        return damages;
     }
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public Set<UUID> getOwners() {
+        return owners;
     }
 }

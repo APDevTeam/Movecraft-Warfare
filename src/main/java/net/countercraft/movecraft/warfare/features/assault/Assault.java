@@ -1,7 +1,6 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 

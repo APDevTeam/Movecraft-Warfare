@@ -21,6 +21,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,6 +33,8 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -138,9 +141,9 @@ public class AssaultUtils {
         if (owners == null || owners.size() == 0)
             return false;
 
-        AssaultData data = AssaultUtils.retrieveInfoFile(regionName, w.getName());
-        if (data != null) {
-            LocalDateTime lastStartTime = data.getStartTime();
+        List<AssaultData> data = AssaultUtils.retrieveInfoFile(regionName, w.getName());
+        if (data != null && data.size() > 0) {
+            LocalDateTime lastStartTime = data.get(0).getStartTime();
             if (lastStartTime != null) {
                 // We have had a previous assault, check the time
                 Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
@@ -178,9 +181,11 @@ public class AssaultUtils {
     }
 
     public static boolean saveInfoFile(Assault assault) {
-        Set<UUID> owners = MovecraftWorldGuard.getInstance().getWGUtils().getUUIDOwners(assault.getRegionName(),
-                assault.getWorld());
-        AssaultData data = new AssaultData(owners, assault.getStartTime());
+        List<AssaultData> data = retrieveInfoFile(assault.getRegionName(), assault.getWorld().getName());
+        if (data == null) {
+            data = new LinkedList<>();
+        }
+        data.add(0, new AssaultData(assault));
 
         Gson gson = buildGson();
         String str = null;
@@ -203,13 +208,13 @@ public class AssaultUtils {
     }
 
     @Nullable
-    public static AssaultData retrieveInfoFile(String regionName, String worldName) {
+    public static List<AssaultData> retrieveInfoFile(String regionName, String worldName) {
         File file = getInfoFile(regionName, worldName);
 
         Gson gson = buildGson();
-        AssaultData data = null;
+        List<AssaultData> data = null;
         try {
-            data = gson.fromJson(new FileReader(file), AssaultData.class);
+            data = gson.fromJson(new FileReader(file), new TypeToken<LinkedList<AssaultData>>(){}.getType());
         } catch (FileNotFoundException ignored) {
         } catch (JsonSyntaxException | JsonIOException e) {
             e.printStackTrace();
