@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,8 +63,13 @@ public class RegionDamagedSign implements Listener {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, damages);
 
         // Re-add the owners
-        AssaultData data = AssaultUtils.retrieveInfoFile(regionName, sign.getWorld().getName());
-        Set<UUID> ownerSet = data.getOwners();
+        List<AssaultData> data = AssaultUtils.retrieveInfoFile(regionName, sign.getWorld().getName());
+        if (data == null || data.size() == 0) {
+            player.sendMessage(
+                    String.format(I18nSupport.getInternationalisedString("Assault - Repair Failed"), regionName));
+            return;
+        }
+        Set<UUID> ownerSet = data.get(0).getOwners();
         if (ownerSet != null && !ownerSet.isEmpty()) {
             if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, sign.getWorld(), ownerSet)) {
                 String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"),

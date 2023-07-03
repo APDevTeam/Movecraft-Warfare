@@ -90,9 +90,9 @@ public class AssaultInfoCommand implements CommandExecutor {
         output += String.format("%.2f", cost);
         lines.add(output);
 
-        AssaultData data = AssaultUtils.retrieveInfoFile(assaultRegion, player.getWorld().getName());
-        if (data != null) {
-            LocalDateTime lastStartTime = data.getStartTime();
+        List<AssaultData> data = AssaultUtils.retrieveInfoFile(assaultRegion, player.getWorld().getName());
+        if (data != null && data.size() > 0) {
+            LocalDateTime lastStartTime = data.get(0).getStartTime();
             if (lastStartTime != null) {
                 // We have had a previous assault, check the time
                 Duration delta = Duration.between(lastStartTime, LocalDateTime.now());
