@@ -4,6 +4,7 @@ import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultWinEvent;
@@ -92,5 +93,8 @@ public class AssaultTask extends BukkitRunnable {
         }
 
         MovecraftWarfare.getInstance().getAssaultManager().getAssaults().remove(assault);
+
+        // Try to save a record to the assault info file
+        AssaultUtils.saveInfoFile(assault);
     }
 }
