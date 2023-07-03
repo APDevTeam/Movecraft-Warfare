@@ -13,7 +13,6 @@ import org.bukkit.World;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
-import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 
 public class SiegePaymentTask extends SiegeTask {
@@ -55,7 +54,7 @@ public class SiegePaymentTask extends SiegeTask {
         for (OfflinePlayer player : owners) {
             MovecraftRepair.getInstance().getEconomy().depositPlayer(player, share);
             MovecraftWarfare.getInstance().getLogger().info(String.format(
-                    I18nSupport.getInternationalisedString("Siege - Ownership Payout Console"),
+                    "Player %s paid %.2f for their ownership in %s",
                     player.getName(),
                     share,
                     siege.getName()));
