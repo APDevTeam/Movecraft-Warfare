@@ -270,8 +270,8 @@ public class SiegeCommand implements TabExecutor {
 
         int currMilitaryTime = getMilitaryTime();
         int dayOfWeek = getDayOfWeek();
-        if (currMilitaryTime <= siege.getConfig().getScheduleStart()
-                || currMilitaryTime >= siege.getConfig().getScheduleEnd()
+        if (currMilitaryTime < siege.getConfig().getScheduleStart()
+                || currMilitaryTime > siege.getConfig().getScheduleEnd()
                 || !siege.getConfig().getDaysOfWeek().contains(dayOfWeek)) {
             player.sendMessage(MOVECRAFT_COMMAND_PREFIX
                     + I18nSupport.getInternationalisedString("Siege - Time Not During Schedule"));
