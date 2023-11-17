@@ -1,12 +1,9 @@
 package net.countercraft.movecraft.warfare.features.siege;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
-import net.countercraft.movecraft.util.Pair;
+import java.util.List;
 
 public class SiegeConfig {
     @NotNull private final String attackRegion;
@@ -16,47 +13,54 @@ public class SiegeConfig {
     private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost;
     private final boolean doubleCostPerOwnedSiegeRegion;
 
-    public static Pair<String, SiegeConfig> load(Map.Entry<String, Map<String, ?>> config) {
-        Map<String,Object> siegeMap = (Map<String, Object>) config.getValue();
-        return new Pair<>(config.getKey(), new SiegeConfig(
-            (String) siegeMap.get("SiegeRegion"),
-            (String) siegeMap.get("RegionToControl"),
-            (List<Integer>) siegeMap.get("DaysOfTheWeek"),
-            (List<String>) siegeMap.get("CraftsToWin"),
-            (List<String>) siegeMap.get("CommandsOnStart"),
-            (List<String>) siegeMap.get("CommandsOnWin"),
-            (List<String>) siegeMap.get("CommandsOnLose"),
-            (int) siegeMap.get("ScheduleStart"),
-            (int) siegeMap.get("ScheduleEnd"),
-            (int) siegeMap.get("DelayBeforeStart"),
-            (int) siegeMap.get("SiegeDuration"),
-            (int) siegeMap.get("DailyIncome"),
-            (int) siegeMap.get("CostToSiege"),
-            (boolean) siegeMap.get("DoubleCostPerOwnedSiegeRegion")
-        ));
-    }
+    public SiegeConfig(ConfigurationSection config) {
+        if(!config.isString("SiegeRegion"))
+            throw new IllegalArgumentException("Invalid SiegeRegion.");
+        attackRegion = config.getString("SiegeRegion");
 
-    private SiegeConfig(
-            @NotNull String attackRegion, @NotNull String captureRegion,
-            @NotNull List<Integer> daysOfWeek,
-            @NotNull List<String> craftsToWin, @NotNull List<String> commandsOnStart,
-            @NotNull List<String> commandsOnWin, @NotNull List<String> commandsOnLose,
-            int scheduleStart, int scheduleEnd, int delayBeforeStart, int duration, int dailyIncome, int cost,
-            boolean doubleCostPerOwnedSiegeRegion) {
-        this.attackRegion = attackRegion;
-        this.captureRegion = captureRegion;
-        this.daysOfWeek = daysOfWeek;
-        this.craftsToWin = craftsToWin;
-        this.commandsOnStart = commandsOnStart == null ? new ArrayList<>() : commandsOnStart;
-        this.commandsOnWin = commandsOnWin == null ? new ArrayList<>() : commandsOnWin;
-        this.commandsOnLose = commandsOnLose == null ? new ArrayList<>() : commandsOnLose;
-        this.scheduleStart = scheduleStart;
-        this.scheduleEnd = scheduleEnd;
-        this.delayBeforeStart = delayBeforeStart;
-        this.duration = duration;
-        this.dailyIncome = dailyIncome;
-        this.cost = cost;
-        this.doubleCostPerOwnedSiegeRegion = doubleCostPerOwnedSiegeRegion;
+        if(!config.isString("RegionToControl"))
+            throw new IllegalArgumentException("Invalid RegionToControl.");
+        captureRegion = config.getString("RegionToControl");
+
+        if(!config.contains("DaysOfTheWeek"))
+            throw new IllegalArgumentException("Invalid DaysOfTheWeek.");
+        daysOfWeek = config.getIntegerList("DaysOfTheWeek");
+
+        if(!config.contains("CraftsToWin"))
+            throw new IllegalArgumentException("Invalid CraftsToWin.");
+        craftsToWin = config.getStringList("CraftsToWin");
+
+        commandsOnStart = config.getStringList("CommandsOnStart");
+        commandsOnWin = config.getStringList("CommandsOnWin");
+        commandsOnLose = config.getStringList("CommandsOnLose");
+
+        if(!config.isInt("ScheduleStart"))
+            throw new IllegalArgumentException("Invalid ScheduleStart");
+        scheduleStart = config.getInt("ScheduleStart");
+
+        if(!config.isInt("ScheduleEnd"))
+            throw new IllegalArgumentException("Invalid ScheduleEnd");
+        scheduleEnd = config.getInt("ScheduleEnd");
+
+        if(!config.isInt("DelayBeforeStart"))
+            throw new IllegalArgumentException("Invalid DelayBeforeStart");
+        delayBeforeStart = config.getInt("DelayBeforeStart");
+
+        if(!config.isInt("SiegeDuration"))
+            throw new IllegalArgumentException("Invalid SiegeDuration");
+        duration = config.getInt("SiegeDuration");
+
+        if(!config.isInt("DailyIncome"))
+            throw new IllegalArgumentException("Invalid DailyIncome");
+        dailyIncome = config.getInt("DailyIncome");
+
+        if(!config.isInt("CostToSiege"))
+            throw new IllegalArgumentException("Invalid CostToSiege");
+        cost = config.getInt("CostToSiege");
+
+        if(!config.isBoolean("DoubleCostPerOwnedSiegeRegion"))
+            throw new IllegalArgumentException("Invalid DoubleCostPerOwnedSiegeRegion");
+        doubleCostPerOwnedSiegeRegion = config.getBoolean("DoubleCostPerOwnedSiegeRegion");
     }
 
     @NotNull
@@ -69,6 +73,7 @@ public class SiegeConfig {
         return attackRegion;
     }
 
+    @NotNull
     public List<Integer> getDaysOfWeek() {
         return daysOfWeek;
     }
