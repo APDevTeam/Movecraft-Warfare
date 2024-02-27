@@ -13,7 +13,7 @@ public class SiegeConfig {
     @NotNull private final String captureRegion;
     @NotNull private final List<Integer> daysOfWeek;
     @NotNull private final List<String> craftsToWin, commandsOnStart, commandsOnWin, commandsOnLose;
-    private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost;
+    private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, suddenDeathDuration, dailyIncome, cost;
     private final boolean doubleCostPerOwnedSiegeRegion;
 
     public static Pair<String, SiegeConfig> load(Map.Entry<String, Map<String, ?>> config) {
@@ -32,6 +32,7 @@ public class SiegeConfig {
             (int) siegeMap.get("SiegeDuration"),
             (int) siegeMap.get("DailyIncome"),
             (int) siegeMap.get("CostToSiege"),
+            (int) siegeMap.getOrDefault("SuddenDeathDuration", 0),
             (boolean) siegeMap.get("DoubleCostPerOwnedSiegeRegion")
         ));
     }
@@ -41,7 +42,7 @@ public class SiegeConfig {
             @NotNull List<Integer> daysOfWeek,
             @NotNull List<String> craftsToWin, @NotNull List<String> commandsOnStart,
             @NotNull List<String> commandsOnWin, @NotNull List<String> commandsOnLose,
-            int scheduleStart, int scheduleEnd, int delayBeforeStart, int duration, int dailyIncome, int cost,
+            int scheduleStart, int scheduleEnd, int delayBeforeStart, int duration, int dailyIncome, int cost, int suddenDeathDuration,
             boolean doubleCostPerOwnedSiegeRegion) {
         this.attackRegion = attackRegion;
         this.captureRegion = captureRegion;
@@ -56,6 +57,7 @@ public class SiegeConfig {
         this.duration = duration;
         this.dailyIncome = dailyIncome;
         this.cost = cost;
+        this.suddenDeathDuration = suddenDeathDuration;
         this.doubleCostPerOwnedSiegeRegion = doubleCostPerOwnedSiegeRegion;
     }
 
@@ -116,6 +118,8 @@ public class SiegeConfig {
     public int getCost() {
         return cost;
     }
+
+    public int getSuddenDeathDuration() {return suddenDeathDuration;}
 
     public boolean isDoubleCostPerOwnedSiegeRegion() {
         return doubleCostPerOwnedSiegeRegion;

@@ -39,8 +39,18 @@ public class SiegeProgressTask extends SiegeTask {
             // Siege is done!
             endSiege();
             return;
-        } else {
-            // Siege is still in progress
+        }
+        // Siege is still in progress
+
+        // Check if it's time to begin sudden death
+        if (!siege.isSuddenDeathActive() && timeLeft < siege.getConfig().getSuddenDeathDuration()) {
+            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Sudden Death"),
+                    siege.getName(), (timeLeft+2)/60));
+            if (!siege.leaderIsInControl()) {
+                endSiege();
+            } else {
+                siege.setSuddenDeathActive(true);
+            }
         }
 
         if (timeLeft % Config.SiegeTaskSeconds != 0)
