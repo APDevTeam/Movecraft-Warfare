@@ -10,6 +10,7 @@ import net.countercraft.movecraft.warfare.features.assault.commands.AssaultInfoC
 import net.countercraft.movecraft.warfare.features.assault.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.features.assault.listener.AssaultExplosionListener;
 import net.countercraft.movecraft.warfare.features.siege.SiegeCommand;
+import net.countercraft.movecraft.warfare.features.siege.SiegeLeaderListener;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -94,9 +95,11 @@ public final class MovecraftWarfare extends JavaPlugin {
 
         if (Config.SiegeEnable) {
             Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);
+            Config.SiegeNoRetreat = getConfig().getBoolean("SiegeNoRetreat", true);
             getLogger().info("Enabling siege");
             siegeManager = new SiegeManager(this);
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
+            getServer().getPluginManager().registerEvents(new SiegeLeaderListener(), this);
         }
 
         getCommand("siege").setExecutor(new SiegeCommand());
