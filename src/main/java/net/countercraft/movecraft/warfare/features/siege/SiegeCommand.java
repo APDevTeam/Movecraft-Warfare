@@ -382,7 +382,7 @@ public class SiegeCommand implements TabExecutor {
             if (siege.isSuddenDeathActive()) {
                 commandSender.sendMessage(String.format(I18nSupport.getInternationalisedString("Siege - Sudden Death"), siege.getPlayer().getName(), (timeLeft / 60) + 1));
             }
-
+            return true;
         }
         commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX
                 + I18nSupport.getInternationalisedString("Siege - No Siege Underway"));
