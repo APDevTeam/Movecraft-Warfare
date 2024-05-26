@@ -354,6 +354,7 @@ public class SiegeCommand implements TabExecutor {
                         siege.getName()));
                 message.append(SiegeUtils.formatMinutes(timeLeft));
                 commandSender.sendMessage(message.toString());
+                return true;
             }
             long timeLeft = siege.getConfig().getDuration() - timePassed.getSeconds();
             Craft siegeCraft = CraftManager.getInstance().getCraftByPlayer(siege.getPlayer().getPlayer());
