@@ -1,8 +1,10 @@
 package net.countercraft.movecraft.warfare.features.siege;
 
-import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicReference;
-
+import net.countercraft.movecraft.repair.MovecraftRepair;
+import net.countercraft.movecraft.warfare.MovecraftWarfare;
+import net.countercraft.movecraft.warfare.features.Warfare;
+import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEvent;
+import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -10,19 +12,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.countercraft.movecraft.warfare.localisation.I18nSupport;
-import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.util.Pair;
-import net.countercraft.movecraft.warfare.MovecraftWarfare;
-import net.countercraft.movecraft.warfare.features.Warfare;
-import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEvent;
+import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Siege extends Warfare {
     public enum Stage {
         IN_PROGRESS, PREPARATION, INACTIVE
     }
 
-    @NotNull private String name;
+    @NotNull private final String name;
     @NotNull private final SiegeConfig config;
     @NotNull private final AtomicReference<Stage> stage;
     @Nullable private LocalDateTime startTime;
@@ -30,9 +28,9 @@ public class Siege extends Warfare {
     private boolean control;
     private boolean suddenDeathActive;
 
-    public Siege(@NotNull Pair<String, SiegeConfig> nameAndConfig) {
-        name = nameAndConfig.getLeft();
-        config = nameAndConfig.getRight();
+    public Siege(@NotNull String siegeName, @NotNull SiegeConfig siegeConfig) {
+        name = siegeName;
+        config = siegeConfig;
         stage = new AtomicReference<>();
         stage.set(Stage.INACTIVE);
         startTime = null;

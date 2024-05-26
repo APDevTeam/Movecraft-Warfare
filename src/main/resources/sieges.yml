@@ -1,0 +1,28 @@
+sieges: # This section must be here and must be the only one inside this file
+  exampleName: # Name of the siege, only used for organization and error checking
+    SiegeRegion: "ExampleSiegeBox" # The WorldGuard name of the siege region that people fight in
+    RegionToControl: "ExampleSiegeCity" # The region that is transferred by winning the siege
+    DaysOfTheWeek: # Days of the week that the siege can happen. 1 is Sunday
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+    CraftsToWin: # The craft types that can siege this region
+      - "Airship"
+      - "MediumAirship"
+    CommandsOnStart: # Commands the server runs on siege start (Optional)
+      - "say hi"
+    CommandsOnWin: # Commands the server runs on siege win (Optional)
+      - "say hi"
+    CommandsOnLose: # Commands the server runs on siege lose (Optional)
+      - "say hi"
+    ScheduleStart: 0 # Time of day where siege window is active written in 24 hour time (for example 2300)
+    ScheduleEnd: 2400 # Time of day where siege window is active written in 24 hour time (for example 2300)
+    DelayBeforeStart: 30 # Duration of the siege's preparationstage in seconds
+    SiegeDuration: 2400 # Duration of the siege's progress stage in seconds
+    DailyIncome: 0 # Amount of in-game money earned per day while after siege victory
+    CostToSiege: 0 # Cost to begin this siege
+    DoubleCostPerOwnedSiegeRegion: false # When enabled the siege cost is doubled for every siege region owned by the siege leader
