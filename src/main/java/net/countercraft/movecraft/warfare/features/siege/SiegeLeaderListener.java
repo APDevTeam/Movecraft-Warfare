@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class SiegeLeaderListener implements Listener {
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCraftMovement(CraftPreTranslateEvent event) {
         Craft leaderCraft = event.getCraft();
-        if (!(leaderCraft instanceof PlayerCraft && Config.SiegeEnable && !event.isCancelled())) return;
+        if (!(leaderCraft instanceof PlayerCraft) || !Config.SiegeEnable) return;
         Player player = ((PlayerCraft)leaderCraft).getPilot();
         Siege currentSiege = getSiegeByLeader(player);
         if (currentSiege == null) return;
@@ -49,10 +49,10 @@ public class SiegeLeaderListener implements Listener {
         event.setCancelled(processCraftMovement(leaderCraft,player,currentSiege,newMaxLocation,newMinLocation));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCraftRotation(CraftRotateEvent event) {
         Craft leaderCraft = event.getCraft();
-        if (!(leaderCraft instanceof PlayerCraft && Config.SiegeEnable && !event.isCancelled())) return;
+        if (!(leaderCraft instanceof PlayerCraft) || !Config.SiegeEnable) return;
         Player player = ((PlayerCraft)leaderCraft).getPilot();
         Siege currentSiege = getSiegeByLeader(player);
         if (currentSiege == null) return;
@@ -73,13 +73,13 @@ public class SiegeLeaderListener implements Listener {
         processCraftRemoval(event.getCraft());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCraftRelease (CraftReleaseEvent event) {
         processCraftRemoval(event.getCraft());
     }
 
     private void processCraftRemoval(Craft leaderCraft) {
-        if (!(leaderCraft instanceof PlayerCraft && Config.SiegeEnable)) return;
+        if (!(leaderCraft instanceof PlayerCraft) || Config.SiegeEnable) return;
         Player player = ((PlayerCraft)leaderCraft).getPilot();
         Siege currentSiege = getSiegeByLeader(player);
         if (currentSiege == null) return;
@@ -146,5 +146,4 @@ public class SiegeLeaderListener implements Listener {
         }
         return null;
     }
-
 }
