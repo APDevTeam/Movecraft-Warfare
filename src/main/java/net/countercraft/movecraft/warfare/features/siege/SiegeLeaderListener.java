@@ -79,7 +79,7 @@ public class SiegeLeaderListener implements Listener {
     }
 
     private void processCraftRemoval(Craft leaderCraft) {
-        if (!(leaderCraft instanceof PlayerCraft) || Config.SiegeEnable) return;
+        if (!(leaderCraft instanceof PlayerCraft) || !Config.SiegeEnable) return;
         Player player = ((PlayerCraft)leaderCraft).getPilot();
         Siege currentSiege = getSiegeByLeader(player);
         if (currentSiege == null) return;
