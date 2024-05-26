@@ -97,7 +97,19 @@ public class SiegeCommand implements TabExecutor {
             if (!region.equalsIgnoreCase(siege.getName()))
                 continue;
 
-            cancelSiege(siege);
+            if((commandSender instanceof Player)) {
+                if (siege.getPlayer().equals((Player) commandSender) || commandSender.hasPermission("movecraft.siege.cancel.other")) {
+                    cancelSiege(siege);
+                } else {
+                    commandSender.sendMessage(I18nSupport.getInternationalisedString("Insufficient Permissions"));
+                }
+            } else {
+                if (commandSender.hasPermission("movecraft.siege.cancel.other")) {
+                    cancelSiege(siege);
+                } else {
+                    commandSender.sendMessage(I18nSupport.getInternationalisedString("Insufficient Permissions"));
+                }
+            }
             return true;
         }
         return false;
@@ -181,6 +193,8 @@ public class SiegeCommand implements TabExecutor {
                 + militaryTimeIntToString(siege.getConfig().getScheduleEnd()) + " UTC");
         commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Duration") + ChatColor.WHITE
                 + secondsIntToString(siege.getConfig().getDuration()));
+        commandSender.sendMessage(I18nSupport.getInternationalisedString("Siege - Sudden Death Duration") + ChatColor.WHITE
+                + secondsIntToString(siege.getConfig().getSuddenDeathDuration()));
         return true;
     }
 

@@ -16,7 +16,10 @@ public class SiegeBroadcastEvent extends SiegeEvent {
         PROGRESS_NOT_IN_BOX,
         WIN,
         LOSE,
-        CANCEL
+        CANCEL,
+        SUDDEN_DEATH,
+        GAIN_CONTROL,
+        LOSE_CONTROL
     }
     private static final HandlerList HANDLERS = new HandlerList();
     private final String broadcast;

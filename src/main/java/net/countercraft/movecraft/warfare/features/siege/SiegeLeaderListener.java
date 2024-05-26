@@ -84,8 +84,11 @@ public class SiegeLeaderListener implements Listener {
         Siege currentSiege = getSiegeByLeader(player);
         if (currentSiege == null) return;
         if (currentSiege.leaderIsInControl()) {
-            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Lost Control"),
-                    player.getDisplayName(), currentSiege.getName()));
+            String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Lost Control"),
+                    player.getDisplayName(), currentSiege.getName());
+            Bukkit.getServer().broadcastMessage(broadcast);
+            SiegeBroadcastEvent event = new SiegeBroadcastEvent(currentSiege, broadcast, SiegeBroadcastEvent.Type.LOSE_CONTROL);
+            Bukkit.getServer().getPluginManager().callEvent(event);
             currentSiege.setLeaderInControl(false);
             if (currentSiege.isSuddenDeathActive())
                 endSiege(currentSiege);
@@ -103,8 +106,11 @@ public class SiegeLeaderListener implements Listener {
                 return true;
             }
         } else if (!currentSiege.leaderIsInControl()) {
-            Bukkit.getServer().broadcastMessage(String.format(I18nSupport.getInternationalisedString("Siege - Gained Control"),
-                    player.getDisplayName(), currentSiege.getName(), leaderCraft.getType().getStringProperty(CraftType.NAME), leaderCraft.getOrigBlockCount(), leaderCraft.getHitBox().getMidPoint().toString()));
+            String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Gained Control"),
+                    player.getDisplayName(), currentSiege.getName(), leaderCraft.getType().getStringProperty(CraftType.NAME), leaderCraft.getOrigBlockCount(), leaderCraft.getHitBox().getMidPoint().toString());
+            Bukkit.getServer().broadcastMessage(broadcast);
+            SiegeBroadcastEvent event = new SiegeBroadcastEvent(currentSiege, broadcast, SiegeBroadcastEvent.Type.GAIN_CONTROL);
+            Bukkit.getServer().getPluginManager().callEvent(event);
             currentSiege.setLeaderInControl(true);
         }
         return false;
@@ -129,7 +135,7 @@ public class SiegeLeaderListener implements Listener {
                     .replaceAll("%l", playerName));
         }
 
-        SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.CANCEL);
+        SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.LOSE);
         Bukkit.getServer().getPluginManager().callEvent(event);
     }
 
