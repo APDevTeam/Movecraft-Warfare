@@ -10,7 +10,7 @@ public class SiegeConfig {
     @NotNull private final String captureRegion;
     @NotNull private final List<Integer> daysOfWeek;
     @NotNull private final List<String> craftsToWin, commandsOnStart, commandsOnWin, commandsOnLose;
-    private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost;
+    private final int scheduleStart, scheduleEnd, delayBeforeStart, duration, dailyIncome, cost, suddenDeathDuration;
     private final boolean doubleCostPerOwnedSiegeRegion;
 
     public SiegeConfig(ConfigurationSection config) {
@@ -61,6 +61,16 @@ public class SiegeConfig {
         if(!config.isBoolean("DoubleCostPerOwnedSiegeRegion"))
             throw new IllegalArgumentException("Invalid DoubleCostPerOwnedSiegeRegion");
         doubleCostPerOwnedSiegeRegion = config.getBoolean("DoubleCostPerOwnedSiegeRegion");
+
+        // Since this is a new addition to the siege file and optional,
+        // get it if present but ignore it if not
+        if (config.contains("SiegeSuddenDeathDuration")) {
+            if(!config.isInt("SiegeSuddenDeathDuration"))
+                throw new IllegalArgumentException("Invalid SiegeSuddenDeathDuration");
+            suddenDeathDuration = config.getInt("SiegeSuddenDeathDuration");
+        } else {
+            suddenDeathDuration = 0;
+        }
     }
 
     @NotNull
@@ -120,6 +130,10 @@ public class SiegeConfig {
 
     public int getCost() {
         return cost;
+    }
+
+    public int getSuddenDeathDuration() {
+        return suddenDeathDuration;
     }
 
     public boolean isDoubleCostPerOwnedSiegeRegion() {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,8 +40,24 @@ public class SiegeProgressTask extends SiegeTask {
             // Siege is done!
             endSiege();
             return;
-        } else {
-            // Siege is still in progress
+        }
+        // Siege is still in progress
+
+        // Check if it's time to begin sudden death
+        if (!siege.isSuddenDeathActive() && timeLeft < siege.getConfig().getSuddenDeathDuration()) {
+            String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Sudden Death"),
+                    siege.getName(), (timeLeft+2)/60);
+            Bukkit.getServer().broadcastMessage(broadcast);
+            SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.SUDDEN_DEATH);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (!siege.leaderIsInControl()) {
+                endSiege();
+            } else {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
+                }
+                siege.setSuddenDeathActive(true);
+            }
         }
 
         if (timeLeft % Config.SiegeTaskSeconds != 0)
