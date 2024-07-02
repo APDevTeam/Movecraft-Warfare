@@ -3,6 +3,7 @@ package net.countercraft.movecraft.warfare.bar;
 import net.countercraft.movecraft.warfare.bar.config.PlayerManager;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
+import net.countercraft.movecraft.warfare.features.assault.events.AssaultLoseEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultPreStartEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultStartEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultWinEvent;
@@ -37,10 +38,13 @@ public class AssaultBarManager extends BukkitRunnable implements Listener {
             BossBar bossBar = entry.getValue();
             switch (assault.getStage().get()) {
                 case PREPARATION:
-                    bossBar.setProgress(Duration.between(assault.getStartTime(), LocalDateTime.now()).toMillis() / (Config.AssaultDelay * 1000.0));
+                    long elapsed = Duration.between(assault.getStartTime(), LocalDateTime.now()).toMillis();
+                    bossBar.setProgress(Math.min(elapsed / (Config.AssaultDelay * 1000.0), 1.0));
+                    bossBar.setTitle(assault.getRegionName() + ": " + Math.round(((Config.AssaultDelay * 1000.0) - elapsed) / 1000.0));
                     break;
                 case IN_PROGRESS:
-                    bossBar.setProgress((double) assault.getDamages() / assault.getMaxDamages());
+                    bossBar.setProgress(Math.min((double) assault.getDamages() / assault.getMaxDamages(), 1.0));
+                    bossBar.setTitle(assault.getRegionName() + ": " + assault.getDamages() + "/" + assault.getMaxDamages());
                     break;
             }
 
@@ -82,7 +86,7 @@ public class AssaultBarManager extends BukkitRunnable implements Listener {
     }
 
     @EventHandler
-    public void onAssaultLose(@NotNull AssaultWinEvent e) {
+    public void onAssaultLose(@NotNull AssaultLoseEvent e) {
         remove(e.getAssault());
     }
 
