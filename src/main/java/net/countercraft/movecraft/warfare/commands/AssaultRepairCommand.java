@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.warfare.features.assault.commands;
+package net.countercraft.movecraft.warfare.commands;
 
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;

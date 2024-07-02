@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.warfare.features.assault.commands;
+package net.countercraft.movecraft.warfare.commands;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
