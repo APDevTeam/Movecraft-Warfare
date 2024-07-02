@@ -13,7 +13,7 @@
     <description>Warfare features of Movecraft</description>
 
     <properties>
-        <java.version>13</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <url>https://github.com/APDevTeam/Movecraft-Warfare</url>
