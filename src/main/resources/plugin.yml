@@ -10,6 +10,9 @@ commands:
   siege:
     description: If the region you are standing in is configured for Siege, lays siege to it
     usage: /siege
+  siegebar:
+    description: Toggle the siege bar feature
+    permission: movecraft.warfare.siegebar
   assaultinfo:
     description: Gives you information about the region(s) you are in, and if they are available for Assault
     usage: /assaultinfo

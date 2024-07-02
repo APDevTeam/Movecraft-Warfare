@@ -66,14 +66,14 @@ public class SiegeManager extends BukkitRunnable {
         }
 
         for (Siege siege : sieges) {
-            if (siege.getStage().get() == Siege.Stage.IN_PROGRESS) {
-                new SiegeProgressTask(siege).runTask(warfare);
-            }
-            else if (siege.getStage().get() == Siege.Stage.PREPARATION) {
-                new SiegePreparationTask(siege).runTask(warfare);
-            }
-            else {
-                // Siege is inactive, do nothing
+            switch (siege.getStage().get()) {
+                case IN_PROGRESS:
+                case SUDDEN_DEATH:
+                    new SiegeProgressTask(siege).runTask(warfare);
+                    break;
+                case PREPARATION:
+                    new SiegePreparationTask(siege).runTask(warfare);
+                    break;
             }
         }
     }

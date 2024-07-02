@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Siege extends Warfare {
     public enum Stage {
-        IN_PROGRESS, PREPARATION, INACTIVE
+        SUDDEN_DEATH, IN_PROGRESS, PREPARATION, INACTIVE
     }
 
     @NotNull private final String name;
@@ -26,7 +26,6 @@ public class Siege extends Warfare {
     @Nullable private LocalDateTime startTime;
     @Nullable private OfflinePlayer player;
     private boolean control;
-    private boolean suddenDeathActive;
 
     public Siege(@NotNull String siegeName, @NotNull SiegeConfig siegeConfig) {
         name = siegeName;
@@ -36,7 +35,6 @@ public class Siege extends Warfare {
         startTime = null;
         player = null;
         control = true;
-        suddenDeathActive = false;
     }
 
     @NotNull
@@ -72,10 +70,6 @@ public class Siege extends Warfare {
 
     public void setLeaderInControl(boolean b) {control = b;}
 
-    public boolean isSuddenDeathActive() {return suddenDeathActive;}
-
-    public void setSuddenDeathActive (boolean b) {suddenDeathActive = b;}
-
     public void start(@NotNull Player player, long cost) {
         for (String startCommand : config.getCommandsOnStart()) {
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
@@ -98,7 +92,6 @@ public class Siege extends Warfare {
         MovecraftRepair.getInstance().getEconomy().withdrawPlayer(player, cost);
         startTime = LocalDateTime.now();
         this.player = player;
-        this.suddenDeathActive = false;
         this.control = true;
         setStage(Stage.PREPARATION);
     }

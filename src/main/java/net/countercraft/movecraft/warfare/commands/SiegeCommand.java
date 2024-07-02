@@ -11,6 +11,7 @@ import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.features.siege.SiegeUtils;
 import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.siege.events.SiegeCancelEvent;
 import net.countercraft.movecraft.warfare.features.siege.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -128,6 +129,9 @@ public class SiegeCommand implements TabExecutor {
 
         SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.CANCEL);
         Bukkit.getServer().getPluginManager().callEvent(event);
+
+        SiegeCancelEvent event2 = new SiegeCancelEvent(siege);
+        Bukkit.getServer().getPluginManager().callEvent(event2);
     }
 
     private boolean timeCommand(CommandSender commandSender) {
@@ -350,42 +354,44 @@ public class SiegeCommand implements TabExecutor {
             Duration timePassed = Duration.between(siege.getStartTime(), LocalDateTime.now());
 
             StringBuilder message = new StringBuilder();
-            if (siege.getStage().get() == Siege.Stage.PREPARATION) {
-                long timeLeft = siege.getConfig().getDelayBeforeStart() - timePassed.getSeconds();
-                message.append(String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"),
-                        siege.getPlayer().getName(),
-                        siege.getName()));
-                message.append(SiegeUtils.formatMinutes(timeLeft));
-                commandSender.sendMessage(message.toString());
-                return true;
-            }
-            long timeLeft = siege.getConfig().getDuration() - timePassed.getSeconds();
-            Craft siegeCraft = CraftManager.getInstance().getCraftByPlayer(siege.getPlayer().getPlayer());
-            if (siege.leaderIsInControl()) {
-                message.append(String.format(I18nSupport.getInternationalisedString("Siege - Flagship In Box"),
-                        siege.getName(),
-                        siegeCraft.getType().getStringProperty(CraftType.NAME),
-                        siegeCraft.getOrigBlockCount(),
-                        siege.getPlayer().getName(),
-                        siegeCraft.getHitBox().getMidPoint().getX(),
-                        siegeCraft.getHitBox().getMidPoint().getY(),
-                        siegeCraft.getHitBox().getMidPoint().getZ()));
-                message.append(SiegeUtils.formatMinutes(timeLeft));
-            } else {
-                message.append(String.format(I18nSupport.getInternationalisedString("Siege - Flagship Not In Box"),
-                        siege.getName(),
-                        siegeCraft.getType().getStringProperty(CraftType.NAME),
-                        siegeCraft.getOrigBlockCount(),
-                        siege.getPlayer().getName(),
-                        siegeCraft.getHitBox().getMidPoint().getX(),
-                        siegeCraft.getHitBox().getMidPoint().getY(),
-                        siegeCraft.getHitBox().getMidPoint().getZ()));
-                message.append(SiegeUtils.formatMinutes(timeLeft));
+            long timeLeft;
+            switch (siege.getStage().get()) {
+                case PREPARATION:
+                    timeLeft = siege.getConfig().getDelayBeforeStart() - timePassed.getSeconds();
+                    message.append(String.format(I18nSupport.getInternationalisedString("Siege - Siege About To Begin"),
+                            siege.getPlayer().getName(),
+                            siege.getName()));
+                    message.append(SiegeUtils.formatMinutes(timeLeft));
+                case SUDDEN_DEATH:
+                    timeLeft = siege.getConfig().getDuration() - timePassed.getSeconds();
+                    message.append(String.format(I18nSupport.getInternationalisedString("Siege - Sudden Death"), siege.getPlayer().getName(), (timeLeft / 60) + 1));
+                case IN_PROGRESS:
+                    timeLeft = siege.getConfig().getDuration() - timePassed.getSeconds();
+                    Craft siegeCraft = CraftManager.getInstance().getCraftByPlayer(siege.getPlayer().getPlayer());
+                    if (siege.leaderIsInControl()) {
+                        message.append(String.format(I18nSupport.getInternationalisedString("Siege - Flagship In Box"),
+                                siege.getName(),
+                                siegeCraft.getType().getStringProperty(CraftType.NAME),
+                                siegeCraft.getOrigBlockCount(),
+                                siege.getPlayer().getName(),
+                                siegeCraft.getHitBox().getMidPoint().getX(),
+                                siegeCraft.getHitBox().getMidPoint().getY(),
+                                siegeCraft.getHitBox().getMidPoint().getZ()));
+                        message.append(SiegeUtils.formatMinutes(timeLeft));
+                    } else {
+                        message.append(String.format(I18nSupport.getInternationalisedString("Siege - Flagship Not In Box"),
+                                siege.getName(),
+                                siegeCraft.getType().getStringProperty(CraftType.NAME),
+                                siegeCraft.getOrigBlockCount(),
+                                siege.getPlayer().getName(),
+                                siegeCraft.getHitBox().getMidPoint().getX(),
+                                siegeCraft.getHitBox().getMidPoint().getY(),
+                                siegeCraft.getHitBox().getMidPoint().getZ()));
+                        message.append(SiegeUtils.formatMinutes(timeLeft));
+                    }
+                    break;
             }
             commandSender.sendMessage(message.toString());
-            if (siege.isSuddenDeathActive()) {
-                commandSender.sendMessage(String.format(I18nSupport.getInternationalisedString("Siege - Sudden Death"), siege.getPlayer().getName(), (timeLeft / 60) + 1));
-            }
             return true;
         }
         commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX

@@ -3,6 +3,7 @@ package net.countercraft.movecraft.warfare;
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.bar.AssaultBarManager;
+import net.countercraft.movecraft.warfare.bar.SiegeBarManager;
 import net.countercraft.movecraft.warfare.bar.config.PlayerManager;
 import net.countercraft.movecraft.warfare.commands.*;
 import net.countercraft.movecraft.warfare.config.Config;
@@ -111,12 +112,20 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.SiegeTaskSeconds = getConfig().getInt("SiegeTaskSeconds", 600);
             Config.SiegeNoRetreat = getConfig().getBoolean("SiegeNoRetreat", true);
             getLogger().info("Enabling siege");
+
             siegeManager = new SiegeManager(this);
             siegeManager.runTaskTimerAsynchronously(this, 0, 20);
+
+            // Startup siege bar manager (every second)
+            SiegeBarManager siegeBarManager = new SiegeBarManager(playerManager);
+            siegeBarManager.runTaskTimerAsynchronously(this, 15, 20);
+            getServer().getPluginManager().registerEvents(siegeBarManager, this);
+
             getServer().getPluginManager().registerEvents(new SiegeLeaderListener(), this);
         }
 
         getCommand("siege").setExecutor(new SiegeCommand());
+        getCommand("siegebar").setExecutor(new SiegeBarCommand(playerManager));
     }
 
     public AssaultManager getAssaultManager() {

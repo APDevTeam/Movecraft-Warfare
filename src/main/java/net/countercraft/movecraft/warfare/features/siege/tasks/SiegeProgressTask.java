@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import net.countercraft.movecraft.warfare.features.siege.events.SiegeSuddenDeathStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -44,7 +45,7 @@ public class SiegeProgressTask extends SiegeTask {
         // Siege is still in progress
 
         // Check if it's time to begin sudden death
-        if (!siege.isSuddenDeathActive() && timeLeft < siege.getConfig().getSuddenDeathDuration()) {
+        if (siege.getStage().get() != Siege.Stage.SUDDEN_DEATH && timeLeft < siege.getConfig().getSuddenDeathDuration()) {
             String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Sudden Death"),
                     siege.getName(), (timeLeft+2)/60);
             Bukkit.getServer().broadcastMessage(broadcast);
@@ -56,7 +57,9 @@ public class SiegeProgressTask extends SiegeTask {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
-                siege.setSuddenDeathActive(true);
+                siege.setStage(Siege.Stage.SUDDEN_DEATH);
+                SiegeSuddenDeathStartEvent event2 = new SiegeSuddenDeathStartEvent(siege);
+                Bukkit.getServer().getPluginManager().callEvent(event2);
             }
         }
 
