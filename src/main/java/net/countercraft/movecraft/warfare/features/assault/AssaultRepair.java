@@ -24,7 +24,6 @@ public class AssaultRepair {
     public AssaultRepair(Plugin plugin) {
         this.plugin = plugin;
         warfareUtils = new WarfareUtils();
-        warfareUtils.runTaskTimerAsynchronously(plugin, 0, 1);
     }
 
     public void saveRegionRepairState(World world, Assault assault) {
