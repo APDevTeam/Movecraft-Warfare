@@ -4,14 +4,11 @@ import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.warfare.bar.AssaultBarManager;
 import net.countercraft.movecraft.warfare.bar.config.PlayerManager;
+import net.countercraft.movecraft.warfare.commands.*;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.features.assault.RegionDamagedSign;
-import net.countercraft.movecraft.warfare.commands.AssaultCommand;
-import net.countercraft.movecraft.warfare.commands.AssaultInfoCommand;
-import net.countercraft.movecraft.warfare.commands.AssaultRepairCommand;
 import net.countercraft.movecraft.warfare.features.assault.listener.AssaultExplosionListener;
-import net.countercraft.movecraft.warfare.commands.SiegeCommand;
 import net.countercraft.movecraft.warfare.features.siege.SiegeLeaderListener;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
@@ -36,6 +33,12 @@ public final class MovecraftWarfare extends JavaPlugin {
         instance = this;
 
         saveDefaultConfig();
+
+        File folder = new File(getDataFolder(), "userdata");
+        if (!folder.exists()) {
+            getLogger().info("Created userdata directory");
+            folder.mkdirs();
+        }
 
         String[] languages = { "en" };
         for (String s : languages) {
@@ -101,6 +104,7 @@ public final class MovecraftWarfare extends JavaPlugin {
 
         getCommand("assaultinfo").setExecutor(new AssaultInfoCommand());
         getCommand("assault").setExecutor(new AssaultCommand());
+        getCommand("assaultbar").setExecutor(new AssaultBarCommand(playerManager));
         getCommand("assaultrepair").setExecutor(new AssaultRepairCommand());
 
         if (Config.SiegeEnable) {

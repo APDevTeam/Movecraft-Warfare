@@ -35,7 +35,7 @@ public class AssaultBarCommand implements CommandExecutor {
         }
 
         manager.toggleAssaultBarSetting(player);
-        player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Bar set") + ": " + manager.getAssaultBarSetting(player));
+        player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Bar Set") + ": " + manager.getAssaultBarSetting(player));
         return true;
     }
 }
