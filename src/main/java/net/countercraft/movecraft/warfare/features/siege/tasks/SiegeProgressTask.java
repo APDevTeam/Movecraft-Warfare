@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import net.countercraft.movecraft.warfare.features.siege.events.SiegeSuddenDeathStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -57,6 +58,8 @@ public class SiegeProgressTask extends SiegeTask {
                     p.playSound(p.getLocation(), Sound.ENTITY_WITHER_DEATH, 1, 0.25F);
                 }
                 siege.setStage(Siege.Stage.SUDDEN_DEATH);
+                SiegeSuddenDeathStartEvent event2 = new SiegeSuddenDeathStartEvent(siege);
+                Bukkit.getServer().getPluginManager().callEvent(event2);
             }
         }
 
