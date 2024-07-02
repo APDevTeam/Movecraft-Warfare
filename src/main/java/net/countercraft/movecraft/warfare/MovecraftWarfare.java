@@ -2,6 +2,8 @@ package net.countercraft.movecraft.warfare;
 
 import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.util.Tags;
+import net.countercraft.movecraft.warfare.bar.AssaultBarManager;
+import net.countercraft.movecraft.warfare.bar.config.PlayerManager;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.AssaultManager;
 import net.countercraft.movecraft.warfare.features.assault.RegionDamagedSign;
@@ -56,6 +58,9 @@ public final class MovecraftWarfare extends JavaPlugin {
             Config.SiegeEnable = false;
         }
 
+        var playerManager = new PlayerManager();
+        getServer().getPluginManager().registerEvents(playerManager, this);
+
         if (Config.AssaultEnable) {
             assaultManager = new AssaultManager(this);
             assaultManager.runTaskTimerAsynchronously(this, 0, 20);
@@ -84,6 +89,11 @@ public final class MovecraftWarfare extends JavaPlugin {
                     Config.AssaultDestroyableBlocks.addAll(materials);
                 }
             }
+
+            // Startup assault bar manager (every second)
+            AssaultBarManager assaultBarManager = new AssaultBarManager(playerManager);
+            assaultBarManager.runTaskTimerAsynchronously(this, 15, 20);
+            getServer().getPluginManager().registerEvents(assaultBarManager, this);
 
             getServer().getPluginManager().registerEvents(new AssaultExplosionListener(), this);
             getServer().getPluginManager().registerEvents(new RegionDamagedSign(), this);
