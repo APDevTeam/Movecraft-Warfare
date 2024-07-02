@@ -90,7 +90,7 @@ public class SiegeLeaderListener implements Listener {
             SiegeBroadcastEvent event = new SiegeBroadcastEvent(currentSiege, broadcast, SiegeBroadcastEvent.Type.LOSE_CONTROL);
             Bukkit.getServer().getPluginManager().callEvent(event);
             currentSiege.setLeaderInControl(false);
-            if (currentSiege.isSuddenDeathActive())
+            if (currentSiege.getStage().get() == Siege.Stage.SUDDEN_DEATH)
                 endSiege(currentSiege);
         }
     }
