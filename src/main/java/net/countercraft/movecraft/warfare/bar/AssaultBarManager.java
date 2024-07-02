@@ -40,7 +40,7 @@ public class AssaultBarManager extends BukkitRunnable implements Listener {
                     bossBar.setProgress(Duration.between(assault.getStartTime(), LocalDateTime.now()).toMillis() / (Config.AssaultDelay * 1000.0));
                     break;
                 case IN_PROGRESS:
-                    bossBar.setProgress((Duration.between(assault.getStartTime(), LocalDateTime.now()).toMillis() - (Config.AssaultDelay * 1000.0)) / (Config.AssaultDuration * 1000.0));
+                    bossBar.setProgress((double) assault.getDamages() / assault.getMaxDamages());
                     break;
             }
 
