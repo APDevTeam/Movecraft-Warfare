@@ -26,80 +26,60 @@ import java.util.List;
 import java.util.Set;
 
 public class AssaultExplosionListener implements Listener {
-    private long lastDamagesUpdate = 0;
-
     @EventHandler(priority = EventPriority.NORMAL)
     public void explodeEvent(EntityExplodeEvent e) {
-        List<Assault> assaults = MovecraftWarfare.getInstance().getAssaultManager() != null
-                ? MovecraftWarfare.getInstance().getAssaultManager().getAssaults()
-                : null;
-        if (assaults == null || assaults.size() == 0)
+        if (MovecraftWarfare.getInstance().getAssaultManager() == null)
+            return;
+        List<Assault> assaults = MovecraftWarfare.getInstance().getAssaultManager().getAssaults();
+        if (assaults == null || assaults.isEmpty())
             return;
 
         for (final Assault assault : assaults) {
             if (e.getLocation().getWorld() != assault.getWorld())
                 continue;
 
-            Iterator<Block> i = e.blockList().iterator();
-            Set<Block> ignored = new HashSet<>();
-            int exploded = 0;
-            while (i.hasNext()) {
-                Block b = i.next();
-                // first see if it is outside the region area
-                Location l = b.getLocation();
-                if (!MovecraftWorldGuard.getInstance().getWGUtils().regionContains(assault.getRegionName(), l))
-                    continue;
+            e.blockList().removeAll(processAssault(assault, e.blockList()));
+        }
+    }
 
-                // remove if outside assault area
-                if (!assault.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(l))) {
-                    ignored.add(b);
-                    continue;
-                }
+    @NotNull
+    private Set<Block> processAssault(Assault assault, @NotNull List<Block> blockList) {
+        Set<Block> result = new HashSet<>();
+        int exploded = 0;
+        for (Block b : blockList) {
+            // first see if it is outside the region area
+            Location l = b.getLocation();
+            if (!MovecraftWorldGuard.getInstance().getWGUtils().regionContains(assault.getRegionName(), l))
+                continue;
 
-                // remove if not destroyable
-                if (!Config.AssaultDestroyableBlocks.contains(b.getType())) {
-                    ignored.add(b);
-                    continue;
-                }
-
-                // remove if fragile
-                if (isFragile(b)) {
-                    ignored.add(b);
-                    continue;
-                }
-
-                exploded++;
+            // remove if outside assault area
+            if (!assault.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(l))) {
+                result.add(b);
+                continue;
             }
 
-            // whether or not you actually destroyed the block, add to damages
-            long damages = exploded + ignored.size();
-            damages *= Config.AssaultDamagesPerBlock;
-            damages += assault.getDamages();
-            assault.setDamages(Math.min(damages, assault.getMaxDamages()));
+            // remove if not destroyable
+            if (!Config.AssaultDestroyableBlocks.contains(b.getType())) {
+                result.add(b);
+                continue;
+            }
 
-            // Remove ignored blocks
-            e.blockList().removeAll(ignored);
+            // remove if fragile
+            if (isFragile(b)) {
+                result.add(b);
+                continue;
+            }
 
-            // notify nearby players of the damages, do this 1 second later so all damages
-            // from this volley will be included
-            if (System.currentTimeMillis() < lastDamagesUpdate + 4000)
-                return;
-
-            final Location location = e.getLocation();
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    long damages = assault.getDamages();
-                    for (Player p : location.getWorld().getPlayers()) {
-                        if (p.getLocation().distanceSquared(location) > (1000 * 1000))
-                            continue;
-
-                        p.sendMessage(I18nSupport.getInternationalisedString("Damage") + ": " + damages);
-                    }
-                }
-            }.runTaskLater(MovecraftRepair.getInstance(), 1);
-            lastDamagesUpdate = System.currentTimeMillis();
+            exploded++;
         }
+
+        // whether you actually destroyed the block or not, add to damages
+        long damages = exploded + result.size();
+        damages *= Config.AssaultDamagesPerBlock;
+        damages += assault.getDamages();
+        assault.setDamages(Math.min(damages, assault.getMaxDamages()));
+
+        return result;
     }
 
     private boolean isFragile(@NotNull Block base) {
