@@ -13,9 +13,15 @@ commands:
   assaultinfo:
     description: Gives you information about the region(s) you are in, and if they are available for Assault
     usage: /assaultinfo
+    permission: movecraft.assaultinfo
   assault:
     description: Begins an Assault on the specified region
     usage: /assault <regionname>
+    permission: movecraft.assault
+  assaultbar:
+    description: Toggle the assault bar feature
+    permission: movecraft.warfare.assaultbar
   assaultrepair:
     description: Repairs a region using admin magic
     usage: /assaultrepair
+    permission: movecraft.assault.adminrepair
