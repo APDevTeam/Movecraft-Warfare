@@ -40,7 +40,7 @@ public class SiegeBarManager extends BukkitRunnable implements Listener {
                     break;
                 case IN_PROGRESS:
                     elapsed = (Duration.between(siege.getStartTime(), LocalDateTime.now()).toMillis() - (siege.getConfig().getDelayBeforeStart() * 1000L));
-                    bossBar.setProgress(Math.min(elapsed / ((siege.getConfig().getDuration() - siege.getConfig().getDelayBeforeStart() - siege.getConfig().getSuddenDeathDuration()) * 1000.0), 1.0);
+                    bossBar.setProgress(Math.min(elapsed / ((siege.getConfig().getDuration() - siege.getConfig().getDelayBeforeStart() - siege.getConfig().getSuddenDeathDuration()) * 1000.0), 1.0));
                     bossBar.setTitle(siege.getName() + ": " + String.format("%,d", Math.round((((siege.getConfig().getDuration() - siege.getConfig().getDelayBeforeStart() - siege.getConfig().getSuddenDeathDuration()) * 1000.0) - elapsed) / 1000.0)));
                     break;
                 case SUDDEN_DEATH:
