@@ -1,9 +1,8 @@
-package net.countercraft.movecraft.warfare.features.assault.commands;
+package net.countercraft.movecraft.warfare.commands;
 
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
-import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.features.assault.AssaultData;
 import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
