@@ -44,7 +44,7 @@ public class AssaultBarManager extends BukkitRunnable implements Listener {
                     break;
                 case IN_PROGRESS:
                     bossBar.setProgress(Math.min((double) assault.getDamages() / assault.getMaxDamages(), 1.0));
-                    bossBar.setTitle(assault.getRegionName() + ": " + assault.getDamages() + "/" + assault.getMaxDamages());
+                    bossBar.setTitle(assault.getRegionName() + ": " + String.format("%,d", assault.getDamages()) + "/" + String.format("%,d", assault.getMaxDamages()));
                     break;
             }
 
