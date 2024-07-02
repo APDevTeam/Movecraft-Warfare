@@ -11,6 +11,7 @@ import net.countercraft.movecraft.warfare.features.siege.Siege;
 import net.countercraft.movecraft.warfare.features.siege.SiegeManager;
 import net.countercraft.movecraft.warfare.features.siege.SiegeUtils;
 import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.siege.events.SiegeCancelEvent;
 import net.countercraft.movecraft.warfare.features.siege.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -128,6 +129,9 @@ public class SiegeCommand implements TabExecutor {
 
         SiegeBroadcastEvent event = new SiegeBroadcastEvent(siege, broadcast, SiegeBroadcastEvent.Type.CANCEL);
         Bukkit.getServer().getPluginManager().callEvent(event);
+
+        SiegeCancelEvent event2 = new SiegeCancelEvent(siege);
+        Bukkit.getServer().getPluginManager().callEvent(event2);
     }
 
     private boolean timeCommand(CommandSender commandSender) {

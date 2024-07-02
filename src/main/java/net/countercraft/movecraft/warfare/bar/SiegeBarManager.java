@@ -2,10 +2,7 @@ package net.countercraft.movecraft.warfare.bar;
 
 import net.countercraft.movecraft.warfare.bar.config.PlayerManager;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
-import net.countercraft.movecraft.warfare.features.siege.events.SiegeLoseEvent;
-import net.countercraft.movecraft.warfare.features.siege.events.SiegePreStartEvent;
-import net.countercraft.movecraft.warfare.features.siege.events.SiegeStartEvent;
-import net.countercraft.movecraft.warfare.features.siege.events.SiegeWinEvent;
+import net.countercraft.movecraft.warfare.features.siege.events.*;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -66,11 +63,16 @@ public class SiegeBarManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onSiegePreStart(@NotNull SiegePreStartEvent e) {
-        bossBars.put(e.getSiege(), Bukkit.createBossBar(e.getSiege().getName(), BarColor.YELLOW, BarStyle.SOLID));
+        bossBars.put(e.getSiege(), Bukkit.createBossBar(e.getSiege().getName(), BarColor.GREEN, BarStyle.SOLID));
     }
 
     @EventHandler
     public void onSiegeStart(@NotNull SiegeStartEvent e) {
+        bossBars.get(e.getSiege()).setColor(BarColor.YELLOW);
+    }
+
+    @EventHandler
+    public void onSiegeSuddenDeathStart(@NotNull SiegeSuddenDeathStartEvent e) {
         bossBars.get(e.getSiege()).setColor(BarColor.RED);
     }
 
@@ -81,6 +83,11 @@ public class SiegeBarManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onSiegeLose(@NotNull SiegeLoseEvent e) {
+        remove(e.getSiege());
+    }
+
+    @EventHandler
+    public void onSiegeCancel(@NotNull SiegeCancelEvent e) {
         remove(e.getSiege());
     }
 
