@@ -12,6 +12,7 @@ import net.countercraft.movecraft.util.ChatUtils;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.siege.events.SiegeBroadcastEvent;
+import net.countercraft.movecraft.warfare.features.siege.events.SiegeLoseEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import net.countercraft.movecraft.worldguard.utils.IsInRegion;
@@ -117,6 +118,7 @@ public class SiegeLeaderListener implements Listener {
     }
 
     private void endSiege(Siege siege) {
+        Bukkit.getPluginManager().callEvent(new SiegeLoseEvent(siege));
         String playerName = SiegeUtils.getSiegeLeaderName(siege.getPlayer());
 
         String broadcast = String.format(I18nSupport.getInternationalisedString("Siege - Siege Failure"),
