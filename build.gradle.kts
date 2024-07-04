@@ -26,7 +26,7 @@ dependencies {
 }
 
 group = "net.countercraft.movecraft.warfare"
-version = "1.0.0_beta-3"
+version = "1.0.0_beta-3_gradle"
 description = "Movecraft-Warfare"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -82,7 +82,7 @@ hangarPublish {
                     hangar("Movecraft-Repair") {
                         required.set(true)
                     }
-                    hangar("Movecraft-Warfare") {
+                    hangar("Movecraft-WorldGuard") {
                         required.set(true)
                     }
                 }
