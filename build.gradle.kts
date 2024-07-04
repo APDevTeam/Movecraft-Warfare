@@ -79,6 +79,12 @@ hangarPublish {
                     hangar("Movecraft") {
                         required.set(true)
                     }
+                    hangar("Movecraft-Repair") {
+                        required.set(true)
+                    }
+                    hangar("Movecraft-Warfare") {
+                        required.set(true)
+                    }
                 }
             }
         }
