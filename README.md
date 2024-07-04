@@ -1,5 +1,5 @@
 # Movecraft-Warfare Addon
-![Warfare](https://github.com/APDevTeam/Movecraft-Warfare/actions/workflows/maven.yml/badge.svg)
+![Warfare](https://github.com/APDevTeam/Movecraft-Warfare/actions/workflows/gradle.yml/badge.svg)
 
 Home of the code for the following features:
  - Siege
@@ -11,19 +11,18 @@ The `legacy` branch is coded for 1.10.2 to 1.16.5 and Movecraft 7.x.
 The `main` branch is coded for 1.14.4+ and Movecraft 8.x.
 
 ## Download
-Devevlopment builds can be found on the [GitHub Actions tab](https://github.com/APDevTeam/Movecraft-Warfare/actions) of this repository.
+Releases can be found on the [releases tab](https://github.com/APDevTeam/Movecraft-Warfare/releases).
 
-Stable builds can be found on [our SpigotMC page](https://www.spigotmc.org/resources/movecraft-warfare.87359/).
+Development builds can be found on the [GitHub Actions tab](https://github.com/APDevTeam/Movecraft-Warfare/actions) of this repository.
+
+Previous builds can be found on[our SpigotMC page](https://www.spigotmc.org/resources/movecraft-warfare.87359/).
 
 ## Building
-This plugin requires that the user setup and build their [Movecraft-Repair](https://github.com/APDevTeam/Movecraft-Repair), [Movecraft-Combat](https://github.com/TylerS1066/Movecraft-Combat), and [Movecraft-WorldGuard](https://github.com/APDevTeam/Movecraft-WorldGuard) development environments, and then clone this into the same folder as your Movecraft development environment such that both Movecraft-Warfare and Movecraft are contained in the same folder.
-
-Then, run the following to build Movecraft-Warfare through `maven`.
+Run the following to build Movecraft-Warfare:
 ```
-mvn clean install
+./gradlew clean build --parallel
 ```
-Jars are located in `/target`.
-
+Jars are located in `/build/libs` directory.
 
 ## Support
 [Github Issues](https://github.com/APDevTeam/Movecraft-Warfare/issues)
