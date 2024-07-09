@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
@@ -69,7 +71,19 @@ public class AssaultRepairCommand implements CommandExecutor {
 
         List<AssaultData> data = AssaultUtils.retrieveInfoFile(regionName, player.getWorld().getName());
         if (data != null && !data.isEmpty()) {
-            MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, player.getWorld(), data.get(0).getOwners());
+            Set<UUID> ownerSet = data.get(0).getOwners();
+            if (ownerSet != null && !ownerSet.isEmpty()) {
+                if (!MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, player.getWorld(), ownerSet)) {
+                    String broadcast = String.format(I18nSupport.getInternationalisedString("Assault - Owners Failed"),
+                            regionName);
+                    Bukkit.getServer().broadcastMessage(broadcast);
+
+                    // Note: there is no assault to pass here...
+                    AssaultBroadcastEvent broadcastEvent = new AssaultBroadcastEvent(null, broadcast,
+                            AssaultBroadcastEvent.Type.OWNER_FAIL);
+                    Bukkit.getServer().getPluginManager().callEvent(broadcastEvent);
+                }
+            }
         }
 
         return true;
