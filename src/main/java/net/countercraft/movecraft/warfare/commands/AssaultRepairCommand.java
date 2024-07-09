@@ -51,7 +51,7 @@ public class AssaultRepairCommand implements CommandExecutor {
         }
 
         String regionName = args[0];
-        if (MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, player.getWorld())) {
+        if (!MovecraftWorldGuard.getInstance().getWGUtils().regionExists(regionName, player.getWorld())) {
             player.sendMessage(
                     MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Assault - Region Not Found"));
             return true;
