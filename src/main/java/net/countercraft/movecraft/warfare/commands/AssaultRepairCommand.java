@@ -57,6 +57,7 @@ public class AssaultRepairCommand implements CommandExecutor {
             return true;
         }
 
+        player.sendMessage(I18nSupport.getInternationalisedString("Assault - Repairing Region"));
         if (!MovecraftWarfare.getInstance().getAssaultManager().getRepairUtils()
                 .repairRegionRepairState(player.getWorld(), regionName, player)) {
             String broadcast = ERROR_PREFIX + " " + String
@@ -86,6 +87,7 @@ public class AssaultRepairCommand implements CommandExecutor {
             }
         }
 
+        player.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("AssaultRepair - Successful"));
         return true;
     }
 }
