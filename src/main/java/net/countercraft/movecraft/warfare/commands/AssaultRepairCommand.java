@@ -2,6 +2,8 @@ package net.countercraft.movecraft.warfare.commands;
 
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
+import net.countercraft.movecraft.warfare.features.assault.AssaultData;
+import net.countercraft.movecraft.warfare.features.assault.AssaultUtils;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -10,13 +12,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
 
 public class AssaultRepairCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, Command command, @NotNull String s, @NotNull String[] args) {
         if (!command.getName().equalsIgnoreCase("assaultrepair"))
             return false;
 
@@ -62,7 +67,10 @@ public class AssaultRepairCommand implements CommandExecutor {
             Bukkit.getServer().getPluginManager().callEvent(event);
         }
 
-        // TODO: Re-add owners
+        List<AssaultData> data = AssaultUtils.retrieveInfoFile(regionName, player.getWorld().getName());
+        if (data != null && !data.isEmpty()) {
+            MovecraftWorldGuard.getInstance().getWGUtils().addOwners(regionName, player.getWorld(), data.get(0).getOwners());
+        }
 
         return true;
     }
