@@ -15,7 +15,7 @@ Releases can be found on the [releases tab](https://github.com/APDevTeam/Movecra
 
 Development builds can be found on the [GitHub Actions tab](https://github.com/APDevTeam/Movecraft-Warfare/actions) of this repository.
 
-Previous builds can be found on[our SpigotMC page](https://www.spigotmc.org/resources/movecraft-warfare.87359/).
+Previous builds can be found on [our SpigotMC page](https://www.spigotmc.org/resources/movecraft-warfare.87359/).
 
 ## Building
 Run the following to build Movecraft-Warfare:

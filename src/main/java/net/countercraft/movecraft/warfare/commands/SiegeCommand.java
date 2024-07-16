@@ -4,7 +4,8 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.repair.MovecraftRepair;
-import net.countercraft.movecraft.util.TopicPaginator;
+import net.countercraft.movecraft.util.ChatUtils;
+import net.countercraft.movecraft.util.ComponentPaginator;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
 import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.siege.Siege;
@@ -15,6 +16,7 @@ import net.countercraft.movecraft.warfare.features.siege.events.SiegeCancelEvent
 import net.countercraft.movecraft.warfare.features.siege.events.SiegePreStartEvent;
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -249,16 +251,22 @@ public class SiegeCommand implements TabExecutor {
             return true;
         }
 
-        TopicPaginator paginator = new TopicPaginator("Sieges");
+        ComponentPaginator paginator = new ComponentPaginator(
+                Component.text("Sieges"),
+                pageNumber -> "/siege list " + pageNumber);
         for (Siege siege : siegeManager.getSieges()) {
-            paginator.addLine("- " + siege.getName());
+            paginator.addLine(Component.text("- ").append(Component.text(siege.getName())));
         }
         if (!paginator.isInBounds(page)) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX
-                    + I18nSupport.getInternationalisedString("Paginator - Invalid Page") + " \"" + args[1] + "\"");
+            commandSender.sendMessage(Component.empty()
+                    .append(ChatUtils.commandPrefix())
+                    .append(net.countercraft.movecraft.localisation.I18nSupport.getInternationalisedComponent("Paginator - Invalid page"))
+                    .append(Component.text(" \""))
+                    .append(Component.text(args[0]))
+                    .append(Component.text("\"")));
             return true;
         }
-        for (String line : paginator.getPage(page))
+        for (Component line : paginator.getPage(page))
             commandSender.sendMessage(line);
         return true;
     }
