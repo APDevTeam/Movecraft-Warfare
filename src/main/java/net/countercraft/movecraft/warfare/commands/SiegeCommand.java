@@ -17,6 +17,7 @@ import net.countercraft.movecraft.warfare.features.siege.events.SiegePreStartEve
 import net.countercraft.movecraft.warfare.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -232,9 +233,10 @@ public class SiegeCommand implements TabExecutor {
         return String.format("%02d", seconds / 60) + ":" + String.format("%02d", seconds % 60);
     }
 
-    private boolean listCommand(CommandSender commandSender, String[] args) {
-        if (!commandSender.hasPermission("movecraft.siege.list")) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
+    private boolean listCommand(@NotNull CommandSender sender, String[] args) {
+        if (!sender.hasPermission("movecraft.siege.list")) {
+            sender.sendMessage(ChatUtils.commandPrefix().append(
+                    I18nSupport.getInternationalisedComponent("Insufficient Permissions")));
             return true;
         }
 
@@ -246,8 +248,12 @@ public class SiegeCommand implements TabExecutor {
             else
                 page = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX
-                    + I18nSupport.getInternationalisedString("Paginator - Invalid Page") + " \"" + args[1] + "\"");
+            sender.sendMessage(Component.empty()
+                    .append(ChatUtils.commandPrefix())
+                    .append(net.countercraft.movecraft.localisation.I18nSupport.getInternationalisedComponent("Paginator - Invalid page"))
+                    .append(Component.text(" \""))
+                    .append(Component.text(args[1]))
+                    .append(Component.text("\"")));
             return true;
         }
 
@@ -255,19 +261,20 @@ public class SiegeCommand implements TabExecutor {
                 Component.text("Sieges"),
                 pageNumber -> "/siege list " + pageNumber);
         for (Siege siege : siegeManager.getSieges()) {
-            paginator.addLine(Component.text("- ").append(Component.text(siege.getName())));
+            paginator.addLine(Component.text("- ").append(
+                    Component.text(siege.getName()).clickEvent(ClickEvent.runCommand("/siege info " + siege.getName()))));
         }
         if (!paginator.isInBounds(page)) {
-            commandSender.sendMessage(Component.empty()
+            sender.sendMessage(Component.empty()
                     .append(ChatUtils.commandPrefix())
                     .append(net.countercraft.movecraft.localisation.I18nSupport.getInternationalisedComponent("Paginator - Invalid page"))
                     .append(Component.text(" \""))
-                    .append(Component.text(args[0]))
+                    .append(Component.text(args[1]))
                     .append(Component.text("\"")));
             return true;
         }
         for (Component line : paginator.getPage(page))
-            commandSender.sendMessage(line);
+            sender.sendMessage(line);
         return true;
     }
 
