@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.warfare.features.assault;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.repair.util.WarfareUtils;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.warfare.MovecraftWarfare;
@@ -54,6 +55,7 @@ public class AssaultRepair {
 
         ChunkRepairTask repairTask = new ChunkRepairTask(world, regionName, chunks, saveDirectory, regionTester, player);
         repairTask.runTaskTimer(MovecraftWarfare.getInstance(), 2, Config.AssaultChunkRepairPeriod);
+        MovecraftRepair.getInstance().getLogger().info("Repairing region " + regionName + " in " + world.getName() + (player != null ? " for " + player.getName() : ""));
         return true;
     }
 
