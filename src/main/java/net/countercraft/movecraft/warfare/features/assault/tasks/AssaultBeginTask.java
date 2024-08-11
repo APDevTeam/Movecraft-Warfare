@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.warfare.features.assault.tasks;
 
+import net.countercraft.movecraft.warfare.config.Config;
 import net.countercraft.movecraft.warfare.features.assault.Assault;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultBroadcastEvent;
 import net.countercraft.movecraft.warfare.features.assault.events.AssaultStartEvent;
@@ -15,14 +16,19 @@ import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX
 public class AssaultBeginTask extends BukkitRunnable {
     private final Player player;
     private final Assault assault;
+    private final long start;
 
     public AssaultBeginTask(Player player, Assault assault) {
         this.player = player;
         this.assault = assault;
+        start = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
+        if (System.currentTimeMillis() - start < Config.AssaultDelay * 1000L)
+            return;
+
         if (assault.getSavedCorrectly().get() != Assault.SavedState.SAVED) {
             player.sendMessage(
                     MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Repair - Could not save file"));

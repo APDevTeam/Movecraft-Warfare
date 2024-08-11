@@ -119,7 +119,7 @@ public class AssaultCommand implements CommandExecutor {
         }
 
         AssaultBeginTask beginTask = new AssaultBeginTask(player, assault);
-        beginTask.runTaskLater(Movecraft.getInstance(), (20L * Config.AssaultDelay));
+        beginTask.runTaskTimer(Movecraft.getInstance(), 20, 20);
 
         AssaultBroadcastEvent event = new AssaultBroadcastEvent(assault, broadcast,
                 AssaultBroadcastEvent.Type.PRESTART);
