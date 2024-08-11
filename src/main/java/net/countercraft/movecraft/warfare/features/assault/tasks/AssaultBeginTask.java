@@ -29,6 +29,7 @@ public class AssaultBeginTask extends BukkitRunnable {
         if (System.currentTimeMillis() - start < Config.AssaultDelay * 1000L)
             return;
 
+        cancel();
         if (assault.getSavedCorrectly().get() != Assault.SavedState.SAVED) {
             player.sendMessage(
                     MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Repair - Could not save file"));
