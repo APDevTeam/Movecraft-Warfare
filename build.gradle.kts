@@ -1,8 +1,8 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.github.0ffz.github-packages") version "1.2.1"
-    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("io.github.apdevteam.github-packages") version "1.2.2"
+    id("io.papermc.hangar-publish-plugin") version "0.1.3"
 }
 
 repositories {
@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     api("org.jetbrains:annotations-java5:24.1.0")
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("net.countercraft:movecraft:+")
     compileOnly("net.countercraft.movecraft.repair:movecraft-repair:+")
     compileOnly("net.countercraft.movecraft.worldguard:movecraft-worldguard:+")
@@ -28,7 +28,7 @@ dependencies {
 group = "net.countercraft.movecraft.warfare"
 version = "1.0.0_beta-5"
 description = "Movecraft-Warfare"
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 tasks.jar {
     archiveBaseName.set("Movecraft-Warfare")
@@ -74,7 +74,7 @@ hangarPublish {
         platforms {
             register(io.papermc.hangarpublishplugin.model.Platforms.PAPER) {
                 jar.set(tasks.jar.flatMap { it.archiveFile })
-                platformVersions.set(listOf("1.18.2-1.21"))
+                platformVersions.set(listOf("1.20.6-1.21.5"))
                 dependencies {
                     hangar("Movecraft") {
                         required.set(true)
